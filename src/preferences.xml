@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_preferences">
+<title>Hierarchical Preferences</title>
+
+<para>Once you are able to start a CSS product, you need to configure it.
+For example, to run the archive engine, you need to specify where it should write data.
+Likewise, the CSS Data Browser needs to be configured to read the archived data from that
+location. These settings are site-specific, they cannot be included in the source code.
+The local CSS administrator should be able to configure these settings so that local
+end users of CSS can simply open the Data Browser without having to adjust the
+archive data source settings.
+Other settings might have useful defaults, but end users may still prefer to adjust them
+to their liking.
+</para>
+
+<para>Eclipse has a preference system<indexterm><primary>Preferences</primary></indexterm>
+that allows each plugin to provide default settings.
+The builder of a product can then add site-specific settings, and finally the users are
+able to adjust them individually for their instance of CSS.
+</para>
+
+<para>Note that the following is a technical view of preference settings:
+How they are originally defined and then adjusted on several levels.
+This is the information that CSS developers need.
+As an end user, you might want to read this <emphasis>from the back</emphasis>,
+jumping right away to <xref linkend="sec_preference_gui"/>.
+
+As somebody who downloaded some generic version of CSS and wants to provide
+all the settings for your site, you would follow 
+<xref linkend="sec_cmdline_plugin_customization"/>.
+</para>
+
+
+<sect1>  <title>Plugin Defaults</title>
+
+<para>Each plugin with configurable settings should have a file
+<filename>preferences.ini</filename><indexterm><primary>preferences.ini</primary></indexterm>
+in its root directory. This file has several purposes:
+<itemizedlist>
+<listitem>It defines those settings, i.e. their name.</listitem>
+<listitem>It documents their meaning, explaining supported values.</listitem>
+<listitem>It establishes the default value for each setting.</listitem>
+</itemizedlist>
+
+For example, such a file can be:
+
+<programlisting># Example preferences.ini for plugin org.csstudio.demo
+
+# Enable the super feature.
+# Set to 'on', 'off' or 'automatic' which enables it whenever possible
+enable_super=automatic
+
+# URL of server where the super feature connects
+url=http://localhost/superdata
+</programlisting>
+
+The Eclipse preference service for a plugin will automatically use such a file
+as long as it has the correct name and is located in the plugins root directory.
+</para>
+
+<para>Note that Eclipse offers more ways to establish defaults, but they are discouraged for CSS
+because of disadvantages:
+<itemizedlist>
+<listitem>Defaults hard-coded in calls to the preference service: These are difficult to find in the code.</listitem>
+<listitem>Preference Initializer extension point defined in plugin.xml: This again hides the preference tags and their default values in the code.</listitem>
+</itemizedlist>
+
+Putting the defaults into <filename>preferences.ini</filename> seems the best way to define
+<emphasis>and</emphasis> at the same time document them.
+</para>
+</sect1>
+
+
+<sect1>  <title>Product (Site) Defaults</title>
+
+<para>When bundling plugins into a site-specific product, a file
+<filename>plugin_customization.ini</filename><indexterm><primary>plugin_customization.ini</primary></indexterm>
+in the plugin that defines that product is automatically used by Eclipse to override settings from individual plugins.
+
+<programlisting># Example plugin_customization.ini
+
+# Override defaults of plugin org.csstudio.demo:
+# URL of our super feature server
+org.csstudio.demo/url=http://my.site.org/mysuperdata
+</programlisting>
+
+Note that in comparison to an individual plugin's preference file,
+all settings in this global preference file are prefixed with the
+name of the affected plugin.
+If you wonder about the names of preference settings supported by each plugin,
+consult the <filename>preferences.ini</filename> of the respective plugin.
+</para>
+<para>This way, your product has the settings for your site built-in.
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_cmdline_plugin_customization">  <title>Slight Tweaks to the Site Defaults</title>
+
+<para>If a select installation at a site requires a few extra changes, for example
+a test network installation needs settings that differ from your main campus
+network, put those into a file with the same format as
+<filename>plugin_customization.ini</filename>,
+for example <filename>testnet.ini</filename>,
+and run the product with a command-line option
+
+<programlisting>my_product -pluginCustomization /path/to/testnet.ini</programlisting>
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_preference_gui">  <title>End User Settings</title>
+<para>Finally, the GUI code can offer Preference Pages via which the end user can change the settings.
+Typically, these end-user settings are saved in the user's workspace, i.e. they persist for the
+current user but will not affect the settings of other users or even the site-wide defaults.
+Details depend on the preference store that is selected by the code that implements the preference page.
+</para>
+</sect1>
+
+
+<sect1>  <title>Note: Passwords</title>
+<para>The CSS <code>SecureStorage</code> and <code>PasswordFieldEditor</code> allow to keep preferences for passwords encrypted.
+It is for example used to store passwords for accessing the relational database of the SNS alarm and archive system.
+The typical use case is like this:
+<itemizedlist>
+<listitem>System administrator installs CSS</listitem>
+<listitem>System administrator starts CSS and enters the passwords once in the preference GUI</listitem>
+</itemizedlist>
+
+Since the <code>SecureStorage</code> and <code>PasswordFieldEditor</code> store the passwords in an encrypted file
+in the CSS install location, these passwords now apply to all instances of CSS.
+Contrary to the default way of storing preference settings from the GUI,
+they are not held in the user's workspace, so there is no need for each user to know and enter the passwords again.
+</para>
+</sect1>
+
+</chapter>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+      
+      
+
+      
+
+<info>
+<title>Control System Studio</title>
+<subtitle>What you always wanted to know but were afraid to ask</subtitle>
+<author><firstname>Kay</firstname><surname>Kasemir</surname></author>
+<copyright><year>2011</year><holder>Oak Ridge National Laboratory</holder></copyright>
+</info>
+
+
+<preface>  <title>No Warranty</title>
+<para>
+Although the programs and procedures described in this book are meant to be helpful instruments for
+building a control system, there is no warranty, either expressed or implied, including, but not limited to,
+fitness for a particular purpose.
+The entire risk as to the quality and performance of the programs and procedures is with you.
+Should the programs or procedures prove defective, you assume the cost of all necessary servicing, repair or correction.
+In no event will anybody be liable to you for damages, including any general, special, incidental or consequential damages
+arising out of the use or inability to use the computer programs and procedures described in here
+(including but not limited to loss of data or data being rendered inaccurate or losses sustained by you or third parties
+or a failure of the programs described in here to operate with any other programs).
+</para>
+</preface>
+
+<acknowledgements>
+<para>
+Control System Studio (CSS) is the result of contributions from many people:
+<itemizedlist>
+<listitem>First of all, CSS builds heavily on Eclipse.</listitem>
+<listitem>Matthias Clausen at the Deutsches Electronen Synchrotron started the CSS idea.</listitem>
+<listitem>Many people from the Canadian Light Source, Brookhaven National Laboratory, Argonne National Laboratory, ITER and other
+sites have contributed either through extensions, code fixes, suggestions or bug reports.
+Check the <code>@author</code> tags in the source code to get an idea.
+</listitem>
+</itemizedlist>
+</para>
+</acknowledgements>
+
+<xi:include href="introduction.xml" />
+
+<xi:include href="css_intro/introduction.xml" />
+<xi:include href="compiling/compiling.xml" />
+<xi:include href="preferences.xml" />
+
+<xi:include href="archive/archive.xml" />
+
+<xi:include href="data.xml" />
+
+<xi:include href="data_exchange.xml" />
+
+
+<!-- 
+* Installing, configuring, running CSS
+ Starting with MySQL, JMS, Java, Eclipse and the CSS sources,
+ how to build the Archive Engine, Alarm Server, CSS GUI.
+ How to configure them.
+ How to run the archive engine.
+ How to tweak CSS for your site's end users.
+ How to run the alarm server.
+ (1-2 days)
+
+* Basic CSS/Eclipse usage (half day)
+ Data Browser, EPICS PV tree, ...
+
+* BOY (Maybe 1 day)
+
+* Alarm Handler (half day)
+ -->
+
+<!-- Appendices -->
+<xi:include href="docbook.xml" /> 
+
+<!-- Index, populated by translator -->
+<index></index>
+
+</book>

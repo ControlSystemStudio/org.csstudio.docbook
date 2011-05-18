@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"  version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_compiling">
+<title>Compiling, Running, Debugging CSS</title>
+
+<para>Once you have the CSS source code and the prerequisite building tools, there are these fundamental
+options for building and executing CSS products:
+
+<orderedlist>
+<listitem>You can run CSS products from within the Eclipse integrated development environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>.
+This is the preferred method during development because it allows full source code debugging and minimizes
+the turn-around time from editing the code to executing the product.
+This is also what you should do when first trying to run CSS from source code.
+</listitem>
+<listitem>You can <quote>Export</quote> a CSS product from within the IDE into a stand-alone package
+that you can deploy on other computers.
+After you managed to run a CSS product in the IDE, exporting it from the IDE is the easiest way
+to create a production version.</listitem>
+<listitem>While the product export from the IDE is initially very convenient, it remains
+a manual process. The <quote>Headless Build</quote> of a CSS product is a script-driven
+process that can be used to for example support nightly integration builds.
+As mentioned in <xref linkend="sec_rcp"/>, Eclipse products are operating system specific.
+Eventually, most sites will implement a headless built for their primary end user products,
+because automated product generation is more repeatable, especially when creating several
+products for various operating systems.
+</listitem>
+</orderedlist>
+</para>
+
+
+<sect1>  <title>Obtaining the Source Code</title>
+
+<para>The CSS sources are in a shared Source Forge<indexterm><primary>Source Forge</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
+repository using the Mercurial version control system.
+The project web site is
+<link xlink:href="http://cs-studio.sourceforge.net/">http://cs-studio.sourceforge.net/</link>
+You can view the sources here:
+<link xlink:href="http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/">http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/</link>
+</para>
+
+<para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
+<orderedlist>
+<listitem>Obtain Source Forge account.</listitem>
+<listitem>Contact one of the CSS developers to gain write access to the repository.</listitem>
+<listitem>Become familiar with the Mercurial<indexterm><primary>Mercurial</primary></indexterm>
+version control system. You can download it from
+<link xlink:href="http://mercurial.selenic.com/">http://mercurial.selenic.com/</link>,
+which also offers nice introductions.
+</listitem>
+<listitem>Install the HG Eclipse plugin which provides Eclipse <quote>Team</quote> support for Mercurial, see
+<link xlink:href="http://www.javaforge.com/project/HGE">http://www.javaforge.com/project/HGE</link>.
+</listitem>
+</orderedlist>
+
+<para>For details refer to the CSS wiki<indexterm><primary>Wiki, CSS Wiki</primary></indexterm>
+at <link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki">http://sourceforge.net/apps/trac/cs-studio/wiki</link>.
+</para>
+
+<para>In the following, we assume you are either already familiar with working on a 
+Source Forge-hosted project, or you obtained a snapshot of the source code by other means,
+for example via download from a site that uses CSS.
+If you download the complete
+source code from the Source Forge repository, you will receive a directory tree similar to this:</para>
+<programlisting>core/features/org.csstudio.core.feature
+core/features/org.csstudio. ... .feature
+core/plugins/org.csstudio.data
+core/plugins/org.csstudio.logging
+core/plugins/org.csstudio...
+applications/features/org.csstudio.opibuilder.feature
+applications/features/org.csstudio. ... .feature
+applications/plugins/org.csstudio.opibuilder
+applications/plugins/org.csstudio.sds
+applications/plugins/org.csstudio.trends.databrowser2
+products/NSLS2/plugins/...
+products/NSLS2/...
+products/SNS/plugins/...
+products/SNS/product/org.csstudio.basic.epics.product
+built/...
+</programlisting>
+
+<para>The source code is roughly organized into</para>
+<itemizedlist>
+<listitem><code>core</code> plugins and features that are shared by many if not all sites that use CSS</listitem>
+<listitem><code>applications</code> plugins and features that are several sites use</listitem>
+<listitem><code>product</code> code that is specific to a site like NSLS2 or SNS</listitem>
+</itemizedlist>
+
+<para>If on the other hand you unpack a source code snapshot from a specific site, the
+result might be a directory including only those sources used to build that site's products:</para>
+<programlisting>org.csstudio.data
+org.csstudio.logging
+org.csstudio...
+org.csstudio.opibuilder.feature
+org.csstudio.opibuilder
+org.csstudio.trends.databrowser2
+org.csstudio.basic.epics.product
+</programlisting>
+</sect1>
+
+
+<sect1>  <title>Prerequisites</title>
+
+<para>In addition to the sources, you will need
+<itemizedlist>
+<listitem>Java JDK. This should be the Sun/Oracle or Apple JDK, not just a JRE.</listitem>
+<listitem>Eclipse IDE for RCP/Plug-in Developers</listitem>
+</itemizedlist>
+Both the JDK and the RCP IDE might have to be of a specific version, ask other CSS developers
+for the currently supported versions. 
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_runnning_in_ide">  <title>IDE Example</title>
+
+<para>Running an RCP product, and this includes CSS products, from the Eclipse IDE is fundamentally simple:
+Open the product definition file, click <quote>Launch ...</quote>, done.
+The most difficult part is the initial Workspace setup.
+</para>
+
+<para>When you start the Eclipse IDE for the first time, you will be prompted for a <code>Workspace</code><indexterm><primary>Workspace (IDE)</primary></indexterm>.
+This is the directory where Eclipse keeps configuration parameters, for example your compiler settings.
+The Workspace is <emphasis>not necessarily</emphasis> the same directory that
+holds the source files. Eclipse will in fact not recognize source files that are simply placed in
+the Workspace directory on your disk.
+Your source files need to be <quote>imported</quote><indexterm><primary>Import sources into Workspace (IDE)</primary></indexterm>
+into the workspace to be recognized by Eclipse.
+</para>
+<para>In the following, we assume that you have the sources in a directory like <filename>/usr/fred/css_sources</filename>,
+while your workspace is a separate directory <filename>/usr/fred/workspace</filename>.
+To import the sources into the workspace:
+</para>
+
+<itemizedlist>
+<listitem>In the IDE, select the menu <code>File/Import...</code>, <code>General</code>, <code>Existing Projects into Workspace</code>.</listitem>
+<listitem>As a root directory, select <filename>/usr/fred/css_sources</filename>.</listitem>
+<listitem><emphasis>Do not check the option </emphasis> <quote>Copy projects into workspace</quote>!</listitem>
+<listitem>By default all the plugins on the disk will be selected.
+If you import from a full Source Forge repository checkout, you might want to un-select
+plugins that you know you will not need. You can always import them later.</listitem>
+<listitem>Press <code>Finish</code>.</listitem>
+</itemizedlist>
+
+<figure xml:id="fig_comp_explorer">  <title>Eclipse Project Explorer</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_explorer.png" width="40%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The Eclipse <code>Project Explorer</code><indexterm><primary>Project Explorer</primary></indexterm>
+should look similar to <xref linkend="fig_comp_explorer"/>.
+It shows a flat list of plugins, even if the source directory tree has the plugins arranged
+into sub-directories like <code>core</code> or <code>applications</code>.
+It may take some time for Eclipse to compile all the sources.
+There should be no errors, i.e. in the package explorer there should be no red marks on any plugin in the Project Explorer.
+</para>
+
+<figure xml:id="fig_comp_search_prod">  <title>Locating all Product Files</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_search_prod.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Next you open one of the <code>*.product</code> files, for example
+<programlisting>org.cs.studio.basic.epics.product/CSS.product</programlisting>.
+You can use the Eclipse <code>Search</code>, <code>File</code> menu to
+locate all available product files as shown in <xref linkend="fig_comp_search_prod"/>
+</para>
+
+<figure xml:id="fig_comp_product">  <title>Eclipse Product Editor</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_product.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>When you open an Eclipse product file, it will be displayed as per <xref linkend="fig_comp_product"/>.
+In the <code>Overview</code> tab, press <code>Synchronize</code>, <code>Launch an Eclipse Application</code> to run the product from within the IDE.
+The product should start up. In the case of the Archive Engine it might soon exit with an error message indicating that it requires more command-line arguments.
+You could go into the menu <code>Run</code>, <code>Run Configurations..</code> and supply the required command-line arguments to run the product from within the IDE,
+but the main point here is that the product should <emphasis>start</emphasis>.
+There should be no errors regarding missing plugins or compilation problems.
+</para>
+
+<para>If the product does not start up, and instead you get an error like <quote>Product ....could not be found</quote>
+or <quote>Missing required bundle ...</quote>, it can be helpful to open the menu <code>Run</code>, <code>Run Configurations..</code>.
+Locate the configuration that was automatically created when you tried to launch the product.
+On the <code>Plug-ins</code> tab, press <code>Validate Plug-Ins</code>.
+It should give a list of unresolved plugins, i.e. missing dependencies.
+If you have the sources for the missing plugins and you did import them into the workspace,
+you can manually select them or use the button <code>Add Required Plug-Ins</code>.
+You should, however, contact the maintainer of the CSS product to determine why
+the product configuration has an error.
+</para>
+
+<para>If you get the product to run: Congratulations!
+Almost as easy as running the product is debugging<indexterm><primary>Debugging</primary></indexterm> it:
+Instead of running the product again from the menu <code>Run</code>, <code>Run History</code>,
+you select <code>Run</code>, <code>Debug History</code> to start the product in debug mode.
+You can browse the source code, set breakpoints by double-clicking at the start of a source line.
+</para>
+
+
+<para>To export<indexterm><primary>Exporting a Product</primary></indexterm> a product,
+again open the product file as shown in <xref linkend="fig_comp_product"/>
+and press the <code>Eclipse Product export wizard</code> link in the Overview tab.
+</para>
+
+<orderedlist>
+<listitem>As a root directory, enter the name of the product (ArchiveEngine, CSS, ...)</listitem>
+<listitem>Enter a directory where the exported product should be placed, for example <filename>/tmp</filename></listitem>
+<listitem>You might want to uncheck the option to <quote>Generate metadata repository</quote></listitem>
+<listitem>Finish</listitem>
+</orderedlist>
+
+<para>You should now have a directory like <filename>/tmp/CSS</filename> that contains a <code>CSS</code> executable.
+You can copy that directory to other computers and run it there.
+</para>
+</sect1>
+
+
+<sect1>  <title>Delta Pack, Cross-Platform Export</title>
+
+<para>The product that you export from the IDE is by default limited to the operating system
+on which it was exported because of the OS-dependent launcher and SWT libraries, see
+<xref linkend="sec_rcp"/>.
+To export code for different platforms, you need the Eclipse <quote>Delta Pack</quote><indexterm><primary>Delta Pack</primary></indexterm>.
+With the Delta Pack installed, Eclipse on OS X can for example build products for Windows, Linux, and OS X.
+Same for Linux. Eclipse on Windows can do this with limitations: The file permissions of the generated product for Linux will not be
+executable because the Windows file system lacks that notion.
+</para>
+
+<para>To obtain the delta pack:</para>
+
+<orderedlist>
+<listitem>Goto the Downloads section on <link xlink:href="http://www.eclipse.org/">http://www.eclipse.org/</link>.</listitem>
+<listitem>Select <quote>Projects</quote>, <quote>Eclipse Project</quote>.</listitem>
+<listitem>Select the version of Eclipse that you are using, for example 3.6.2.</listitem>
+<listitem>Locate the Delta Pack, a file like <filename>eclipse-3.6.2-delta-pack.zip</filename>.</listitem>
+</orderedlist>
+
+<para>To use the delta pack:</para>
+
+<orderedlist>
+<listitem>Extract the delta pack archive into its own directory on disk.</listitem>
+<listitem>Open the Target Platform preferences (Menu <code>Window</code>, <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>).</listitem>
+<listitem>Edit the active target and add the path to the delta pack's <filename>plugin</filename> directory.</listitem>
+</orderedlist>
+
+<para>When you now export a product from the IDE, there will be a new option export to multiple platforms.</para>
+</sect1>
+
+
+<sect1>  <title>Headless Build</title>
+</sect1>
+
+<para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
+is eventually necessary for each site that periodically publishes CSS product updates.
+It automates the build process, guaranteeing that the products are indeed exported for each supported platform.
+It can also be used as part of a nightly or integration build.
+For details, check the Eclipse online help for Headless Build,
+and refer to the scripts in the <filename>build</filename> subdirectory of the CSS sources.
+</para>
+
+
+</chapter>

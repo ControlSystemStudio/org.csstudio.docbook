@@ -1,0 +1,23 @@
+body
+{
+    font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif;
+    font-variant: normal;
+    font-style: normal;
+}
+
+.figure
+{
+	margin-left: 3em;
+    margin-right: 3em;
+    border-top-style: solid;
+    border-top-color: #CCC;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #CCC;
+    border-bottom-width: 1px;
+}
+
+.programlisting
+{
+	background-color: #CCC;
+}

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_data_exchange">
+<title>Data Exchange within CSS</title>
+
+<para>Maybe the biggest difference between arbitrary RCP plugins and CSS code is
+the use of common data types, allowing for exchange of these data types via context
+menus or drag-and-drop.
+This chapter explains some of the underlying details for those who want to implement
+their own plugin code that links to CSS.
+</para>
+
+
+<sect1 xml:id="sec_css_data_types">  <title>CSS Data Types</title>
+
+<para>The plugin <code>org.csstudio.csdata</code> defines
+control system data types like <code>ProcessVariable</code>,
+a class that holds the name of a PV.
+By using this data type, CSS code can distinguish PV names
+from arbitrary strings.
+</para>
+</sect1>
+
+
+<sect1>  <title>Context Menu Contributions</title>
+
+<para>Applications can define context menus.
+For example, when the user right-clicks on the list of traces in the
+Data Browser configuration, a context menu appears that allows operations
+like adding a trace, removing the selected trace etc.
+</para>
+
+<para>One very powerful aspect of RCP is the way it allows code to contribute
+to context menus of <emphasis>other</emphasis> application code.
+For example, the Data Browser configuration panel defines a context menu
+with entries for editing the configuration of the current data browser.
+For those data browser traces that are based on PVs, the context menu will
+include links to other CSS tools that are capable of handling PVs.
+The underlying mechanism works as follows.</para>
+
+<sect2>  <title>Use or Adapt to CSS Types</title>
+<para>The application has to provide data in the form of
+common CSS data types like <code>ProcessVariable</code>.
+It can do that by directly using these data types,
+but in reality the data model of an application probably needs to
+store additional information, for example a PV name with color and other
+attributes. In that case it needs to implement an Eclipse adapter via
+the extension point
+<code>org.eclipse.core.runtime.adapters</code> from its internal
+model data types to CSS data types like <code>ProcessVariable</code>.</para>
+</sect2>
+
+<sect2>  <title>Allow additions to the context menu</title>
+<para>When defining a context menu, all RCP applications are encouraged
+to include one item named "additions" that can be used by other RCP plugins
+to extend the context menu:
+<programlisting>MenuManager menu = .... my menu ...;
+menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+</programlisting>
+</para>
+</sect2>
+
+<sect2>  <title>Contributing to context menus</title>
+<para>The plugin <code>org.csstudio.ui.menu</code> defines a context menu
+with ID <code>org.csstudio.ui.menu.popup.processvariable</code>
+that is automatically added to all context menus
+where the selection adapts to a CSS <code>ProcessVariable</code>.
+If you want your tool to appear in such menus, you need to hook into the
+PV context menu with mark-up similar to the following:
+
+<programlisting><![CDATA[<!-- Your plugin.xml -->
+<extension point="org.eclipse.ui.menus">
+ <menuContribution
+   locationURI="popup:org.csstudio.ui.menu.popup.processvariable">
+   <command commandId="org.csstudio.my_app.OpenMyTool"
+         icon="icons/my_app.gif"
+         style="push">
+    </command>
+ </menuContribution>
+</extension>]]>
+</programlisting>
+
+This defines a command for the PV context menu.
+The command is further linked to the actual implementation (handler):
+
+<programlisting><![CDATA[<extension point="org.eclipse.ui.commands">
+  <command id="org.csstudio.my_app.OpenMyTool"
+    defaultHandler="org.csstudio.my_app.OpenMyTool">
+  </command>
+</extension>]]>
+</programlisting>
+</para>
+</sect2>
+
+<sect2>  <title>Handling the invocation from a context menu</title>
+<para>
+Finally, you implement the handler that will be invoked from the context
+menu like this to receive for example the PV names:
+<programlisting>
+package org.csstudio.my_app;
+public class OpenMyTool extends AbstractHandler
+{
+    @Override
+    public Object execute(final ExecutionEvent event)
+      throws ExecutionException
+    {
+        final ISelection selection =
+         HandlerUtil.getActiveMenuSelection(event);
+        final ProcessVariable[] pvs =
+         AdapterUtil.convert(selection, ProcessVariable.class);
+        // Open my view, display the PVs, ...
+</programlisting>
+</para>
+</sect2>
+
+</sect1>
+
+
+<sect1>  <title>Drag-and-Drop</title>
+
+<para>Eclipse provides Drag-and-Drop support for data types like text and file names.
+CSS adds Drag-and-Drop support for any data type that is <code>Serializable</code>.
+The data types from <xref linkend="sec_css_data_types"/> like <code>ProcessVariable</code> are already
+<code>Serializable</code>, so application code that uses the CSS data types or adapts to
+them can easily participate in Drag-and-Drop data exchange.
+Drag-and-Drop is also possible within an application via data types that are only used
+within that application as long as they are <code>Serializable</code>.
+As a minimum denominator, data can be exchanged as text, which can be useful when interfacing
+with non-CSS applications.
+</para>
+
+<sect2>  <title>Drag Source, Drop Target</title>
+<para>The plugin <code>org.csstudio.ui.util</code> offers helper classes
+<code>ControlSystemDragSource</code> and <code>ControlSystemDropTarget</code>
+that allow <quote>dragging</quote> respectively <quote>dropping</quote> of any data type
+that supports serialization:
+<programlisting>ProcessVariable pv = new ProcessVariable("Fred");
+// Assume view somehow displays the pv
+TableView view = ...;
+// Allow dragging the PV out of the view
+new ControlSystemDragSource(view.getControl())
+{
+   public Object getSelection()
+   {
+       return pv;
+   }
+};
+</programlisting>
+
+<programlisting>
+// Other control that should allow dropping a PV
+Control ctl = ...;
+new ControlSystemDropTarget(ctl, ProcessVariable.class, String.class)
+{
+  public void handleDrop(final Object item)
+  {
+      if (item instanceof ProcessVariable)
+          ctl.setText(((ProcessVariable) item).getName());
+      else
+          ctl.setText((String) item);
+  }
+};
+</programlisting>
+</para>
+</sect2>
+
+<sect2>  <title>Common Pitfalls</title>
+<para>When adding Drag-and-Drop support to an application plugin, it can be helpful
+to enable detailed logging.
+The warning <quote>Serialization failed</quote> because of a <code>NotSerializableException</code>
+indicates that the data passed to the <code>ControlSystemDragSource</code> is not fully
+serializable. Maybe the class itself was marked as implementing <code>Serializable</code>,
+but one or more member variables are using non-serializable objects.
+</para>
+
+<para>If the <quote>De-Serialization fails</quote> because of a <code>ClassNotFoundException</code>,
+the reason could be that the class used for the transfer is not visible outside the
+plugin that defines it.
+The code that performs the data transfer is in the plugin <code>org.csstudio.ui.util</code>.
+It can only de-serialize data with known object types.
+If your plugin defines a new data type <code>MyDataType implements Serializable</code>,
+you also need to list its package name in the <code>Export-Package</code> section of your plugin
+<code>MANIFEST.MF</code>.
+In addition, the package name of your data type must start with the plugin name, because
+the package name is used to determine which plugin class loader to use to create the de-serialized
+data instance.
+Even if you only plan to drag-and-drop data between views within one and the same plugin, all
+custom data types used for those transfers must be visible to the plugin <code>org.csstudio.ui.util</code>.
+</para>
+
+<para>When transferring array data types, care must be taken to provide instances of the actual
+data type for the array like
+<programlisting>new MyDataType[] { new MyDataType(), new MyDataType() }</programlisting>
+
+The transfer will fail when sending an object array, even if it contains only instances of
+the supported data type:
+<programlisting>new Object[] { new MyDataType(), new MyDataType() }</programlisting>
+
+When dragging the currently selected data out of a JFace <code>Viewer</code>, it may thus be
+necessary to convert the selection before passing it to the drag source:
+<programlisting>new ControlSystemDragSource(viewer.getControl())
+{
+   public Object getSelection()
+   {
+     final IStructuredSelection selection =
+      (IStructuredSelection) viewer.getSelection();
+     final Object[] objs = selection.toArray();
+     final ProcessVariable[] pvs = Arrays.copyOf(objs, objs.length,
+                    ProcessVariable[].class);
+     return pvs;
+   }
+};
+</programlisting>
+</para>
+</sect2>
+</sect1>
+
+</chapter>

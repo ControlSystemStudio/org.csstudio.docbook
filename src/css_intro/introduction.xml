@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Control System Studio (CSS)</title>
+
+<para>A first look at Control System Studio can be overwhelming.
+CSS is a collection of tools: Alarm handler, archive engine, as well as several operator
+interface and control system diagnostic tools.
+Most of them deal with Process Variables (PV)<indexterm><primary>Process Variable (PV)</primary></indexterm>,
+i.e. named control system data points that
+have a value, time stamp, alarm state, maybe units and display ranges,
+but they do this in different ways.
+One tool displays the value of a PV, one displays details of the PV configuration,
+while another concentrates on the alarm state of a PV.
+Each individual tool deserves some attention, and the
+Experimental Physics and Industrial Control System toolkit, EPICS<indexterm><primary>EPICS</primary></indexterm>,
+offers each functionality as a separate tool.
+A key point of CSS is the integration of such functionalities.
+</para>
+
+<para>To build a control system, one would typically select certain tools,
+configure them, deploy them in the control room, and then offer operators
+with some way of integrated access. For example, icons for the individual tools
+are placed on the desktop, or a Launcher application implemented in
+Python/TkInter is created to allow access to all control system tools from one top-level
+user interface. The same desktop computer used to access the control system
+might also run an EMail application, and most sites also have some type of
+Electronic Logbook, maybe with a web browser interface.
+</para>
+
+<para>Integration of fundamentally separate tools via a Launcher still leaves
+you with stand-alone tools, running in parallel. CSS offers an integrated approach that
+might become more obvious in the following example scenario.
+</para>
+
+
+<sect1 xml:id="sec_intro_use_case">  <title>Example Use Case</title>
+
+<figure xml:id="fig_intro_alarm_table">  <title>CSS Alarm Table</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="intro_1_alarm_table.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Let's assume an operator is running the <code>Alarm Table</code><indexterm><primary>Alarm Table</primary></indexterm>
+shown in <xref linkend="fig_intro_alarm_table"/>.
+This application displays current alarms, and the operator notices a power supply voltage fault
+that needs further investigation. The alarm table indicates that this fault was
+reported by the Process Variable <code>MEBT_CHOP:PS_2:V</code>.
+Using separate tools, the operator could start a strip charting application, and
+enter the PV name into that other tool to review how the voltage changed over time.
+There may also be a way to copy and paste the PV name from the alarm table to the
+strip chart, but in any case the operator will first have to start
+the strip chart application. 
+</para>
+
+<figure xml:id="fig_intro_context_menu">  <title>Context Menu</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="intro_2_context_menu.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Enter CSS context menus: When right-clicking on the alarm under investigation
+in the alarm table, a context menu opens up, see <xref linkend="fig_intro_context_menu"/>. It lists entries specific to this alarm,
+for example it allows the operator to acknowledge the alarm. In addition, there are links
+to other CSS tools, including the <code>Data Browser</code>. The Data Browser<indexterm><primary>Data Browser</primary></indexterm>
+is a strip-charting tool for CSS. Selecting this Data Browser entry will open a new Data Browser plot and
+add the PV associated with the alarm to the Data Browser.
+With CSS, the task of opening another tool, then copying and pasting a PV name
+or even manually entering it has been reduced to a mouse click in the context menu!
+</para>
+
+<figure xml:id="fig_intro_data_browser">  <title>Data Browser</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="intro_3_databrowser.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>In the Data Browser, the operator can now inspect the behavior of the PV
+over time. She might notice that the power supply voltage indeed dropped down,
+causing the alarm. In addition, she can see that the same voltage drop has occurred
+before, about one day ago. The operator can add annotations to the plot to indicate the time of the
+current as well as previous voltage drop.
+</para>
+
+<figure xml:id="fig_intro_elog">  <title>Electronic Logbook Submission</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="intro_4_elog.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>
+Eventually, the operator handles the alarm: Whatever caused the voltage to drop is understood
+and fixed. Especially when a similar event has happened before, as a day ago in this example,
+it makes sense to add a note to the electronic logbook, or to send an email to the engineer who
+maintains the power supply.
+If a site that uses CSS has an electronic logbook system (ELog), for example with a web interface,
+one could save a screen-shot of the Data Browser plot to a file, then go to a web browser,
+log into the ELog, describe the problem, attach the Data Browser screen-shot, submit the entry.
+With CSS, this can again be integrated: The context menu of the Data Browser plot directly offers
+a  <code>Logbook...</code> link, see <xref linkend="fig_intro_elog"/>.
+When activated, a basic text entry with attached Data Browser screen-shot is prepared.
+The operator can enter the text, provide the user name and password that she uses in the ELog system,
+and submit the entry right from within CSS. 
+</para>
+
+<para>In summary, the whole work flow for handling an alarm that would otherwise require an operator
+to start separate stand-alone applications can be integrated within CSS:
+<orderedlist>
+<listitem>View Alarms in the CSS Alarm Table.</listitem>
+<listitem>Open Data Browser on an alarm from within the Alarm Table.</listitem>
+<listitem>Send screen-shot of Data Browser plot, with explanation, to an electronic logbook.</listitem>
+<listitem>Finally, acknowledge alarm in Alarm Table.</listitem>
+</orderedlist>
+There is no need to copy/paste PV names, there is no need to save a screen-shot as an image file,
+remember the location of that file, then open another application to attach the file to an ELog
+entry.
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_rcp">  <title>Java, Eclipse, RCP</title>
+
+<para>The functionality of Control System Studio (CSS) that we described in the previous example
+is implemented in Java, using the Eclipse software framework, specifically the Rich Client Platform (RCP).
+</para>
+
+<para>The Java<indexterm><primary>Java</primary></indexterm>
+programming language and runtime environment allows the creation of software that
+can be used on several operating systems like Microsoft Windows, Linux and Apple Mac OS X.
+The same CSS application code can thus run in the control room as well as on office computers.
+While the Java runtime might in certain cases be slower than a program that was
+specifically created for a certain operating system in a language like C++, the speed is usually
+"good enough", and there are more advantages:
+<itemizedlist>
+<listitem>Standard library covers basic data structures (lists, hash tables, ...)
+as well as network communication for all currently used protocols.
+No need to re-implement the wheel.</listitem>
+<listitem>Excellent software development tools: Debuggers, Profilers.
+Even without a debugger one can usually get a meaningful stack trace<indexterm><primary>Stack Trace</primary></indexterm>
+from a program that appears to be hung by sending the 'QUIT' signal to it (at least on Linux and OS X).
+</listitem>
+</itemizedlist>
+It is hard to imagine that a program suite as complex as CSS could have been implemented
+without Java.
+</para>
+
+<para>As Java code becomes more complex, it can be split into several library files ('JAR'<indexterm><primary>JAR File</primary></indexterm>
+files).
+The Java runtime can dynamically load and unload these libraries.
+Through introspection it is possible to locate features in such JAR files.
+For example, one can create a Java program that communicates with a control system, where
+the specific network protocol implementation is in a JAR file.
+While developing or later extending the software, a test JAR file is used to simulate a control system.
+For the operational setup, a site-specific JAR file connects the software to the actual control system.
+The same program can be used at different sites because the site-specific portion of the code is "plug-able".
+</para>
+
+<para>While Java supports such dynamic binding, it does not enforce a standard way to do this. 
+The Eclipse<indexterm><primary>Eclipse</primary></indexterm> software framework provides three key elements:
+
+<orderedlist>
+<listitem><code>Plug-Ins</code><indexterm><primary>Plug-in</primary></indexterm>:
+A Plug-in is fundamentally a JAR file that the Eclipse runtime
+can dynamically load or also unload.
+Each Plug-in contains a <filename>MANIFEST.MF</filename> file that describes
+<emphasis>dependencies</emphasis>, i.e. which other Plug-ins are required to
+load a given Plug-in. Eclipse will automatically load these other Plug-ins as needed.
+The manifest file further defines which Plug-in content should be visible to other
+Plug-ins, and what is only accessible to code within the same Plug-in.
+</listitem>
+
+<listitem><code>Extension Points</code><indexterm><primary>Extension Point</primary></indexterm>:
+A Plug-in can define interfaces called extension points.
+An example would be an interface for getting data from a control system.
+Other Plug-ins can then implement them.
+The Eclipse <emphasis>Registry</emphasis> allows Plug-ins to locate available
+extension points.
+</listitem>
+
+<listitem><code>Rich Client Platform (RCP)</code><indexterm><primary>Rich Client Platform (RCP)</primary></indexterm>:
+Finally, Eclipse provides a complete <emphasis>application framework</emphasis> that is
+based on extension points. The entry point of the application itself, i.e. the "main"
+routine of the application, is an extension point.
+Items that are meant to appear in the menu bar are contributed by Plug-ins via extension points.
+</listitem>
+</orderedlist>
+
+An Eclipse <code>Product</code><indexterm><primary>Product</primary></indexterm>
+combines selected plugins with configurations files and a
+<code>Launcher</code><indexterm><primary>Launcher</primary></indexterm><indexterm><primary>Operating System (OS), specific code</primary></indexterm>.
+Traditionally, Java products require a Unix shell script or a Windows batch file to
+set certain environment variables, configure the Java <code>CLASSPATH</code><indexterm><primary>CLASSPATH</primary></indexterm>,
+and finally invoke the Java runtime.
+Eclipse provides each product with a Launcher, which is an application native to the operating system.
+The Launcher can display a <quote>Splash</quote> screen, locate the Java Runtime, configure it,
+and finally start the product. To the end user, an Eclipse product thus looks just like any other
+application that is native to the operating system. CSS has icon and shows up as CSS in the task bar or process list,
+while traditional Java programs often appeared as shell scripts.
+While almost all the CSS and Eclipse Java code is fully portable across operating systems,
+this Launcher is specific to an operating system.
+</para>
+
+<para>Another part that is operating system specific is the Eclipse Standard Window Toolkit (SWT)<indexterm><primary>Standard Window Toolkit (SWT)</primary></indexterm>.
+Java itself provides the Abstract Window Toolkit (AWT)<indexterm><primary>Abstract Window Toolkit (AWT)</primary></indexterm>
+to generate user interface code. At least in the past, AWT had an appearance that clearly differed from the
+native user interface of the operating system on which a Java application ran.
+The Eclipse community developed SWT, which always uses the native user interface elements of an operating system.
+For example, SWT on Mac OS uses <code>Cocoa</code> widgets, while SWT on Linux uses <code>GTK</code> widgets.
+The Eclipse and CSS code mostly uses SWT in a transparent way, but when building a product for a certain operating system,
+Eclipse includes the SWT plugins that are specific to that operating system.
+</para>
+</sect1>
+
+
+<sect1>  <title>RCP and Control System Studio</title>
+<para>Control System Studio is an Eclipse RCP product, i.e. fundamentally just a collection of Eclipse Plug-ins.
+In CSS, what could otherwise be a stand-alone control system application turns into a Plug-in, for example:
+<itemizedlist>
+<listitem>Probe Plug-in:
+Displays value of one Process Variable</listitem>
+<listitem>EPICS PV Tree Plug-in:
+Displays the input/output link hierarchy of EPICS records, for example a <code>calc</code> record's
+input links, which themselves might have input links and so on.</listitem>
+<listitem>Data Browser:
+Displays strip-chart type plots of Process Variable values over time</listitem>
+</itemizedlist> 
+</para>
+
+<para>In principle, these could each be separate programs.
+Users would individually start and stop them as needed.
+In CSS, they become Plug-ins of the CSS product. Users run CSS,
+then start Probe or the Data Browser from within CSS.
+Just as a site integrator might choose which individual programs
+to install in the control room, she can add Plug-ins to CSS or remove
+them from CSS based on local requirements.
+</para>
+
+<para>
+As a side note, there still <emphasis>are</emphasis> individual applications:
+The Alarm Server, the Archive Engine are examples for stand-alone RCP applications
+that use essential CSS library code, but they are nevertheless executed as individual application instances.
+In the following we are concentrating on the CSS product that end users see in the control room
+or on their office computers, where they typically run one instance of CSS
+and inside that includes Probe, EPICS PV Tree, Data Browser and other CSS tools.
+</para>
+
+<figure xml:id="fig_intro_prefs">  <title>CSS Preference Panel</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="intro_5_prefs.png" width="50%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>
+So what are the advantages of a combined Eclipse/CSS product over individual Java applications?
+For one, the online help and preference settings of Probe, EPICS PV Tree, Data Browser
+and other CSS tools are integrated. As shown in <xref linkend="fig_intro_prefs"/>,
+one preference panel, opened from the menu bar under <code>CSS/Preferences</code>,
+provides access to all settings: Alarm system connectivity used by the Alarm Table,
+Data Browser settings can be found under the <code>Trends</code> section,
+and also generic control system settings like the <code>EPICS</code> connection parameters
+under <code>CSS Core</code>.
+</para>
+
+<para>If the alarm plugins were removed from the CSS product shown in <xref linkend="fig_intro_prefs"/>,
+the related settings would simply disappear from the preference panel. Likewise, when additional
+plugins are added to the CSS product, their preference settings will appear in the panel.
+With standalone, pre-Eclipse control system applications, the preference settings were provided via environment variables
+or configuration files. Details tended to differ for each application.
+With CSS, the same Eclipse preference system applies to all application plugins.
+More in this in <xref linkend="ch_preferences"/>.  
+</para>
+
+<para>CSS similarly benefits from the Eclipse/RCP online help system. Whenever CSS plugins
+include online help pages, these pages become part of the online help system, with global seach support.
+</para>
+
+<para>What distinguishes CSS plugins from generic RCP plugins is the use of control system specific extension points.
+CSS defines extension points for providing live or archived data,
+to submit text and images to an electronic logbook.
+CSS application plugins can be implemented as users of these extension points.
+Combined with site-specific implementations of these extension points, a product is created that will for example
+get live data from EPICS Channel Access, archived data from a MySQL database, and send submissions to an electronic
+logbook that keeps its data in an Oracle database.
+</para>
+
+<para>CSS furthermore defines control system specific classes like a Process Variable.
+Combined with an RCP mechanism called <code>Object Contributions</code>, this results
+in the seamless workflow between applications described in <xref linkend="sec_intro_use_case"/>:
+In the Alarm Table, each line that displays alarm information also <quote>is</quote> a process variable.
+The Data Browser is a tool that understands process variables. It registers with Eclipse as an Object Contribution
+for context menues whenever a process variable is selected.
+The Alarm Table code is not at all aware of the Data Browser, it simply displays a context menu with alarm related
+entries like <quote>acknowledge</quote>. Eclipse detects that the currently selected alarm table row also
+represents a process variable. Eclipse adds the Data Browser entry to the context menu, and when the user invokes
+that entry, Eclipse will start the Data Browser with the process variable name.
+</para>
+
+<para>Based on the Object Contribution mechanism, applications that deal with PV names can exchange
+them without having any knowledge of each other; they remain seperate plugins, possibly implemented by
+different people. When a new PV-aware plugin is added to a CSS product, it will automatically appear
+in context menues of all other plugins that provide PVs.
+</para>
+
+<para>Another feature that Eclipse/RCP offers are online updates:
+The CSS product can be build such that users download it onto their office computer.
+When the local CSS administrator publishes software updates to a site-specific update site,
+CSS will detect this on the next startup and prompt the user to update to the latest version.
+Similarly, optional CSS components that only some user need can be placed on a site-specific update site
+such that these users add them to their CSS product as needed.
+</para>
+
+</sect1>
+
+</chapter>

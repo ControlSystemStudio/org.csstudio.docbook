@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<!-- Ant file for building from the command line
+
+     Kay Kasemir
+  -->
+<project name="css_docbook" default="all">
+    <!-- Map all environment variables XYZ to ${env.XYZ} -->
+    <property environment="env"/>
+
+    <!-- Build directory -->
+    <property name="out" value="out" />
+
+    <!-- XML-FO Processor -->
+    <property name="fop" value="/usr/local/fop-1.0/fop" />
+
+    <!-- XSL Processor -->
+    <property name="xsltproc" value="xsltproc" />
+    
+    <!-- Remove all that might have been built previously -->
+    <target name="clean">
+        <delete dir="${out}" />
+    </target>
+
+    <!-- Create build directory structure, check dependencies -->
+    <target name="prepare">
+        <mkdir dir="${out}" />
+    </target>
+
+    <!-- Generate HTML -->
+    <target name="html" depends="prepare">
+        <apply executable="${xsltproc}">
+            <arg value="--xinclude"/>
+        	<arg value="--output"/>
+        	<targetfile/>
+            <arg value="myhtml.xsl"/>
+        	<srcfile/>
+            <fileset dir="src">
+                <include name="css_book.xml"/>
+            </fileset>
+            <mapper type="glob" from="*.xml" to="${out}/*.html"/>
+        </apply>
+    </target>
+
+    <!-- Generate Wiki -->
+    <target name="wiki" depends="prepare">
+        <apply executable="${xsltproc}">
+            <arg value="--output"/>
+            <targetfile/>
+            <arg value="wiki/docbook.xsl"/>
+            <srcfile/>
+            <fileset dir="src">
+                <include name="preferences.xml"/>
+            </fileset>
+            <mapper type="glob" from="*.xml" to="${out}/*.tracwiki"/>
+        </apply>
+    </target>
+	
+    <!-- Generate PDF -->
+    <target name="pdf" depends="prepare">
+        <apply executable="${fop}">
+            <arg value="-xsl"/>
+        	<arg value="mypdf.xsl"/>
+        	<arg value="-xml"/>
+            <srcfile/>
+            <arg value="-pdf"/>
+            <targetfile/>
+            <fileset dir="src">
+                <include name="css_book.xml"/>
+            </fileset>
+            <mapper type="glob" from="*.xml" to="${out}/*.pdf"/>
+        </apply>
+    </target>
+
+    <!-- Update and view PDF (on OS X) -->
+    <target name="pdfview" depends="clean,pdf">
+        <apply executable="open">
+            <srcfile/>
+            <fileset dir="${out}">
+                <include name="*.pdf"/>
+            </fileset>
+        </apply>
+    </target>
+
+    <!-- Update and view HTML (on OS X) -->
+    <target name="htmlview" depends="clean,html">
+    	<copy todir="${out}" flatten="true">
+            <fileset dir="src">
+                <include name="**/*.png"/>
+            </fileset>
+            <fileset dir=".">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
+        <apply executable="open">
+            <srcfile/>
+            <fileset dir="${out}">
+                <include name="css_book.html"/>
+                <include name="index.html"/>
+            </fileset>
+        </apply>
+    </target>
+
+    <!-- Push changes to repository -->
+    <target name="push">
+        <exec executable="hg">
+            <arg value="commit"/>
+            <arg value="-m"/>
+            <arg value="sync"/>
+        </exec>
+        <exec executable="hg">
+            <arg value="push"/>
+        </exec>
+    </target>
+	
+    <!-- Run the whole chain -->
+    <target name="all" depends="clean,html,pdf">
+        <echo>=== Completed building ${ant.project.name} ===</echo>
+    </target>
+</project>
