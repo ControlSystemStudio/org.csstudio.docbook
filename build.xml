@@ -40,6 +40,14 @@
             </fileset>
             <mapper type="glob" from="*.xml" to="${out}/*.html"/>
         </apply>
+    	<copy todir="${out}" flatten="true">
+            <fileset dir="src">
+                <include name="**/*.png"/>
+            </fileset>
+            <fileset dir=".">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
     </target>
 
     <!-- Generate Wiki -->
@@ -84,14 +92,6 @@
 
     <!-- Update and view HTML (on OS X) -->
     <target name="htmlview" depends="clean,html">
-    	<copy todir="${out}" flatten="true">
-            <fileset dir="src">
-                <include name="**/*.png"/>
-            </fileset>
-            <fileset dir=".">
-                <include name="*.css"/>
-            </fileset>
-        </copy>
         <apply executable="open">
             <srcfile/>
             <fileset dir="${out}">
