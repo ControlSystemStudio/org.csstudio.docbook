@@ -7,7 +7,7 @@
 <xsl:import href="/usr/local/docbook-xsl-1.76.1/html/docbook.xsl"/> 
 
 -->
-<xsl:import href="/usr/local/docbook-xsl-1.76.1/html/chunk.xsl"/> 
+<xsl:import href="docbook-xsl-1.76.1/html/chunk.xsl"/> 
 
 <xsl:param name="html.stylesheet">doc.css</xsl:param>
 <xsl:param name="toc.section.depth">0</xsl:param>

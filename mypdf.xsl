@@ -3,7 +3,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"> 
 
 <!-- Should use a catalog, but couldn't get that to work... -->
-<xsl:import href="/usr/local/docbook-xsl-1.76.1/fo/docbook.xsl"/> 
+<xsl:import href="docbook-xsl-1.76.1/fo/docbook.xsl"/> 
 
 <xsl:param name="section.autolabel" select="1"/>
 <xsl:param name="section.label.includes.component.label" select="1"/>

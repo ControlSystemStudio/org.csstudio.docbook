@@ -4,6 +4,7 @@ To generate the document, you need
 
 * Docbook XSL style sheets from https://sourceforge.net/projects/docbook/files/docbook-xsl/
 I used version 1.76.1
+Use the install script to download automatically, or put a link in this directory named docbook-xsl-1.76.1 to where is installed on the system.
 
 * xsltproc for translating the XML sources into html, wiki, ...
 It's included in Mac OS X and Linux.
@@ -41,5 +42,7 @@ and then adjust some settings.
 What I have not figured out:
 I always need the full path to the docbook-xsl.
 Should use a "catalog", but have not managed to do that.
+Currently refer to the local directory: install here or use symlinks.
+
 
 

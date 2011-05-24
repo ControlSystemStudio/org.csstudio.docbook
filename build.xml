@@ -12,7 +12,7 @@
     <property name="out" value="out" />
 
     <!-- XML-FO Processor -->
-    <property name="fop" value="/usr/local/fop-1.0/fop" />
+    <property name="fop" value="fop" />
 
     <!-- XSL Processor -->
     <property name="xsltproc" value="xsltproc" />
