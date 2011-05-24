@@ -1,4 +1,4 @@
 syntax: glob
 
 out/*
-docbook-xsl-1.76.1/*
+docbook-xsl-1.76.1

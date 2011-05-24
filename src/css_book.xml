@@ -41,6 +41,14 @@ Check the <code>@author</code> tags in the source code to get an idea.
 </listitem>
 </itemizedlist>
 </para>
+<para>The sources for this book are on SourceForge under
+<link xlink:href="http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/docbook/">http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/docbook/</link>.
+</para>
+<para>Thanks to Gabriele Carcassi, the latest HTML version is available at
+<link xlink:href="http://cs-studio.sourceforge.net/docbook/">http://cs-studio.sourceforge.net/docbook/</link>,
+and the current PDF is at
+<link xlink:href="http://cs-studio.sourceforge.net/docbook/css_book.pdf">http://cs-studio.sourceforge.net/docbook/css_book.pdf</link>.
+</para>
 </acknowledgements>
 
 <xi:include href="introduction.xml" />
