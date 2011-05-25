@@ -11,7 +11,7 @@
     <figure id="fig_ui_menu_main">
       <title>The CSS main menu</title>
       <mediaobject><imageobject>
-      <imagedata fileref="ui_menu_main.png" format="PNG" width="100%"/></imageobject></mediaobject>
+      <imagedata fileref="ui_menu_main.png" format="PNG" /></imageobject></mediaobject>
     </figure>
     <para>The overall structure of the menu is:</para>
     <programlisting>CSS (id: css)
