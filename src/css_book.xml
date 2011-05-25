@@ -62,7 +62,11 @@ and the current PDF is at
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />
+
+<part>
+<title>Plug-in reference</title>
 <xi:include href="ui.menu/ui.menu.xml" />
+</part>
 
 
 <!-- 
