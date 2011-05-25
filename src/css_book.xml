@@ -65,7 +65,9 @@ and the current PDF is at
 
 <part>
 <title>Plug-in reference</title>
-<xi:include href="ui.menu/ui.menu.xml" />
+<xi:include href="org.csstudio.core.feature/chapter.xml" />
+<xi:include href="org.csstudio.core.util.feature/chapter.xml" />
+<xi:include href="org.csstudio.ui.menu/chapter.xml" />
 </part>
 
 

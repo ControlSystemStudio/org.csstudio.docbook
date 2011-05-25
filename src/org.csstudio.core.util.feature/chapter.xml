@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0">
+  <title>CSS Core Utilities - org.csstudio.core.util.feature</title>
+  <para>
+    CSS Core Utilities is the group of plug-ins that are supported to 
+    be shared across different sites to provide commons functionality 
+    among CSS applications, and constitute most of CSS core 
+    infrastructure. This includes data definitions, connection 
+    services, common Eclipse RCP items or utilities. A plug-in can be 
+    added to this feature if the following conditions are met:
+    <orderedlist>
+      <listitem>there is interested from more than one site in using 
+      this plug-in</listitem>
+      <listitem>the maintainer takes responsibility for support to 
+      other sites</listitem>
+    </orderedlist>
+  </para>
+  <para>The <code>org.csstudio.core.util.feature</code> is used to 
+  maintain the list of plug-ins that belong to this group, and is not 
+  mandated to be packaged and distributed in a product (though one may 
+  decide to do so).</para>
+</chapter>

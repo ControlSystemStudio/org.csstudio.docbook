@@ -1,0 +1,12 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0">
+  <title>CSS Core - org.csstudio.core.feature</title>
+  <para>CSS Core is the group of plug-ins that every CSS distribution 
+  has, regardless of product or site requirements. This set is kept as 
+  small as possible, to avoid dependency creep-in. A plug-in is added 
+  to this group only if, after a discussion on the mailing list, a 
+  qualified majority emerges in favor of the inclusion.</para>
+  <para>The <code>org.csstudio.core.feature</code> is used to maintain 
+  the list of plug-ins that belong to this group.</para>
+</chapter>
