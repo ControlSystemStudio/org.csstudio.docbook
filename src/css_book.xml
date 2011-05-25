@@ -62,6 +62,7 @@ and the current PDF is at
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />
+<xi:include href="ui.menu/ui.menu.xml" />
 
 
 <!-- 

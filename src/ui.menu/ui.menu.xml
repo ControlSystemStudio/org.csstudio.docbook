@@ -1,0 +1,54 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0">
+  <title>CSS menus - org.csstudio.ui.menu</title>
+  <para>The plugin <quote>org.csstudio.ui.menu</quote> defines through 
+  extensions the CSS Menu (which appears in the menu bar) and the 
+  context sensitive pop-up submenu for object adapatable to 
+  <code>org.csstudio.csdata.ProcessVariable</code>.</para>
+  <sect1>
+    <title>The CSS main menu</title>
+    <figure id="fig_ui_menu_main">
+      <title>The CSS main menu</title>
+      <mediaobject><imageobject>
+      <imagedata fileref="ui_menu_main.png" format="PNG" width="100%"/></imageobject></mediaobject>
+    </figure>
+    <para>The overall structure of the menu is:</para>
+    <programlisting>CSS (id: css)
+ - Display (id: display)
+ - Alarm (id: alarm)
+ - Diagnostic (id: diag)
+ - Debugging (id: debugging)
+ - Configuration (id: configuration)
+ - Management (id: management)
+ - Editors (id: editors)
+ - Utilities (id: utility)
+ - Trends (id: trends)
+ - Test (id: test)
+ - Other (id: other)</programlisting>
+    <para>where the each line has the name of each sub-menus and the 
+    <quote>id</quote> which is needed to define contributsion to those 
+    menus. Only the sub-menus that actually have contribution are going 
+    to be displayed</para>
+    <para>The following examples adds a command to the display 
+    sub-menu:</para>
+    <programlisting>&lt;plugin&gt;
+   ...
+   &lt;extension
+         point=&quot;org.eclipse.ui.menus&quot;&gt;
+      ...
+      &lt;menuContribution
+            allPopups=&quot;false&quot;
+            locationURI=&quot;menu:display&quot;&gt;
+         &lt;command
+               commandId=&quot;org.csstudio.display.waterfall.OpenView&quot;
+               icon=&quot;icons/water.png&quot;
+               style=&quot;push&quot;&gt;
+         &lt;/command&gt;
+      &lt;/menuContribution&gt;
+      ...
+   &lt;/extension&gt;
+   ...
+&lt;/plugin&gt;</programlisting>
+  </sect1>
+</chapter>
