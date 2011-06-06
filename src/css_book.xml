@@ -51,6 +51,22 @@ and the current PDF is at
 </para>
 </acknowledgements>
 
+<part>
+<title>CSS Guide</title>
+<partintro>
+<para>This book has two parts.
+The first part consists of an introduction to CSS.
+It explains how to compile CSS from sources,
+how to install it, how to perform the initial setup
+of the archive and alarm system.
+It is meant to serve as a guide for those who need
+to install, maintain and extend CSS.
+</para>
+<para>The second part of the book has reference chapters
+for selected plugins.
+</para>
+</partintro>
+
 <xi:include href="introduction.xml" />
 
 <xi:include href="css_intro/introduction.xml" />
@@ -62,9 +78,15 @@ and the current PDF is at
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />
+</part>
 
 <part>
-<title>Plug-in reference</title>
+<title>Plug-in Reference</title>
+<partintro>
+<para>The following chapters contain references for certain
+CSS plugins.
+</para>
+</partintro>
 <xi:include href="org.csstudio.core.feature/chapter.xml" />
 <xi:include href="org.csstudio.core.util.feature/chapter.xml" />
 <xi:include href="org.csstudio.ui.menu/chapter.xml" />
