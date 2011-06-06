@@ -1,0 +1,92 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0">
+  <title>CSS menus - org.csstudio.ui.menu</title>
+  <para>The plugin <quote>org.csstudio.ui.menu</quote> defines through 
+  extensions the CSS Menu (which appears in the menu bar) and the 
+  context sensitive pop-up submenu for object adapatable to 
+  <code>org.csstudio.csdata.ProcessVariable</code>.</para>
+  <sect1>
+    <title>The CSS main menu</title>
+    <figure id="fig_ui_menu_main">
+      <title>The CSS main menu</title>
+      <mediaobject><imageobject>
+      <imagedata fileref="ui_menu_main.png" format="PNG"/></imageobject></mediaobject>
+    </figure>
+    <para>The overall structure of the menu is:</para>
+    <programlisting>CSS (id: css)
+ - Display (id: display)
+ - Alarm (id: alarm)
+ - Diagnostic (id: diag)
+ - Debugging (id: debugging)
+ - Configuration (id: configuration)
+ - Management (id: management)
+ - Editors (id: editors)
+ - Utilities (id: utility)
+ - Trends (id: trends)
+ - Test (id: test)
+ - Other (id: other)</programlisting>
+    <para>where the each line has the name of each sub-menus and the 
+    <quote>id</quote> which is needed to define contributions to those 
+    menus. Only sub-menus that have contributions are going to be 
+    displayed</para>
+    <para>The following examples adds a command to the display 
+    sub-menu:</para>
+    <programlisting>&lt;plugin&gt;
+   ...
+   &lt;extension
+         point=&quot;org.eclipse.ui.menus&quot;&gt;
+      ...
+      &lt;menuContribution
+            allPopups=&quot;false&quot;
+            locationURI=&quot;menu:display&quot;&gt;
+         &lt;command
+               commandId=&quot;org.csstudio.display.waterfall.OpenView&quot;
+               icon=&quot;icons/water.png&quot;
+               style=&quot;push&quot;&gt;
+         &lt;/command&gt;
+      &lt;/menuContribution&gt;
+      ...
+   &lt;/extension&gt;
+   ...
+&lt;/plugin&gt;</programlisting>
+  </sect1>
+  <sect1>
+    <title>The Process Variable popup-menu</title>
+    <figure id="fig_ui_menu_popup">
+      <title>The Process Variable popup-menu</title>
+      <mediaobject><imageobject>
+      <imagedata fileref="ui_menu_popup.png" format="PNG"/></imageobject></mediaobject>
+    </figure>
+    <para>This popup menu (id: 
+    <code>org.csstudio.ui.menu.popup.processvariable</code>) will 
+    appear only on objects that are adaptable to 
+    <code>org.csstudio.csdata.ProcessVariable</code>. Given that the 
+    whole menu is hidden/displayed, one only has to contribute commands 
+    without worrying about the display condition for each command. It 
+    also makes it easier for the user to predict which entries he will 
+    find in the menu and where they are located: if the <quote>Process 
+    Variable</quote> sub-menu is present, then the object is of the 
+    right type and all the same commands are going to be available in 
+    the same order.</para>
+    <para>The following example adds a command to the popup menu:</para>
+    <programlisting>&lt;plugin&gt;
+   ...
+   &lt;extension
+         point=&quot;org.eclipse.ui.menus&quot;&gt;
+      ...
+      &lt;menuContribution
+            allPopups=&quot;false&quot;
+            locationURI=&quot;popup:org.csstudio.ui.menu.popup.processvariable&quot;&gt;
+         &lt;command
+               commandId=&quot;org.csstudio.display.waterfall.OpenView&quot;
+               icon=&quot;icons/water.png&quot;
+               style=&quot;push&quot;&gt;
+         &lt;/command&gt;
+      &lt;/menuContribution&gt;
+      ...
+   &lt;/extension&gt;
+   ...
+&lt;/plugin&gt;</programlisting>
+  </sect1>
+</chapter>

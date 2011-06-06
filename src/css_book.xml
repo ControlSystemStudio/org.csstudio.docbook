@@ -63,6 +63,13 @@ and the current PDF is at
 
 <xi:include href="data_exchange.xml" />
 
+<part>
+<title>Plug-in reference</title>
+<xi:include href="org.csstudio.core.feature/chapter.xml" />
+<xi:include href="org.csstudio.core.util.feature/chapter.xml" />
+<xi:include href="org.csstudio.ui.menu/chapter.xml" />
+</part>
+
 
 <!-- 
 * Installing, configuring, running CSS
