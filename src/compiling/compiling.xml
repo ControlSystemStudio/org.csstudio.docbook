@@ -244,7 +244,7 @@ executable because the Windows file system lacks that notion.
 <orderedlist>
 <listitem>Extract the delta pack archive into its own directory on disk.</listitem>
 <listitem>Open the Target Platform preferences (Menu <code>Window</code>, <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>).</listitem>
-<listitem>Edit the active target and add the path to the delta pack's <filename>plugin</filename> directory.</listitem>
+<listitem>Edit the active target. Add a <quote>Directory</quote>, using the path to the delta pack's <filename>plugin</filename> directory.</listitem>
 </orderedlist>
 
 <para>When you now export a product from the IDE, there will be a new option export to multiple platforms.</para>
