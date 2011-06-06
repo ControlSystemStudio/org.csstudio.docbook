@@ -242,12 +242,12 @@ executable because the Windows file system lacks that notion.
 <para>To use the delta pack:</para>
 
 <orderedlist>
-<listitem>Extract the delta pack archive into its own directory on disk.</listitem>
+<listitem>Extract the delta pack archive into its own directory on disk. The result should be a <filename>eclipse</filename> directory with sub-directories <filename>plugins</filename> and <filename>features</filename></listitem>
 <listitem>Open the Target Platform preferences (Menu <code>Window</code>, <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>).</listitem>
-<listitem>Edit the active target. Add a <quote>Directory</quote>, using the path to the delta pack's <filename>plugin</filename> directory.</listitem>
+<listitem>Edit the active target. Add an <quote>Installation</quote>, using the path to the delta pack's <filename>eclipse</filename> directory.</listitem>
 </orderedlist>
 
-<para>When you now export a product from the IDE, there will be a new option export to multiple platforms.</para>
+<para>When you now export a product from the IDE, there will be a new option <quote>Export to multiple platforms</quote>.</para>
 </sect1>
 
 
