@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
          version="5.0">
-  <title>CSS menus - org.csstudio.ui.menu</title>
+  <title>CSS menus - org.csstudio.ui.menu<indexterm><primary>org.csstudio.ui.menu</primary></indexterm></title>
   <para>The plugin <quote>org.csstudio.ui.menu</quote> defines through 
   extensions the CSS Menu (which appears in the menu bar) and the 
   context sensitive pop-up submenu for object adapatable to 

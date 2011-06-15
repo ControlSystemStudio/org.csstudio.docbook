@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
          version="5.0">
-  <title>CSS Core Utilities - org.csstudio.core.util.feature</title>
+  <title>CSS Core Utilities - org.csstudio.core.util.feature<indexterm><primary>org.csstudio.core.util.feature</primary></indexterm></title>
   <para>
     CSS Core Utilities is the group of plug-ins that are supported to 
     be shared across different sites to provide commons functionality 
