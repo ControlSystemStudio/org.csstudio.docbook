@@ -3,17 +3,13 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:xlink="http://www.w3.org/1999/xlink">
       
-      
-
-      
-
 <info>
 <title>Control System Studio</title>
 <subtitle>What you always wanted to know but were afraid to ask</subtitle>
 <author><firstname>Kay</firstname><surname>Kasemir</surname></author>
+<author><firstname>Gabriele</firstname><surname>Carcassi</surname></author>
 <copyright><year>2011</year><holder>Oak Ridge National Laboratory</holder></copyright>
 </info>
-
 
 <preface>  <title>No Warranty</title>
 <para>
