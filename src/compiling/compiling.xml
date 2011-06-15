@@ -252,7 +252,6 @@ executable because the Windows file system lacks that notion.
 
 
 <sect1>  <title>Headless Build</title>
-</sect1>
 
 <para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
 is eventually necessary for each site that periodically publishes CSS product updates.
@@ -261,6 +260,6 @@ It can also be used as part of a nightly or integration build.
 For details, check the Eclipse online help for Headless Build,
 and refer to the scripts in the <filename>build</filename> subdirectory of the CSS sources.
 </para>
-
+</sect1>
 
 </chapter>
