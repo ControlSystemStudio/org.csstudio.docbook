@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"  version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_org_csstudio_archive_engine">
+<title>Archive Tools - org.csstudio.archive.engine and related</title>
+
+<para>The Archive Engine<indexterm><primary>Archive Engine</primary></indexterm>
+uses plugins to allow customization.
+It was developed based on the idea of using a relational database
+(MySQL, Oracle, PostgreSQL, ...) for storing both the sample engine
+configuration and the archived data.
+By replacing for example the plugin that implements the <quote>write</quote>
+support, one can store samples in a modified RDB table format or
+even a totally different storage medium.
+See <xref linkend="chap_archive"/> for setup and usage of the archive tools. 
+</para>
+
+<sect1>  <title>org.csstudio.archive.engine<indexterm><primary>org.csstudio.archive.engine</primary></indexterm></title>
+
+<para>This plugin contains the archive sample engine code. This includes
+the code that connects to PVs, samples them by various means, as well as
+a web server to provide access to status information.
+To obtain the sample engine configuration and to write samples to the actual
+storage, it uses interfaces from plugins described in the following sections.
+</para>
+<para>The engine plugin also includes an <code>ArchiveEngine.product</code>
+file that is used to build the executable. This product file selects specific
+implementing plugins, for example to create an RDB-based archive engine.
+Sites that plan to build the archive engine for a different configuration or
+sample storage implementation will need to create a different product file. 
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archive.config<indexterm><primary>org.csstudio.archive.config</primary></indexterm></title>
+
+<para>This plugin defines the API and extension point for reading
+an archive engine configuration. It provides access to the list of
+groups, channels, and the sample configuration of each channel.
+The archive engine uses this API to determine which channels it
+should archive and how.
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archive.config.rdb<indexterm><primary>org.csstudio.archive.config.rdb</primary></indexterm></title>
+
+<para>This plugin implements the configuration API for an RDB,
+meaning it reads an archive configuration from MySQL, Oracle or PostgreSQL.
+It also provides <code>ArchiveConfigTool.product</code>, a command-line
+application that can be used to export a sample configuration into an
+XML file and (re-)import an archive engine configuration from such an XML file.
+</para>
+<para>By replacing this plugin with a site-specific variant, one could for
+example store the archive engine configuration in a different table format
+or even an entirely different system like LDAP.
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archive.writer<indexterm><primary>org.csstudio.archive.writer</primary></indexterm></title>
+
+<para>This plugin defines the API and extension point for writing
+archive samples to a data store.
+The archive engine uses this API to write samples to the archive.
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archive.writer.rdb<indexterm><primary>org.csstudio.archive.writer.rdb</primary></indexterm></title>
+
+<para>This plugin implements the sample writer API for an RDB,
+meaning it allows the archive engine to write samples to MySQL, Oracle or PostgreSQL.
+</para>
+<para>By replacing this plugin with a site-specific variant, one could for
+example store the archive engine configuration in a different table format
+or even an entirely different storage system.
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archivereader<indexterm><primary>org.csstudio.archivereader</primary></indexterm></title>
+
+<para>This plugin defines the API and extension point for reading
+archived data. It is for example used by the Data Browser to obtain
+historic data for a channel.
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archivereader.rdb<indexterm><primary>org.csstudio.archivereader.rdb</primary></indexterm></title>
+
+<para>This plugin implements the archive reader API
+for the RDB table structure used by the RDB-based archive engine.
+When using an archive engine that writes to a different RDB table layout or even
+an entirely different storage system, you will have to implement the archive reader
+API for that system.
+</para>
+</sect1>
+
+
+<sect1>  <title>org.csstudio.archive.rdb<indexterm><primary>org.csstudio.archive.rdb</primary></indexterm></title>
+
+<para>This plugin defines the RDB table structure that is used by
+the <code>org.csstudio.archive.config.rdb</code>,
+<code>org.csstudio.archive.writer.rdb</code>
+and <code>org.csstudio.archivereader.rdb</code> plugins.
+It also defines the fundamental RDB connection preferences
+for those plugins, i.e. the RDB URL, user name and password.
+</para>
+</sect1>
+
+</chapter>

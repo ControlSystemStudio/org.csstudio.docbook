@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns="http://docbook.org/ns/docbook"
-         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_archive">
 <title>Archive System</title>
 
 <para>One part of CSS is the Archive System, specifically the
@@ -9,11 +10,17 @@ that was developed as a replacement for the Channel Archiver.
 An Archive Engine takes PV data samples from a front-end computer, for example from EPICS IOCs via Channel Access,
 and places them in some data storage, see <xref linkend="fig_archive"/>.
 Archive client programs then access historic data samples in that storage.
-In this system, the storage is a Relational Database (RDB)<indexterm><primary>Relational Database (RDB)</primary></indexterm>
-like MySQL or Oracle.
-Both the historic data of PVs and the Archive Engine configuration are stored in the relational database.
+</para>
+<para>As described here, the storage is a
+Relational Database (RDB)<indexterm><primary>Relational Database (RDB)</primary></indexterm>
+like MySQL, Oracle or PostgreSQL.
+Both the historic data of PVs and the Archive Engine configuration are stored in the same relational database.
 The engine configuration can be imported from an XML file format into the database, or it can be exported
 from the database back into an XML file format for editing.
+The archive engine uses a pluggable implementation for its configuration and data storage as
+described in <xref linkend="chap_org_csstudio_archive_engine"/>, so it is fundamentally
+possible to use the archive engine with different storage for the configuration and data,
+but in the following examples we concentrate on an RDB-based setup.
 </para>
 
 <para>Typical setups will include more than one Archive Engine, for example one sample engine per subsystem.
@@ -47,7 +54,7 @@ the tool used to import engine configuration files into the relational database.
 They are defined in these product files:
 
 <programlisting>org.csstudio.archive.engine/ArchiveEngine.product
-org.csstudio.archive.rdb/EngineConfigImport.product
+org.csstudio.archive.config.rdb/ArchiveConfigTool.product
 </programlisting>
 
 For first tests, you can run both tools from within the Eclipse IDE as described in

@@ -67,6 +67,24 @@ for selected plugins.
 </para>
 </partintro>
 
+<!-- 
+* Installing, configuring, running CSS
+ Starting with MySQL, JMS, Java, Eclipse and the CSS sources,
+ how to build the Archive Engine, Alarm Server, CSS GUI.
+ How to configure them.
+ How to run the archive engine.
+ How to tweak CSS for your site's end users.
+ How to run the alarm server.
+ (1-2 days)
+
+* Basic CSS/Eclipse usage (half day)
+ Data Browser, EPICS PV tree, ...
+
+* BOY (Maybe 1 day)
+
+* Alarm Handler (half day)
+ -->
+
 <xi:include href="introduction.xml" />
 
 <xi:include href="css_intro/introduction.xml" />
@@ -87,29 +105,13 @@ for selected plugins.
 CSS plugins.
 </para>
 </partintro>
+
 <xi:include href="org.csstudio.core.feature/chapter.xml" />
 <xi:include href="org.csstudio.core.util.feature/chapter.xml" />
 <xi:include href="org.csstudio.ui.menu/chapter.xml" />
+
+<xi:include href="org.csstudio.archive.engine/chapter.xml" />
 </part>
-
-
-<!-- 
-* Installing, configuring, running CSS
- Starting with MySQL, JMS, Java, Eclipse and the CSS sources,
- how to build the Archive Engine, Alarm Server, CSS GUI.
- How to configure them.
- How to run the archive engine.
- How to tweak CSS for your site's end users.
- How to run the alarm server.
- (1-2 days)
-
-* Basic CSS/Eclipse usage (half day)
- Data Browser, EPICS PV tree, ...
-
-* BOY (Maybe 1 day)
-
-* Alarm Handler (half day)
- -->
 
 <!-- Appendices -->
 <xi:include href="docbook.xml" /> 
