@@ -89,6 +89,8 @@ for selected plugins.
 
 <xi:include href="archive/archive.xml" />
 
+<xi:include href="products/products.xml" />
+
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />

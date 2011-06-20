@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns="http://docbook.org/ns/docbook"
-         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_introduction">
 <title>Control System Studio (CSS)</title>
 
 <para>A first look at Control System Studio can be overwhelming.
@@ -145,8 +146,9 @@ It is hard to imagine that a program suite as complex as CSS could have been imp
 without Java.
 </para>
 
-<para>As Java code becomes more complex, it can be split into several library files ('JAR'<indexterm><primary>JAR File</primary></indexterm>
-files).
+<para>As Java code becomes more complex, it can be split into several library files
+called Java Archives or 'JAR'<indexterm><primary>JAR File</primary></indexterm>
+files.
 The Java runtime can dynamically load and unload these libraries.
 Through introspection it is possible to locate features in such JAR files.
 For example, one can create a Java program that communicates with a control system, where

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_products">
+<title>Products</title>
+
+<para>This chapter describes how and why Plug-ins get combined into a Product.
+</para>
+
+<para>As already explained in <xref linkend="sec_rcp"/>,
+a product combines selected Plug-ins with configuration files
+and an OS-specific launcher.
+Why is there more than one CSS product?
+Why can it be difficult to select the required Plug-ins?
+</para>
+
+
+<sect1> <title>Site-Specific Plugin Selection and Settings</title>
+<para>Plug-in contain the Java code and associated content like online help
+for some CSS functionality.
+One example would be a <code>databrowser</code> Plug-in that implements
+the Data Browser.
+System integrators at different site might prefer some Plug-ins over others,
+for example one operator interface tool over another.
+</para>
+
+<para>A product also contains the default settings, the
+<filename>plugin_customization.ini</filename> file described
+in <xref linkend="ch_preferences"/>.
+To users of CSS it is most convenient when the suitable settings
+for their site, for example EPICS Channel Access addresses, web links,
+LDAP server hosts for authentication are already <quote>built in</quote>,
+so that there is usually no need to adjust any preference settings
+after installing CSS onto their office computer.
+</para>
+
+<para>To provide a site-specific selection of products with suitable
+default settings, most sites will need a custom-built CSS product.</para>
+
+<para>CSS instances can self-update from a repository.
+Users will see a notice that updates are available, and CSS will
+restart after installing them.
+In an operational setup it is typically of advantage to control
+which updates become available when and how, which means that each
+site that uses CSS will need its own, local update server
+from which its CSS instances pull updates that apply to their local CSS
+product.
+</para>
+</sect1>
+
+
+<sect1> <title>Plug-in Dependencies</title>
+<para>
+A plug-in can depend on other plug-ins.
+For example, the <code>databrowser</code> plug-in depends on others
+which provide access to archived data, to live data, and it also depends on
+a plotting plugin.
+When adding the <code>databrowser</code> plugin to a product, these dependencies
+are mostly added automatically.
+There are, however, additional dependencies that Eclipse cannot automatically determine.
+</para>
+
+<para>For example, the plug-in on which the Data Browser directly depends to read archived data
+only defines the programming interface for reading historic data.
+CSS is designed to support multiple sources of archived data,
+for example the XML-RPC network data server of the Channel Archiver but also
+an RDB-based archive. Some sites use the former, others the latter, some might use both
+and other sites might use an entirely different archive data store.
+Similar examples exist for access to an electronic log-book, or to reading live control system data.
+</para>
+
+<para>Eclipse cannot automatically decide which implementing plug-in are necessary at
+a site, so it is up to the creator of a CSS product to select among the available
+plug-ins that implement access to archived data, a log book or live data.
+She might even need to implement a new, site-specific way of reading historic data
+or writing to a log book.
+</para>
+</sect1>
+
+
+<sect1> <title>Features</title>
+<para>As just described, we often need more than one plug-in to provide
+a certain functionality, for example the <code>databrowser</code> plug-in
+with its immediate dependencies combined with a site-specific selection of
+log book, live and historic data implementations.
+Directly listing all plug-ins in a product configuration would result in
+a long list that is hard to maintain.
+</para>
+
+<para>A feature is simply a list of related plug-ins, for example all plug-ins
+that a site uses for the Data Browser functionality.
+Features can also be used to modularize the head-less built,
+and features can appear as separate, optional components in an update repository,
+allowing end users to install them into their CSS product on demand.
+</para>
+</sect1>
+
+
+<sect1> <title>Creating a Product</title>
+<para>
+TODO This should be described.
+</para>
+</sect1>
+
+
+</chapter>
