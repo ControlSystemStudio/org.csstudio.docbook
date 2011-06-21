@@ -37,7 +37,7 @@ to create reports. A typical application might be JSP-based web reports of data.
 </figure>
 
 <para>There are two integration points with the legacy Channel Archiver<indexterm><primary>Channel Archiver</primary></indexterm>:
-The EngineConfigImport tool can import existing archive engine configuration files into the RDB because the
+The <code>ArchiveConfigTool</code> tool can import existing archive engine configuration files into the RDB because the
 XML file format is compatible with the Channel Archiver.
 The Data Browser is capable of reading data from the relational database as well as from the Channel Archiver's
 XML-RPC-based data server, thereby allowing nearly transparent access to both <quote>old</quote> and <quote>new</quote>
@@ -47,9 +47,10 @@ data.
 
 <sect1>  <title>Building the Tools</title>
 
-<para>The Archive Engine is the central sampling tool that reads values from PVs and writes them to the archive data storage.
+<para>The Archive Engine is the central sampling tool that reads values from PVs and writes them to the
+archive data storage.
 It is implemented as an Eclipse product.
-You will probably also want to build EngineConfigImport, 
+You will probably also want to build ArchiveConfigTool, 
 the tool used to import engine configuration files into the relational database.
 They are defined in these product files:
 
@@ -68,7 +69,7 @@ needed to collect data.
 </sect1>
 
 
-<sect1>  <title>Relational Database Setup</title>
+<sect1 xml:id="sec_archive_rdb_setup">  <title>Relational Database Setup</title>
 
 <para>Before using the archive tools, you need to create the required table structure in your RDB.
 Currently MySQL, Oracle and PostgreSQL are supported.
@@ -82,10 +83,12 @@ and another read-only account for archive clients like the CSS Data Browser to r
 </para>
 
 <para>The RDB tables for the different database dialects are very similar with the exception of the 
-<code>TIMESTAMP</code> used to store the time stamps of samples. While the Oracle time stamp data type already offers nanosecond detail,
-the MySQL data type of the same name only covers seconds.
+<code>TIMESTAMP</code> used to store the time stamps of samples.
+While the Oracle time stamp data type already offers nanosecond detail,
+the MySQL and PostgreSQL data types of the same name only cover seconds.
 The MySQL tables therefore have an added <code>nanosecs</code> column for this purpose.
-There are a few more differences in the SQL dialects, but the Archive Engine, CSS Data Browser etc. auto-configure based on the database URL.
+There are a few more differences in the SQL dialects, but the Archive Engine and Data Browser
+auto-configure based on the database URL.
 </para>
 
 <para>The setup for MySQL might be the easiest at least for development and testing, but it has limitations.
@@ -98,7 +101,15 @@ Furthermore, while it will be almost trivial to enter something like
 to delete older samples, this will either not free up any space or require an added <code>OPTIMIZE</code> rebuild, which takes a very long time.
 </para>
 
-<para>One reason for using Oracle lies in its support for partitioning: While the sample <code>sample</code> appears as one table,
+<para>For PostgreSQL, the table size limit at this time seems to be much higher at 32TB, with no additional row count limit.
+Performance of the <code>sample</code> table that holds archived samples is reduced by about 50%
+when adding constraints. The <code>dbd</code> file for PostgreSQL includes constraints to allow the RDB
+to assert referential data integrity, but if you trust the Archive Engine code to only write correct
+samples to the RDB, performance can be gained by disabling the <code>sample</code> table constraints. 
+</para>
+
+<para>One reason for using Oracle lies in its support for partitioning.
+While the sample <code>sample</code> appears as one table,
 it can be spread over several table partitions based on the sample time and channel name.
 Spreading by channel name might improve performance because several channels can be written
 in parallel to different disk locations. Partitioning by time allows quick removal of older samples.
@@ -107,13 +118,17 @@ In addition, for Oracle the archive data readout implementation used by the Data
 supports a stored procedure for server-side data reduction which is not available for MySQL.
 </para>
 
-<para>Whatever database you use, in the end you need to provide all CSS archive tools with the following configuration information:</para>
+<para>Whatever database you use, in the end you need to provide all CSS archive tools
+with the following configuration information:</para>
 <itemizedlist>
 <listitem>URL:
 Depending on the RDB system this will be a URL of the format
-<programlisting><![CDATA[jdbc:mysql://[host]:[port]/[database]?user=[user]&password=[pw]
+<programlisting><![CDATA[jdbc:mysql://[host]:[port]/[database]
 ]]></programlisting>
-for MySQL or
+for MySQL,
+<programlisting>jdbc:postgresql://[host]:[port]/[database]
+</programlisting>
+for PostgreSQL or
 <programlisting>jdbc:oracle:thin:@//[host]:[port]/[database]
 </programlisting>
 for Oracle. The archive tools will use the start of that URL to detect the RDB dialect: MySQL, Oracle, PostgreSQL.
@@ -121,16 +136,22 @@ for Oracle. The archive tools will use the start of that URL to detect the RDB d
 <listitem>User name: A user name known to the RDB. Typically you configure at least one user with write access for archive engines, and one
 with read-only access for client programs.</listitem>
 <listitem>Password: Associated password</listitem>
-<listitem>Schema: A prefix for RDB table names that is for example often needed by Oracle to access the tables.</listitem>
+<listitem>Schema: A prefix for RDB table names that might be needed by Oracle to access the tables
+because the database name provided in the URL refers to a system ID and not the table schema.
+In this case, set the schema to for example <code>chan_arch.</code>, including the trailing dot.
+For MySQL and PostgreSQL, the URL typically includes the database and no further table
+prefix is needed, in which case it should be left empty.
+</listitem>
 </itemizedlist>
 
-<para>The command-line tools will accept these parameters on the command-line.
-For other tools, refer to <xref linkend="ch_preferences"/>
+<para>See <xref linkend="ch_preferences"/> for details on how to provide
+these RDB settings for the archive plugins.
+The command-line tools will also accept these parameters on the command-line.
 </para>
 </sect1>
 
 
-<sect1>  <title>Archive Engine Configuration</title>
+<sect1>  <title>Archive Engine Configuration<indexterm><primary>Archive Engine</primary></indexterm></title>
 
 <para>Each sample engine configuration identified by a name, for example
 <quote>WaterSystem</quote>. Inside the RDB the configuration is actually
@@ -176,7 +197,7 @@ meta data.
 </para>
 
 <para>When a channel sends a new value to the archive engine is somewhat outside of the
-control of the archive engine. The control system software on the front end controls this.
+control of the archive engine. The software on the front end computer controls this.
 For EPICS record, the <code>SCAN</code> field in combination with the <code>ADEL</code> field
 of analog records determines when a new value is sent to the archive engine.</para>
 
@@ -184,7 +205,6 @@ of analog records determines when a new value is sent to the archive engine.</pa
 provides the data. For EPICS records, the <code>EGU</code>, <code>HOPR</code> and other fields
 have to be used to configure these.</para>
 </sect2>
-
 
 <sect2>  <title>Duplicate Channels</title>
 <para>The RDB configuration allows for multiple sample engines.
@@ -229,27 +249,110 @@ last written sample by at least some configurable margin.
 <para>In scanned mode, the archive engine still receives each update from the data source,
 but it only writes the most recent sample at periodic times, for example once every 5 minutes.
 </para>
+
 <para>This mode is a compromise. If a channel has no significant change for hours, why
 should the uninteresting changes fill disk space every 5 minutes?
 On the other hand, if an important even happens that produces a brief <quote>blip</quote>
 in the data, the archived data is likely to miss it when only storing a value every 5 minutes.
 </para>
+
 <para>This mode was created for channels which do not have a good dead-band configuration,
 where using the monitored mode would add too many samples to the archive.
-Periodic sampling is clearly imperfect, but sometimes a workable compromise.</para>
+Periodic sampling is clearly imperfect, but sometimes a workable compromise.
+</para>
 </sect2>
 </sect1>
 
 
-
-
 <sect1>  <title>Editing the Configuration</title>
+<para>The configuration for all archive engines resides in the RDB,
+which allows you to modify it in various ways.
+Note, however, that running archive engines are not notified of
+configuration changes in the RDB because there is currently no
+convenient mechanism for them to learn about such changes.
+You <emphasis>must manually re-start all affected archive engines</emphasis> after
+modifying their configuration!
+</para>
+
+<sect2>  <title>SQL Manipulation</title>
+<para>It is possible to modify an archive engine configuration
+via direct SQL manipulation, for example from an SQL shell:
+<programlisting>
+SELECT * FROM smpl_eng;
+INSERT INTO smpl_eng(name, descr, url)
+  VALUES ('demo', 'Example Engine',
+          'http://somehost:4812');
+</programlisting>
+This clearly requires some familiarity with the RDB table layout,
+see <xref linkend="sec_archive_rdb_setup"/>.
+For operations like renaming a channel or bulk changes this can
+be the most convenient procedure.
+</para>
+</sect2>
+
+<sect2>  <title>Archive Config Tool<indexterm><primary>Archive Config Tool</primary></indexterm></title>
+<para>The <code>ArchiveConfigTool</code> can export existing archive engine configurations
+from the RDB into an XML file format, or import such XML files into the RDB.
+The XML file format is compatible with the one used by the Channel Archiver,
+allowing the import of existing archive engine configurations.
+</para>
+
+<para>The <filename>xml</filename> directory in the plugin
+<code>org.csstudio.archive.config.rdb</code> contains a commented
+example configuration file.
+</para>
+
+<para>The ArchiveConfigTool offers command-line help similar to this:
+<programlisting>-help                    : show help
+-engine my_engine        : Engine Name
+-config my_config.xml    : XML Engine config file
+-export                  : export configuration as XML
+-import                  : import configuration from XML
+-delete_config           : Delete existing engine config
+-description 'My Engine' : Engine Description
+-host my.host.org        : Engine Host
+-port 4812               : Engine Port
+-replace_engine          : Replace existing engine config, or stop?
+-steal_channels          : Steal channels from other engine
+-rdb_url jdbc:...        : RDB URL
+-rdb_user user           : RDB User
+-rdb_password password   : RDB Password
+-rdb_schema schema       : RDB schema (table prefix), ending in '.'
+</programlisting>
+</para>
+
+<para>To export an existing engine configuration into an XML file, use
+<programlisting>ArchiveConfigTool -engine my_engine -config my_config.xml -export</programlisting>
+In addition, the RDB connection parameters might have to be supplied unless
+they are built into the tool or provided via a <code>-pluginCustomization</code>
+argument.
+</para>
+
+<para>To import a configuration from an XML file into the RDB, use
+<programlisting>ArchiveConfigTool -engine my_engine -config my_config.xml -import\
+-host my.host.org -port 4812</programlisting>
+The host name specifies the host on which the engine is supposed to execute,
+and the port number under which is runs its web server.
+The configuration file could be the edited result of a previous export, or
+have been created by other means.
+</para>
+
+<para>The archive config tool is cautious about disturbing existing configurations.
+By default it will stop when there is already a configuration in the RDB for the
+same sample engine name unless the <code>-replace_engine</code> option is provided,
+in which case an existing configuration for that engine name will be deleted before
+importing the XML file.
+Similarly, the config tool will ignore channel names that are already handled by
+a different engine configuration, unless the <code>-steal_channels</code> option
+is provided to instruct the tool to move such channels from the archive engine that
+previously handled the channels.
+</para>
+</sect2>
 </sect1>
 
 
-
 <sect1>  <title>Running Archive Engines</title>
-
+URL, port
 Settings
 Database connection
 logging
@@ -266,8 +369,6 @@ Ideally, a future tool will automatically start engines on the configured host a
 </sect2>
 
 </sect1>
-
-
 
 
 </chapter>
