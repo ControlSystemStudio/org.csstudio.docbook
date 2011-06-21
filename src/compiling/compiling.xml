@@ -137,10 +137,31 @@ To import the sources into the workspace:
 <listitem>As a root directory, select <filename>/usr/fred/css_sources</filename>.</listitem>
 <listitem><emphasis>Do not check the option </emphasis> <quote>Copy projects into workspace</quote>!</listitem>
 <listitem>By default all the plugins on the disk will be selected.
-If you import from a full Source Forge repository checkout, you might want to un-select
-plugins that you know you will not need. You can always import them later.</listitem>
+You can leave them selected, or select only specific plugins as described below.</listitem>
 <listitem>Press <code>Finish</code>.</listitem>
 </itemizedlist>
+
+<para>If you import from a source snapshot used by a CSS site, that snapshot might be limited
+to the plugins that the site-specific products use, and you can simply import all plugins.
+On the other hand, if you import from a full Source Forge repository checkout,
+you might want to un-select plugins that you know you will not need because otherwise
+you will end up with a workspace that is confusingly huge, even though you at best need
+only half of the plugins in there.
+</para>
+
+<para>The problem might be that you have initially no idea which plugins you actually need.
+You can leave them all selected, then later remove those from the workspace
+that you find not to be needed for your products. When deleting plugin projects from the workspace,
+do <emphasis>not</emphasis> check the option to <quote>Delete project contents on disk</quote>
+which would delete the actual files. Instead, only delete the project from the workspace,
+but leave it on the disk and thus also in the software repository.
+</para>
+
+<para>If you start with an initial selection of plugins that you assume you might need,
+look for errors about missing plugin dependencies, then import the missing plugins.
+Though this will initially require some trial and error, it might in the end be the most
+convenient way.
+</para>
 
 <figure xml:id="fig_comp_explorer">  <title>Eclipse Project Explorer</title>
   <mediaobject>
@@ -163,7 +184,8 @@ There should be no errors, i.e. in the package explorer there should be no red m
 </figure>
 
 <para>Next you open one of the <code>*.product</code> files, for example
-<programlisting>org.cs.studio.basic.epics.product/CSS.product</programlisting>.
+<programlisting>org.cs.studio.basic.epics.product/CSS.product</programlisting>
+
 You can use the Eclipse <code>Search</code>, <code>File</code> menu to
 locate all available product files as shown in <xref linkend="fig_comp_search_prod"/>
 </para>
@@ -182,15 +204,28 @@ but the main point here is that the product should <emphasis>start</emphasis>.
 There should be no errors regarding missing plugins or compilation problems.
 </para>
 
-<para>If the product does not start up, and instead you get an error like <quote>Product ....could not be found</quote>
-or <quote>Missing required bundle ...</quote>, it can be helpful to open the menu <code>Run</code>, <code>Run Configurations..</code>.
+<para>If the product does not start up, and instead you get an error like
+<quote>Product ....could not be found</quote> or <quote>Missing required bundle ...</quote>,
+it can be helpful to open the menu <code>Run</code>, <code>Run Configurations..</code>.
 Locate the configuration that was automatically created when you tried to launch the product.
 On the <code>Plug-ins</code> tab, press <code>Validate Plug-Ins</code>.
 It should give a list of unresolved plugins, i.e. missing dependencies.
-If you have the sources for the missing plugins and you did import them into the workspace,
-you can manually select them or use the button <code>Add Required Plug-Ins</code>.
-You should, however, contact the maintainer of the CSS product to determine why
-the product configuration has an error.
+</para>
+
+<para>If you downloaded a consistent set of sources, you should have the missing plugins,
+but maybe you did not import them into the workspace.
+Import them, them add them to the run configuration by either manually selecting them
+or via the button <code>Add Required Plug-Ins</code>.
+</para>
+
+<para>If you cannot find the missing plugins, there are usually two scenarios:
+The missing plugins are part of Eclipse, and you are using a version of Eclipse that
+is not compatible with the sources. For example, some plugin code may depend on 
+<code>org.eclipse.core.runtime</code> version 3.6, but you are using Eclipse 3.5 which
+is too old.
+The other scenario would be that you obtained an inconsistent snapshot of the sources
+where some part is simply missing. In that case you probably need to contact the maintainer
+of the CSS product to determine why the product configuration has an error.
 </para>
 
 <para>If you get the product to run: Congratulations!

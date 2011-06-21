@@ -2,6 +2,15 @@
 
 <!-- Ant file for building from the command line
 
+     When running under windows, the 'fop' program
+     is called 'fop.bat' for the batch file.
+     
+     Calling ant with
+       -Dfop=fop.bat
+     will define the property, and since ant properties
+     are immutable, the <property name="fop" ... setting
+     in here will then be ignored.
+
      Kay Kasemir
   -->
 <project name="css_docbook" default="all">

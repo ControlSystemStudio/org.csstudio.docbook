@@ -94,6 +94,9 @@ for selected plugins.
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />
+
+<!-- TODO JMS Message info -->
+
 </part>
 
 <part>
