@@ -285,9 +285,9 @@ the bug report on <quote>Support for exporting eclipsec.exe in RCP apps</quote>,
 <link xlink:href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185205">https://bugs.eclipse.org/bugs/show_bug.cgi?id=185205</link>.
 </para>
 
-<para>For the time being, the only solution is to manually remove the generated launcher, for example
-<filename>AlarmServer.exe</filename>, and replace it with a copy of <filename>eclipsec.exe</filename>
-from the Eclipse IDE, renamed to <filename>AlarmServer.exe</filename>.
+<para>For the time being, the only solution is to manually replace the generated launcher, for example
+<filename>AlarmServer.exe</filename>, with a copy of <filename>eclipsec.exe</filename>:
+<programlisting>copy \path\to\eclipsec.exe AlarmServer.exe</programlisting>
 </para>
 
 </sect1>
