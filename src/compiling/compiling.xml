@@ -234,10 +234,19 @@ Instead of running the product again from the menu <code>Run</code>, <code>Run H
 you select <code>Run</code>, <code>Debug History</code> to start the product in debug mode.
 You can browse the source code, set breakpoints by double-clicking at the start of a source line.
 </para>
+</sect1>
 
 
-<para>To export<indexterm><primary>Exporting a Product</primary></indexterm> a product,
-again open the product file as shown in <xref linkend="fig_comp_product"/>
+<sect1 xml:id="sec_prod_export_from_ide">  <title>Product Export from IDE</title>
+
+<para>End users of CSS cannot be expected to open the IDE, install the source code,
+and then run CSS from within the IDE. They need a product that executes
+from their <quote>start</quote> menu or a desktop link.
+One way to create such a standalone product is to
+<quote>export</quote><indexterm><primary>Exporting a Product</primary></indexterm>
+the product from the IDE.
+</para>
+<para>To export a product, open the product file as shown in <xref linkend="fig_comp_product"/>
 and press the <code>Eclipse Product export wizard</code> link in the Overview tab.
 </para>
 
@@ -250,7 +259,37 @@ and press the <code>Eclipse Product export wizard</code> link in the Overview ta
 
 <para>You should now have a directory like <filename>/tmp/CSS</filename> that contains a <code>CSS</code> executable.
 You can copy that directory to other computers and run it there.
+One method of deployment would be to offer a ZIP file of the exported product on a web page. 
 </para>
+
+<para>Note that there is currently a limitation for command-line products on Windows.
+Command-line applications, in Eclipse called
+<quote>headless</quote><indexterm><primary>Headless RCP Application</primary></indexterm> RCP applications,
+are invoked from a terminal window.
+They are configured via command-line arguments, and they print information to the terminal.
+This works fine on Linux and Mac OS X, but in the Windows <filename>cmd.exe</filename> you will by default
+not see any output from headless RCP applications.
+The problem<indexterm><primary>Headless RCP Application Problem on Windows</primary></indexterm>
+is related to the fact that Java for Windows includes both
+<filename>javaw.exe</filename> and <filename>java.exe</filename> because Windows distinguishes
+between GUI and console applications. <code>javaw -version</code> invoked in <code>cmd.exe</code>
+will not display any output.
+</para>
+
+<para>Eclipse for Windows likewise includes launchers  
+<filename>eclipse.exe</filename> and <filename>eclipsec.exe</filename>.
+Headless products like an <filename>ArchiveEngine</filename>, <filename>AlarmServer</filename> etc.
+should use <filename>eclipsec.exe</filename> as their launcher, but there is currently no
+way to specify this in the product configuration, see also
+the bug report on <quote>Support for exporting eclipsec.exe in RCP apps</quote>,
+<link xlink:href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185205">https://bugs.eclipse.org/bugs/show_bug.cgi?id=185205</link>.
+</para>
+
+<para>For the time being, the only solution is to manually remove the generated launcher, for example
+<filename>AlarmServer.exe</filename>, and replace it with a copy of <filename>eclipsec.exe</filename>
+from the Eclipse IDE, renamed to <filename>AlarmServer.exe</filename>.
+</para>
+
 </sect1>
 
 
