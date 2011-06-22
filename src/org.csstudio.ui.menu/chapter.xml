@@ -5,7 +5,10 @@
   <para>The plugin <quote>org.csstudio.ui.menu</quote> defines through 
   extensions the CSS Menu (which appears in the menu bar) and the 
   context sensitive pop-up submenu for object adapatable to 
-  <code>org.csstudio.csdata.ProcessVariable</code>.</para>
+  <code>org.csstudio.csdata.ProcessVariable</code>. The plugin <quote>org.csstudio.ui.menu</quote>
+  provides examples of how to contribute actions/commands, how to implement
+  a view that displays the pop-up menu, and with the same view one cacn
+  test whether his popup action/commands acutally display.</para>
   <sect1>
     <title>The CSS main menu</title>
     <figure id="fig_ui_menu_main">
@@ -84,6 +87,29 @@
                style=&quot;push&quot;&gt;
          &lt;/command&gt;
       &lt;/menuContribution&gt;
+      ...
+   &lt;/extension&gt;
+   ...
+&lt;/plugin&gt;</programlisting>
+  </sect1>
+    <para>The following example adds an action to the popup menu (note the contribution to the <quote>main</quote> section):</para>
+    <programlisting>&lt;plugin&gt;
+   ...
+   &lt;extension
+         point=&quot;org.eclipse.ui.popupMenus&quot;&gt;
+      ...
+      &lt;objectContribution
+            adaptable=&quot;true&quot;
+            id=&quot;org.csstudio.ui.menu.test.objectContribution1&quot;
+            objectClass=&quot;org.csstudio.csdata.ProcessVariable&quot;&gt;
+         &lt;action
+               class=&quot;org.csstudio.ui.menu.test.TestPVAction&quot;
+               icon=&quot;icons/test.png&quot;
+               id=&quot;org.csstudio.ui.menu.test.testpvaction&quot;
+               label=&quot;Test Action&quot;
+               menubarPath=&quot;org.csstudio.ui.menu.popup.processvariable/main&quot;&gt;
+         &lt;/action&gt;
+      &lt;/objectContribution&gt;
       ...
    &lt;/extension&gt;
    ...
