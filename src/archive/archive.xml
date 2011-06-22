@@ -352,11 +352,36 @@ previously handled the channels.
 
 
 <sect1>  <title>Running Archive Engines</title>
-URL, port
-Settings
-Database connection
-logging
-EPICS
+<para>The <code>ArchiveEngine</code> is a headless RCP application that
+reads a sample engine configuration, connects to the control system channels
+listed in the configuration, and writes received samples to the archive data
+store.
+</para>
+
+<para>It supports these command-line arguments:
+<programlisting>-help                         : Display Help
+-port 4812                    : HTTP server port
+-engine demo_engine           : Engine config name
+-data /home/fred/Workspace    : Eclipse workspace location
+-pluginCustomization /path/to/mysettings.ini: Eclipse plugin defaults
+</programlisting>
+</para>
+
+<para>The <code>-pluginCustomization</code> parameter can be used to provide
+settings for the RDB connection, to configure the logging, and to provide
+settings for access to the control system, for example EPICS Channel Access
+network preferences.
+</para>
+<para>The <code>-engine</code> parameter selects the sample engine configuration.
+In principle, that engine configuration already includes the URL of the
+engine web server, but an additional <code>-port</code> parameter is required
+for two reasons: First, this allows the engine to start a web server which
+can be used to monitor engine operation as soon as possible, for example while
+the engine it trying to connect to an RDB. Secondly, the engine will compare the
+provided port number with the port number of the URL in its configuration.
+This is means as a basic constistency check that helps avoid running archive engines
+with the wrong configuration.
+</para>
 
 <sect2>  <title>Engine Web Server</title>
 <para>Each sample engine has a built-in web server for status information
@@ -364,11 +389,54 @@ and basic remote control of the engine. When starting the engine on a host,
 the port number for this HTTPD must be provided.
 The sample engine URL configured in the RDB should match the format
 <programlisting><![CDATA[http://<host>:<port>/main]]></programlisting>
-Ideally, a future tool will automatically start engines on the configured host and port.
+
+The engine will compare the port number from the URL with the port
+number provided as a command-line argument.
+</para>
+
+<para>The engine web server provides several web pages, mostly linked
+from the <code>.../main</code> URL. Note that the engine only serves a blank
+page at its root URL. For example, accessing <code>http://localhost:4813</code>
+will result in an empty page. You have to start browsing at <code>http://localhost:4813/main</code>.
+Starting at <code>.../main</code>, one can drill down to the status of groups and individual channels.
+</para>
+
+<para>A few engine web pages are <emphasis>not</emphasis> accessible by following web browser links
+because they affect the engine operation. This is meant to prevent a web-crawling program to accidentally
+stop the engine.
+<variablelist> <title>Other Engine URLs</title>
+  <varlistentry><term><filename><![CDATA[http://<host>:<port>/stop]]></filename></term>
+  <listitem>Invoke this URL to stop the engine gracefully, i.e.
+  to ask the engine to write a final <code>Archive_Off</code>
+  sample to each channel, then quit.
+  </listitem>
+  </varlistentry>
+  
+  <varlistentry><term><filename><![CDATA[http://<host>:<port>/restart]]></filename></term>
+  <listitem>Invoke this URL to trigger a running restart of the engine.
+  The engine will stop sampling, read its configuration,
+  then start again.
+  Invoking this URL is required after changes to the configuration of
+  an archive engine.
+  </listitem>
+  </varlistentry>
+
+  <varlistentry><term><filename><![CDATA[http://<host>:<port>/reset]]></filename></term>
+  <listitem>Invoke this URL to reset engine statistics,
+  for example the average write time displayed on the
+  main page of the engine.
+  </listitem>
+  </varlistentry>
+
+  <varlistentry><term><filename><![CDATA[http://<host>:<port>/environment]]></filename></term>
+  <listitem>Invoke this URL to display engine environment settings
+  which might be useful when trying to debug a problem.
+  </listitem>
+  </varlistentry>
+</variablelist>
 </para>
 </sect2>
 
 </sect1>
-
 
 </chapter>
