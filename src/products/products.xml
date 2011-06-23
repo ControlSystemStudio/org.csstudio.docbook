@@ -97,9 +97,94 @@ allowing end users to install them into their CSS product on demand.
 
 
 <sect1> <title>Creating a Product</title>
-<para>
-TODO This should be described.
+<para>Fundamentally, an RCP Product is a plugin that implements the
+<code>org.eclipse.core.runtime.applications</code> extension point,
+and has a <filename>*.product</filename> file.
+The application extension point represents the <quote>main</quote> routine
+of the program, and the product file lists all plugins that you want to include
+in your product.
 </para>
+
+<para>A CSS application should create a workbench window with certain menus
+into which other CSS plugins can then add their entries. Similarly, it should
+provide a skeleton for the online help and preference system.
+Existing CSS plugins can be used to provide these.
+</para>
+
+<sect2>  <title>New Product Plug-in</title>
+<para>Create a new plugin. The suggested name is <code>org.csstudio.</code>
+followed by your site name and ending in <code>.product</code>,
+for example <code>org.csstudio.mysite.product</code>
+Add these dependencies:
+<variablelist>
+  <varlistentry><term><code>org.eclipse.core.runtime</code></term>
+  <listitem>Defines the application extension point.</listitem>
+  </varlistentry>
+
+  <varlistentry><term><code>org.csstudio.startup</code></term>
+  <listitem>Provides CSS-compliant application code.</listitem>
+  </varlistentry>
+</variablelist>
+</para>
+</sect2>
+
+<sect2>  <title>Implement Application</title>
+<para>Extend the <code>org.eclipse.core.runtime.applications</code> extension point.
+As an ID, you can simply enter <quote>application</quote> which will result
+in a full ID of <code>org.csstudio.your-site.product.application</code>.
+Add a <quote>run</quote> element with value
+<code>org.csstudio.startup.application.Application</code>,
+i.e. use the skeleton implementation from the CSS startup plugin.
+</para>
+</sect2>
+
+<sect2>  <title>Add Product Definition</title>
+<para>Use the IDE wizard to create a new <quote>Plug-in Development</quote>,
+<quote>Product Configuration</quote> in your product plugin.
+When editing the generated <filename>.product</filename> file,
+select the application ID defined in the previous step.
+Press the <quote>New...</quote> button next to the <quote>Product Definition</quote>
+section to create a new product ID, and in there again select your application ID.
+</para>
+<para>Next you need to select if your product configuration is based on plugins or features,
+and then list either plugin or features in the <quote>Dependencies</quote> tab.
+Initially it might appear easier to simply list plugins, but in the long run you will
+find it easier to maintain the product if it is based on features, so select the latter
+and add <code>org.eclipse.rcp</code> as the first feature.
+</para>
+</sect2>
+
+<sect2>  <title>Create <code>eclipse</code> Feature</title>
+<para>Create a new <quote>Feature</quote> project called
+<code>org.csstudio.your-site.eclipse.feature</code>.
+This feature will list all Eclipse plugins, i.e. plugins that CSS uses but
+which are provided by Eclipse.
+It is unfortunately not very easy to determine which Eclipse plugins you
+need to include in your product, and details will change between versions
+of Eclipse.
+For this reason it is useful to list them in their own feature.
+</para>
+<para>Start by adding <code>org.eclipse.core.runtime</code> to your
+<code>eclipse</code>, that add it in turn to your
+<filename>*.product</filename> dependencies.
+We will later determine which other Eclipse plugins need to be listed
+in your <code>eclipse</code>.
+</para>
+</sect2>
+
+<sect2>  <title>Create <code>core</code> Feature</title>
+<para>Similar to the <code>eclipse</code> feature, create a feature
+called <code>org.csstudio.your-site.core.feature</code> and add it as
+a dependency to your product.
+</para>
+</sect2>
+
+
+<sect2>  <title>Create <code>applications</code> Feature</title>
+<para></para>
+</sect2>
+
+
 </sect1>
 
 
