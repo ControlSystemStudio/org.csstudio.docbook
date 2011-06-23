@@ -49,7 +49,7 @@ product.
 </sect1>
 
 
-<sect1> <title>Plug-in Dependencies</title>
+<sect1> <title>Plug-in Dependencies<indexterm><primary>Dependencies</primary></indexterm></title>
 <para>
 A plug-in can depend on other plug-ins.
 For example, the <code>databrowser</code> plug-in depends on others
@@ -78,7 +78,7 @@ or writing to a log book.
 </sect1>
 
 
-<sect1> <title>Features</title>
+<sect1> <title>Features<indexterm><primary>Features</primary></indexterm></title>
 <para>As just described, we often need more than one plug-in to provide
 a certain functionality, for example the <code>databrowser</code> plug-in
 with its immediate dependencies combined with a site-specific selection of
@@ -96,7 +96,7 @@ allowing end users to install them into their CSS product on demand.
 </sect1>
 
 
-<sect1> <title>Creating a Product</title>
+<sect1> <title>Creating a Product<indexterm><primary>Product, Creating</primary></indexterm></title>
 <para>Fundamentally, an RCP Product is a plugin that implements the
 <code>org.eclipse.core.runtime.applications</code> extension point,
 and has a <filename>*.product</filename> file.
@@ -106,16 +106,17 @@ in your product.
 </para>
 
 <para>A CSS application should create a workbench window with certain menus
-into which other CSS plugins can then add their entries. Similarly, it should
-provide a skeleton for the online help and preference system.
+into which other CSS plugins can then add their entries. Similarly, it needs
+to create a skeleton for the online help and preference system.
 Existing CSS plugins can be used to provide these.
 </para>
 
 <sect2>  <title>New Product Plug-in</title>
 <para>Create a new plugin. The suggested name is <code>org.csstudio.</code>
 followed by your site name and ending in <code>.product</code>,
-for example <code>org.csstudio.mysite.product</code>
-Add these dependencies:
+for example <code>org.csstudio.mysite.product</code>.
+</para>
+<para>Add these dependencies:
 <variablelist>
   <varlistentry><term><code>org.eclipse.core.runtime</code></term>
   <listitem>Defines the application extension point.</listitem>
@@ -131,7 +132,7 @@ Add these dependencies:
 <sect2>  <title>Implement Application</title>
 <para>Extend the <code>org.eclipse.core.runtime.applications</code> extension point.
 As an ID, you can simply enter <quote>application</quote> which will result
-in a full ID of <code>org.csstudio.your-site.product.application</code>.
+in a complete ID of <code>org.csstudio.mysite.product.application</code>.
 Add a <quote>run</quote> element with value
 <code>org.csstudio.startup.application.Application</code>,
 i.e. use the skeleton implementation from the CSS startup plugin.
@@ -148,15 +149,59 @@ section to create a new product ID, and in there again select your application I
 </para>
 <para>Next you need to select if your product configuration is based on plugins or features,
 and then list either plugin or features in the <quote>Dependencies</quote> tab.
-Initially it might appear easier to simply list plugins, but in the long run you will
-find it easier to maintain the product if it is based on features, so select the latter
-and add <code>org.eclipse.rcp</code> as the first feature.
+Initially it might appear easier to simply list plugins.
+You can then list the application plugins that you want to include in your product,
+for example Probe and BOY. You then press the <quote>Add Required Plug-ins</quote>
+button, and you are done.
+</para>
+<para>This approach has the disadvantage that your product consists of a long
+list of plugins. After the fact it will be hard to determine which plugins you wanted to include
+in your product to provide the user with some functionality, and which plugins had
+to be added because they were dependencies of those functional plugins.
+</para>
+<para>In the long run you might find it easier to maintain the product if it is based on features.
+You define one feature to list the application plugins that you want for your users,
+and separate features to list the plugins that result from dependencies,
+maybe further separated into CSS core plugins and those from Eclipse.
+The following describes how to create those features.
+</para>
+</sect2>
+
+<sect2>  <title>Create <code>applications</code> Feature</title>
+<para>Create a new <quote>Feature</quote> project called
+<code>org.csstudio.mysite.applications.feature</code>.
+This feature lists all the application plugins that you want to
+include into your product, for example the plugins for Probe,
+Data Browser, BOY.
+</para>
+<para>Start by adding your product plugin, then add the application
+plugins. Some application plugins are already pre-aggregated into
+features, for example
+<code>org.csstudio.opibuilder.feature</code>.
+You can add individual plugins or make your applications feature
+include other features.
+</para>
+<para>Finally, add the applications plugin to your
+<filename>*.product</filename> dependencies.
+</para>
+</sect2>
+
+<sect2>  <title>Create <code>core</code> Feature</title>
+<para>Similar to the <code>eclipse</code> feature, create a feature
+called <code>org.csstudio.mysite.core.feature</code> and add it as
+a dependency to your product.
+This feature will list all <quote>core</quote> CSS plugins that your application
+plugins need.
+By separating these supporting plugins from the application plugins that
+the end user sees, it will be easier to maintain your product in the long run.
+</para>
+<para>One core plugin that you will have to add is <code>org.csstudio.startup</code>,
+and we will soon add more.
 </para>
 </sect2>
 
 <sect2>  <title>Create <code>eclipse</code> Feature</title>
-<para>Create a new <quote>Feature</quote> project called
-<code>org.csstudio.your-site.eclipse.feature</code>.
+<para>Finally, create an <code>eclipse</code> feature.
 This feature will list all Eclipse plugins, i.e. plugins that CSS uses but
 which are provided by Eclipse.
 It is unfortunately not very easy to determine which Eclipse plugins you
@@ -172,16 +217,22 @@ in your <code>eclipse</code>.
 </para>
 </sect2>
 
-<sect2>  <title>Create <code>core</code> Feature</title>
-<para>Similar to the <code>eclipse</code> feature, create a feature
-called <code>org.csstudio.your-site.core.feature</code> and add it as
-a dependency to your product.
+
+<sect2>  <title>Fix Dependencies</title>
+<para>Finally, create an <code>eclipse</code> feature.
+This feature will list all Eclipse plugins, i.e. plugins that CSS uses but
+which are provided by Eclipse.
+It is unfortunately not very easy to determine which Eclipse plugins you
+need to include in your product, and details will change between versions
+of Eclipse.
+For this reason it is useful to list them in their own feature.
 </para>
-</sect2>
-
-
-<sect2>  <title>Create <code>applications</code> Feature</title>
-<para></para>
+<para>Start by adding <code>org.eclipse.core.runtime</code> to your
+<code>eclipse</code>, that add it in turn to your
+<filename>*.product</filename> dependencies.
+We will later determine which other Eclipse plugins need to be listed
+in your <code>eclipse</code>.
+</para>
 </sect2>
 
 
