@@ -91,7 +91,6 @@
    &lt;/extension&gt;
    ...
 &lt;/plugin&gt;</programlisting>
-  </sect1>
     <para>The following example adds an action to the popup menu (note the contribution to the <quote>main</quote> section):</para>
     <programlisting>&lt;plugin&gt;
    ...
