@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0">
+  <title>Common SWT/JFace utilities - org.csstudio.ui.util</title>
+  <para>The plugin <quote>org.csstudio.ui.util</quote> defines common
+  ui elements can be used in different applications.</para>
+  <sect1>
+    <title>Adapter utilities - org.csstudio.ui.util.AdapterUtil</title>
+    <para>The most important way for Eclipse RCP plug-ins to communicate is throught
+    the use of Adapters. Unfortunately Adapters do not work well with conversions
+    from one object to arrays of an object of different kind, so we created
+    a few utility methods to properly handle this case. These should be used
+    when adapting the selection from one plug-in to the other during events
+    like drag'n'drog and context menu command/actions.</para>
+    <para>For example, this command handler convert a selection to a specific type:</para>
+    <programlisting>	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		ProcessVariable[] pvs = AdapterUtil.convert(selection, PocessVariable.class);
+		...
+	}
+</programlisting>
+    <para>If no selection is available, or no conversion is available, and empty array
+    is returned. If each item in the selection is adaptable to a PV[], those arrays
+    will be merged into a single array.</para>
+  </sect1>
+  <sect1>
+    <title>Drag and drop - org.csstudio.ui.util.dnd</title>
+    <para>This supports easier implementation for drag sources and drop targets.</para>
+    <para>To declare a source:</para>
+    <programlisting>        Control control = ...
+
+        // Drag PVs out of control
+        new ControlSystemDragSource(control) {
+            @Override
+            public Object getSelection() {
+                return pvs;
+            }
+        };
+</programlisting>
+    <para>The source will take care of broacasting the selection in all possible
+    adaptable types.</para>
+    <para>To declare a drop:</para>
+    <programlisting>        Control control = ...
+
+        // Accept PVs for a drop
+        new ControlSystemDropTarget(control, MyData.class, ProcessVariable[].class) {
+            @Override
+            public void handleDrop(Object item) {
+                if (item instanceof ProcessVariable[]) {
+                    control.setText(Arrays.toString((ProcessVariable[]) item));
+                }
+                if (item instanceof MyData) {
+                    control.setText(((MyData) item).getText());
+                }
+            }
+        };
+</programlisting>
+    <para>The target will take care of requesting the type request, in the order
+    of preference given in the constructor.</para>
+  </sect1>
+</chapter>
