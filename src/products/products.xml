@@ -49,18 +49,18 @@ product.
 </sect1>
 
 
-<sect1> <title>Plug-in Dependencies<indexterm><primary>Dependencies</primary></indexterm></title>
+<sect1> <title>Plug-in Dependencies<indexterm><primary>Dependencies, direct and hidden</primary></indexterm></title>
 <para>
 A plug-in can depend on other plug-ins.
-For example, the <code>databrowser</code> plug-in depends on others
+For example, a data plotting plug-in depends on others
 which provide access to archived data, to live data, and it also depends on
 a plotting plugin.
-When adding the <code>databrowser</code> plugin to a product, these dependencies
-are mostly added automatically.
+When adding a plotting plugin to a product, such direct dependencies are obvious
+and Eclipse can help to add them to the product.
 There are, however, additional dependencies that Eclipse cannot automatically determine.
 </para>
 
-<para>For example, the plug-in on which the Data Browser directly depends to read archived data
+<para>For example, the plug-in on which the plotting tool directly depends to read archived data
 only defines the programming interface for reading historic data.
 CSS is designed to support multiple sources of archived data,
 for example the XML-RPC network data server of the Channel Archiver but also
@@ -137,6 +137,10 @@ Add a <quote>run</quote> element with value
 <code>org.csstudio.startup.application.Application</code>,
 i.e. use the skeleton implementation from the CSS startup plugin.
 </para>
+<para>
+TODO:
+Describe the "common startup" module settings
+</para>
 </sect2>
 
 <sect2>  <title>Add Product Definition</title>
@@ -149,8 +153,8 @@ section to create a new product ID, and in there again select your application I
 </para>
 <para>Next you need to select if your product configuration is based on plugins or features,
 and then list either plugin or features in the <quote>Dependencies</quote> tab.
-Initially it might appear easier to simply list plugins.
-You can then list the application plugins that you want to include in your product,
+Initially it is easier to base a product on plugins.
+You can list the application plugins that you want to include in your product,
 for example Probe and BOY. You then press the <quote>Add Required Plug-ins</quote>
 button, and you are done.
 </para>
@@ -158,8 +162,9 @@ button, and you are done.
 list of plugins. After the fact it will be hard to determine which plugins you wanted to include
 in your product to provide the user with some functionality, and which plugins had
 to be added because they were dependencies of those functional plugins.
+Also remember that you might need plugins that do not show up as direct dependencies.
 </para>
-<para>In the long run you might find it easier to maintain the product if it is based on features.
+<para>In the long run your product might be easier to maintain if it is based on features.
 You define one feature to list the application plugins that you want for your users,
 and separate features to list the plugins that result from dependencies,
 maybe further separated into CSS core plugins and those from Eclipse.
@@ -181,8 +186,8 @@ features, for example
 You can add individual plugins or make your applications feature
 include other features.
 </para>
-<para>Finally, add the applications plugin to your
-<filename>*.product</filename> dependencies.
+<para>Add the <code>applications</code> feature as a dependency to your
+<filename>*.product</filename>.
 </para>
 </sect2>
 
@@ -198,6 +203,8 @@ the end user sees, it will be easier to maintain your product in the long run.
 <para>One core plugin that you will have to add is <code>org.csstudio.startup</code>,
 and we will soon add more.
 </para>
+<para>Add the <code>core</code> feature as a dependency to your <filename>*.product</filename>.
+</para>
 </sect2>
 
 <sect2>  <title>Create <code>eclipse</code> Feature</title>
@@ -210,29 +217,39 @@ of Eclipse.
 For this reason it is useful to list them in their own feature.
 </para>
 <para>Start by adding <code>org.eclipse.core.runtime</code> to your
-<code>eclipse</code>, that add it in turn to your
-<filename>*.product</filename> dependencies.
-We will later determine which other Eclipse plugins need to be listed
-in your <code>eclipse</code>.
+<code>eclipse</code> feature, then add the <code>eclipse</code> feature
+as a dependency to your <filename>*.product</filename>.
 </para>
 </sect2>
 
 
-<sect2>  <title>Fix Dependencies</title>
-<para>Finally, create an <code>eclipse</code> feature.
-This feature will list all Eclipse plugins, i.e. plugins that CSS uses but
-which are provided by Eclipse.
-It is unfortunately not very easy to determine which Eclipse plugins you
-need to include in your product, and details will change between versions
-of Eclipse.
-For this reason it is useful to list them in their own feature.
+<sect2>  <title>Fix Dependencies<indexterm><primary>Dependency Errors, Fixing</primary></indexterm></title>
+<para>When a product is based on features, some manual labor will
+be required to add direct plugin dependencies to the 
+<code>core</code> respectively <code>eclipse</code> features.
 </para>
-<para>Start by adding <code>org.eclipse.core.runtime</code> to your
-<code>eclipse</code>, that add it in turn to your
-<filename>*.product</filename> dependencies.
-We will later determine which other Eclipse plugins need to be listed
-in your <code>eclipse</code>.
+<para>Start by trying to run the new product from within the IDE:
+Open the <filename>*.product</filename> file, press <quote>Synchronize</quote>
+and then <quote>Launch an Eclipse Application</quote>.
+Your product will <emphasis>not</emphasis> start.
+Instead, you will see many error messages, including
+<quote>The application could not start. Would you like to view the log?</quote>.
+When you select to see the errors in an Error log view, which is typically more convenient,
+or in a plain log file that looks like this:
+
+<programlisting>!MESSAGE Bundle .../org.csstudio.ui.help/ was not resolved.
+!MESSAGE Missing required bundle org.eclipse.help.ui_0.0.0
+</programlisting>
+
+This means that the plugin <code>org.eclipse.help.ui</code> is a missing direct dependency
+of your product. Add all missing plugins with names starting in org.csstudio into your
+<code>core</code> feature, and add the missing Eclipse plugins into your <code>eclipse</code>
+feature.
 </para>
+<para>Press <quote>Synchronize</quote> and then <quote>Launch an Eclipse Application</quote>
+again, fix remaining dependency problems until your product starts.
+</para>
+
 </sect2>
 
 
