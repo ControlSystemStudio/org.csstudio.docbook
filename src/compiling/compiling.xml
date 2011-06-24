@@ -198,10 +198,31 @@ locate all available product files as shown in <xref linkend="fig_comp_search_pr
 
 <para>When you open an Eclipse product file, it will be displayed as per <xref linkend="fig_comp_product"/>.
 In the <code>Overview</code> tab, press <code>Synchronize</code>, <code>Launch an Eclipse Application</code> to run the product from within the IDE.
-The product should start up. In the case of the Archive Engine it might soon exit with an error message indicating that it requires more command-line arguments.
-You could go into the menu <code>Run</code>, <code>Run Configurations..</code> and supply the required command-line arguments to run the product from within the IDE,
-but the main point here is that the product should <emphasis>start</emphasis>.
-There should be no errors regarding missing plugins or compilation problems.
+The product should start up.
+</para>
+
+<para>In the case of the Archive Engine it might soon exit with an error message indicating
+that it requires more command-line arguments.
+We will later describe how to <quote>export</quote> products from the IDE into standalone
+executables, and with such an exported command-line tool it will of course be trivial
+to provice command-line arguments when invoking the tool from the shell.
+</para>
+
+<para>During development and initial testing, though, it can be more convenient to execute CSS products
+from within the IDE.
+To add command-line arguments<indexterm><primary>Command-line arguments in IDE</primary></indexterm>
+to products executed in the IDE,
+invoke the menu <code>Run</code>, <code>Run Configurations..</code>.
+Locate the configuration for the product, open its <quote>Arguments</quote> tab.
+The <quote>Program Arguments</quote> section may already contain entries like
+<code>-os ${target.os}</code>.
+Add your desired command-line arguments to the end of the program arguments.
+</para>
+
+<para>When running a product from within the IDE for the first time,
+the main goal is that the product should <emphasis>start</emphasis>.
+It may then stop because of missing command line arguments,
+but it should be no errors regarding missing plugins or compilation problems.
 </para>
 
 <para>If the product does not start up, and instead you get an error like
