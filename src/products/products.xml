@@ -246,14 +246,29 @@ of your product. Add all missing plugins with names starting in org.csstudio int
 <code>core</code> feature, and add the missing Eclipse plugins into your <code>eclipse</code>
 feature.
 </para>
-<para>Press <quote>Synchronize</quote> and then <quote>Launch an Eclipse Application</quote>
-again, fix remaining dependency problems until your product starts.
+
+<figure xml:id="fig_prod_validate">  <title>Plug-in Dependency Validator</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="validate.png" width="40%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Another display of missing plugin dependencies<indexterm><primary>Plug-in Dependency Validation</primary></indexterm>
+is available from the menu <quote>Run</quote>, <quote>Run Configurations...</quote>.
+Locate the Eclipse Application entry for your product,
+select the <quote>Plug-ins</quote> tab and press the
+<quote>Validate Plug-Ins</quote> button.
+It will open a display of missing dependencies as shown in
+<xref linkend="fig_prod_validate"/>.
+</para>
+
+<para>Continue to add missing dependencies to your features,
+occasionally pressing <quote>Synchronize</quote> and then <quote>Launch an Eclipse Application</quote>
+in your product to see which dependencies are still required.
 </para>
 
 </sect2>
 
-
 </sect1>
-
 
 </chapter>
