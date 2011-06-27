@@ -91,6 +91,10 @@ for selected plugins.
 
 <xi:include href="products/products.xml" />
 
+<xi:include href="intropages.xml" />
+
+<!-- TODO Headless build -->
+
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />
