@@ -37,7 +37,27 @@ of your product:
 </extension>
 ]]></programlisting>
 </para>
-
+<para>Your product's <filename>plugin.xml</filename> file should already
+contain an entry for the <code>org.eclipse.core.runtime.products</code>
+extension point.
+You need to add the following elements to configure the main page
+of the universal intro:
+<programlisting><![CDATA[<extension point="org.eclipse.core.runtime.products">
+  id="product"
+  <product application="...." name="...">
+    <property name="aboutImage" value="..."/>
+    <!-- Append intro properties: -->
+    <property name="introBrandingImageText"
+       value="My Version of CSS"/>
+    <property name="introBrandingImage"
+       value="product:icons/css64.png"/>
+    <property name="introTitle"
+       value="Welcome to Control System Studio (CSS) for this site!">
+    </property>
+  </product>
+</extension>
+]]></programlisting>
+</para>
 <para>You can influence the behavior of the Universal Intro plugin
 to some extend via preference settings added to your product's
 <filename>plugin_customization.ini</filename> file, for example
@@ -105,9 +125,14 @@ to the intro pages:
  </configExtension>
 </extension>
 ]]></programlisting>
-
+</para>
+<para>The IDE can help with this step:
+When adding a <code>..configExtension</code>
+to your product in the plugin editor,
+the "Universal Welcome Contribution" is listed as a template.
+It will generate an example intro file.
 Consult the Eclipse online help or example files from other CSS
-plugin for details on the format of the intro file content.
+plugin for details on the intro file format.
 </para>
 <para>Assuming you have a plugin <code>org.csstudio.XXX</code>
 and you want to provide intro content, there are two options
