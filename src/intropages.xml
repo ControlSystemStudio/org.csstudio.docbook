@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_intropages">
+
+<!-- This page is also on the wiki as
+     https://sourceforge.net/apps/trac/cs-studio/wiki/IntroPages
+  -->
+
+<title>Product Intro Pages</title>
+
+<sect1> <title><quote>Welcome</quote> Pages</title>
+<para>Eclipse provides introduction pages that are accessible via the menu
+<code>Help</code>, <code>Welcome</code>.
+They are also displayed to the user when CSS is started for the very first time.
+</para>
+</sect1>
+
+<sect1> <title>Universal Intro</title>
+<para>Fundamentally, an RCP product can provide arbitrary
+introduction page content via the <code>org.eclipse.ui.intro</code>
+extension point. Refer to the online help for details.
+</para>
+<para>CSS products, however, should use the Universal Intro mechanism.
+Instead of defining the complete introduction page content within your
+product, it allows other CSS plugins to also contribute intro page content.
+There is no need to update a custom, product-specific intro when
+adding or changing plugins.
+</para>
+<para>To enable the Universal Intro, configure the intro extension point
+as follows for your product, using the correct <code>productId</code>
+of your product:
+<programlisting><![CDATA[<extension point="org.eclipse.ui.intro">
+ <introProductBinding
+       introId="org.eclipse.ui.intro.universal"
+       productId="org.csstudio.....your-product.....product"/>
+</extension>
+]]></programlisting>
+</para>
+</sect1>
+
+
+<sect1> <title>How to Contribute</title>
+<para>The following mark-up in your plugin.xml file
+adds a link to your file <filename>doc/overview.xml</filename>
+to the intro pages:
+<programlisting><![CDATA[<extension
+    point="org.eclipse.ui.intro.configExtension">
+ <configExtension
+   configId="org.eclipse.ui.intro.universalConfig"
+   content="doc/overview.xml">
+ </configExtension>
+</extension>
+]]></programlisting>
+
+Consult the Eclipse online help or example files from other CSS
+plugin for details on the format of the intro file content.
+</para>
+<para>Assuming you have a plugin <code>org.csstudio.XXX</code>
+and you want to provide intro content, there are two options
+for the location of that content:
+<itemizedlist>
+<listitem>Within the same plugin
+
+ <code>org.csstudio.XXX</code>.
+</listitem>
+
+<listitem>In a separate
+ plugin
+  <code>org.csstudio.XXX.intro</code>.
+</listitem>
+</itemizedlist>
+</para>
+<para>Using the same plugin is the easiest option.
+All users of the plugin will get the intro content.
+If site integrators want to disable it, they can do this via a
+<code><![CDATA[<hidden>]]></code>  section in the
+<code>org.eclipse.ui.intro.universal/INTRO_DATA</code>.
+It does, however, add a dependency to the intro plugins to
+your plugin.
+</para>
+<para>Using a separate plugin for the intoduction makes the inclusion or exclusion
+of the intro content more straight forward, but adds more plugins, and is additional work.
+It would allow building products without universal intro or even no intro at all.
+In the long run, intro content in a separate plugin is probably most flexible.
+In the short run, it might be OK to add the intro to the existing plugin,
+then extract it to a separate plugin as the need arises.
+</para>
+</sect1>
+
+<sect1> <title>Where to Contribute</title>
+<para>Technically, one can contribute to universal intro pages
+called <code>overview</code>, <code>firststeps</code>,
+<code>tutorials</code>, <code>samples</code>,
+<code>whatsnew</code>, <code>migrate</code>,
+<code>webresources</code>, or even define new pages.
+</para>
+<para>
+For CSS products it is suggested to concentrate on the following:
+
+<variablelist>
+
+<varlistentry><term><code>overview</code></term>
+<listitem>This is where each site can publish their site-specific content:
+<programlisting>Welcome to CSS for ... users!
+CSS is ...
+To get started, read the 'first steps'
+that introduce the various tools.
+You can also read the online help, ...
+</programlisting>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><code>firststeps</code></term>
+<listitem>This is where each tool, via a separate
+<code>org.csstudio.....intro</code> plugin,
+can contribute some how-to-get-started content.
+</listitem>
+</varlistentry>
+
+<varlistentry><term><code>whatsnew</code></term>
+<listitem>This is were each site and each tool may add info about
+most recent changes, so users who've used CSS before can read up
+on what changed.
+</listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+</sect1>
+
+
+<sect1> <title>Issues</title>
+
+<sect2> <title>Main Intro Screen</title>
+<para>The layout of the Universal Intro main screen is mostly fixed.
+There isn't much to customize beyond a one-line title and a small icon.
+</para>
+</sect2>
+
+<sect2> <title> Cheat Sheets</title>
+<para>In principle, it would be nice to be able to link to
+Cheat Sheets from for example the <code>firststeps</code> section
+with code like this:
+
+<programlisting><![CDATA[<!-- url is one string, broken for readability -->
+<link
+  url="http://org.eclipse.ui.intro/showStandby?
+  partId=org.eclipse.platform.cheatsheet&amp;
+  input=org.csstudio.XXXX.some_cheat_sheet"
+]]></programlisting>
+
+But that requires the plugin <code>org.eclipse.platform</code>,
+which in turn adds quite some intro content that is useful for
+Eclipse programmers but potentially confusing for CSS end-users.
+</para>
+</sect2>
+
+</sect1>
+
+
+
+
+
+
+
+
+
+</chapter>
