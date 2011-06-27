@@ -21,7 +21,7 @@ They are also displayed to the user when CSS is started for the very first time.
 introduction page content via the <code>org.eclipse.ui.intro</code>
 extension point. Refer to the online help for details.
 </para>
-<para>CSS products, however, should use the Universal Intro mechanism.
+<para>CSS products, however, should use the <quote>Universal Intro</quote> mechanism.
 Instead of defining the complete introduction page content within your
 product, it allows other CSS plugins to also contribute intro page content.
 There is no need to update a custom, product-specific intro when
@@ -35,6 +35,59 @@ of your product:
        introId="org.eclipse.ui.intro.universal"
        productId="org.csstudio.....your-product.....product"/>
 </extension>
+]]></programlisting>
+</para>
+
+<para>You can influence the behavior of the Universal Intro plugin
+to some extend via preference settings added to your product's
+<filename>plugin_customization.ini</filename> file, for example
+like this:
+<programlisting># Select sections of intro page
+org.eclipse.ui.intro.universal/INTRO_ROOT_PAGES=overview,\
+     firststeps,whatsnew
+
+# Select scheme
+org.eclipse.ui.intro/INTRO_THEME=org.eclipse.ui.intro.universal.slate
+# Configure placement of sections
+org.eclipse.ui.intro.universal/INTRO_DATA=product:intro_data.xml
+</programlisting>
+
+The <filename>intro_data.xml</filename> file mentioned in these settings
+can look like this:
+
+<programlisting><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<!-- This file controls the initial placement of
+     Welcome (intro) page items.
+     File can be generated via the Welcome page preference panel.
+     
+     Items that are not listed in here will show in a
+     default place on their page.
+     Items listen in <hidden></hidden> sections will be, well,
+     hidden.
+  -->
+<extensions>
+ <page id="overview">
+  <group path="page-content/top-left">
+   <extension id="org.csstudio.myproduct.product.overview"
+              importance="high"/>
+  </group>
+ </page>
+ <page id="whatsnew">
+  <group path="page-content/top-left">
+    <extension id="org.csstudio.sns.product.whatsnew"
+               importance="high"/>
+  </group>
+ </page>
+ <page id="firststeps">
+  <group path="page-content/top-left">
+    <extension id="org.csstudio.trends.databrowser"
+               importance="medium"/>
+  </group>
+  <group path="page-content/top-right">
+    <extension id="org.csstudio.opibuilder" importance="medium"/>
+  </group>
+ </page>
+</extensions>
 ]]></programlisting>
 </para>
 </sect1>
