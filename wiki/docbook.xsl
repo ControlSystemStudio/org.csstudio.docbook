@@ -12,14 +12,12 @@
      <chapter> must have <title>,
      then one or more <para> and <sect1>.
      
-     <sect1> must have <title>
+     <sect1> must have <title>.
+     May include <para> and <sect2>
      
      Other markup:
      
      <itemizedlist> or <orderedlist> each with <listitem>
-     The text for a <listitem> must not contain any line breaks.
-     If the <listitem> text is not kept on one line,
-     the generated wiki list will have gaps.
      
      <code>, <filename>, <programlisting>, <emphasis>
      
@@ -41,14 +39,25 @@ wiki text is re-generated from the DocBook file.
 }}}
 
 = <xsl:value-of select="db:title"/> =
-<xsl:apply-templates/>
+
+[[PageOutline]]
+
+<xsl:apply-templates select="db:para"/>
+<xsl:apply-templates select="db:sect1"/>
 </xsl:template>
 
-<!-- Section: Show title, process paragraphs -->
+<!-- Sections: Show title, process paragraphs -->
 <xsl:template match="db:sect1">
 == <xsl:value-of select="db:title"/> ==
+<xsl:apply-templates select="db:sect2"/>
 <xsl:apply-templates select="db:para"/>
 </xsl:template>
+
+<xsl:template match="db:sect2">
+=== <xsl:value-of select="db:title"/> ===
+<xsl:apply-templates select="db:para"/>
+</xsl:template>
+
 
 <!-- Add another newline after paragraphs -->
 <xsl:template match="db:para">
@@ -60,17 +69,28 @@ wiki text is re-generated from the DocBook file.
 <!-- Escape filename, programlisting, emphasis, ... -->
 <xsl:template match="db:filename">{{{<xsl:value-of select="."/>}}}</xsl:template>
 
+<!--  Copy code verbatim, NOT escaping '<' as '&lt;' and so on -->
 <xsl:template match="db:programlisting">
 {{{
-<xsl:value-of select="."/>
+<xsl:value-of select="." disable-output-escaping="yes"/>
 }}}
 </xsl:template>
 
-<xsl:template match="db:code">{{{<xsl:value-of select="."/>}}}</xsl:template>
+<xsl:template match="db:code">{{{<xsl:value-of select="." disable-output-escaping="yes"/>}}}</xsl:template>
 
 <xsl:template match="db:emphasis">
 <xsl:text>__</xsl:text><xsl:value-of select="."/><xsl:text>__</xsl:text>
 </xsl:template>
+
+<xsl:template match="db:quote">
+"<xsl:value-of select="."/>"
+</xsl:template>
+
+
+<!-- indexterm, primary are NOT correctly handled! -->
+<xsl:template match="db:indexterm">
+</xsl:template>
+
 
 
 <!-- Lists-->
@@ -82,14 +102,18 @@ wiki text is re-generated from the DocBook file.
 <xsl:apply-templates select="db:listitem" mode="number"/>
 </xsl:template>
 
+<!-- normalize-space(.) to place list item text on one line,
+     to avoid gaps in the wiki output
+  -->
 <xsl:template match="db:listitem" mode="number">
-<xsl:text>  1. </xsl:text><xsl:value-of select="."/><xsl:text></xsl:text>
+<xsl:text>  1. </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="db:listitem" mode="bullet">
-<xsl:text>  * </xsl:text><xsl:value-of select="."/><xsl:text></xsl:text>
+<xsl:text>  * </xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>
+</xsl:text>
 </xsl:template>
-
 
 
                 
