@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_openfile">
+
+<title>Opening Files from Command-Line - org.csstudio.openfile<indexterm><primary><code>org.csstudio.openfile</code></primary></indexterm></title>
+
+<sect1> <title>Goal</title>
+<para>While it is quite easy to open display or other CSS configuration
+files inside CSS, i.e. when CSS is already running,
+there is often also the need to open such files from <emphasis>outside</emphasis> of CSS.
+This is especially important for sites that are transitioning to
+CSS. If legacy control system tools can somehow open CSS displays
+from the command line, i.e. also from within shell scripts, the
+transition can be much smoother.
+</para>
+</sect1>
+
+<sect1> <title>Eclipse Launcher</title>
+<para>The Eclipse Launcher supports a command-line option
+<programlisting>--launcher.openfile  some_file_name.ext
+</programlisting>
+
+When this option is found, the launcher will send the
+<code>SWT.OpenDocuments</code> event to the RCP application.
+The launcher will also check for another copy of the RCP application.
+If it detects that another copy of the RCP application is already
+running, it will send the event to that application.
+</para>
+<para>Fundamentally, this accomplishes the goal:
+CSS can receive the names of files that it should open
+from the command line. Duplicate instances of CSS are
+automatically prevented.
+</para>
+</sect1>
+
+<sect1> <title>Product Name</title>
+<para>To benefit from this Eclipse feature, several steps
+are necessary.
+</para>
+<para>The launcher needs to detect another instance of CSS
+that might already be running, and it has to be able to do
+this on all supported operating systems.
+Eclipse depends on the following correlation between the product name
+and the launcher name:
+<itemizedlist>
+<listitem>The launcher name has to be a lower-case name like
+<filename>css</filename>.
+You configure the launcher name in the <quote>Launching</quote>
+tab of the editor for your <filename>*.product</filename> file.
+On Windows, the resulting launcher is actually called
+<filename>css.exe</filename>.
+</listitem>
+<listitem>The application name must match the launcher name
+with the first letter capitalized, i.e. <quote>Css</quote>.
+You specify the application name on the <quote>Overview</quote>
+tab of the editor for your <filename>*.product</filename> file,
+in the <quote>General Information</quote> section.
+After pressing the <quote>Synchronize</quote> link on the Overview tab
+of the product editor, you should find the same application name
+in the product's <filename>plugin.xml</filename> file like this:
+<programlisting><![CDATA[<extension id="product"
+    point="org.eclipse.core.runtime.products">
+ <product
+    application="org.csstudio.your-site.product.application"
+    name="Css">
+    <property name="appName" value="Css">
+    </property>
+  ...
+]]>
+</programlisting> 
+The key here is that the <code>appName</code> matches the
+name of your launcher with the first letter capitalized.
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1> <title>Handle <code>SWT.OpenDocuments</code></title>
+<para>Your CSS application needs to handle the received
+<code>SWT.OpenDocuments</code> events.
+When you use the <code>Workbench</code> class
+from the plugin <code>org.csstudio.utility.product</code>,
+its <code>ApplicationWorkbenchAdvisor</code> will attempt
+to open all received files.
+To accomplish this, it relies on the <code>DisplayUtil</code> from the
+<code>org.csstudio.openfile</code> plugin.
+</para>
+</sect1>
+
+<sect1> <title>Associate File Types with Handlers</title>
+<para>The <code>org.csstudio.openfile</code> plugin declares
+an extension point <code>org.csstudio.openfile.openDisplay</code>
+that other plugins can implement to support opening their
+files from the command-line.
+</para>
+<para>One example is BOY, which will open <filename>*.opi</filename>
+files in the BOY runtime.
+</para>
+<para>One might think that the existing Eclipse registry entries for
+editors are sufficient to associate file types with a handler that
+can open them. The editor registry, however, allows for the registration
+of multiple editors. When using that to open files from the command line,
+it would be hard to predict if for example an <filename>*.opi</filename> file
+was opened in the desired BOY runtime, or in the BOY editor, a generic XML
+file editor or a plain text file editor. 
+The designated <code>...openDisplay</code> extension point avoids such
+ambiguities.
+</para>
+</sect1>
+
+<sect1> <title>Default Command-Line Action</title>
+<para>As described so far, a CSS product can open files from the
+command line when called like this:
+<programlisting>css --launcher.openFile some_file.opi
+</programlisting>
+</para>
+<para>When adding the following to the <filename>*.ini</filename>
+file of your product, simply listing the file name is sufficient:
+<programlisting>--launcher.defaultAction
+openFile
+</programlisting>
+</para>
+<para>TODO: Or put <code>--launcher.defaultAction openFile</code>
+into the p2.ini? Or into the "Launching Arguments" of the *.product?
+</para>
+
+<para>For one, this can be more convenient. In addition, this is necessary
+to support opening files on windows when you double click a file
+that is associated with CSS, or you select files and choose
+<quote>Open With</quote> or <quote>Sent To</quote> CSS,
+because that mechanism will invoke CSS with just the file names,
+lacking the <code>--launcher.openFile</code> option.
+</para>
+</sect1>
+
+</chapter>

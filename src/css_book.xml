@@ -120,6 +120,7 @@ CSS plugins.
 <xi:include href="org.csstudio.ui.util/chapter.xml" />
 
 <xi:include href="org.csstudio.archive.engine/chapter.xml" />
+<xi:include href="org.csstudio.openfile/openfile.xml" />
 </part>
 
 <!-- Appendices -->

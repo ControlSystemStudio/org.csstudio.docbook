@@ -147,7 +147,13 @@ Describe the "common startup" module settings
 <para>Use the IDE wizard to create a new <quote>Plug-in Development</quote>,
 <quote>Product Configuration</quote> in your product plugin.
 When editing the generated <filename>.product</filename> file,
-select the application ID defined in the previous step.
+one of the first things you can set in the <quote>General Information</quote>
+section of the <quote>Overview</quote> tab of the product editor
+is the Name of your product.
+You should use <quote>Css</quote> as the name, for an explanation
+see <xref linkend="ch_openfile"/>.
+</para>
+<para>Select the application ID defined in the previous step.
 Press the <quote>New...</quote> button next to the <quote>Product Definition</quote>
 section to create a new product ID, and in there again select your application ID.
 </para>
