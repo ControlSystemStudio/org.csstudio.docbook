@@ -246,6 +246,25 @@ of your product. Add all missing plugins with names starting in org.csstudio int
 <code>core</code> feature, and add the missing Eclipse plugins into your <code>eclipse</code>
 feature.
 </para>
+<para>For some missing dependencies you will find that they are available
+in system-specific variants<indexterm><primary>Operating-system specific plugins</primary></indexterm>.
+One example is file system access, which includes
+plugins <code>org.eclipse.core.filesystem.win32.x86</code>
+and <code>org.eclipse.core.filesystem.macosx</code> because details of file
+systems differ between operating systems.
+You should go ahead and add all variants, because eventually you want to build
+your product for multiple architectures.
+When doing this, however, you should configure the feature to only include
+those plugins on the appropriate target architecture.
+In the feature editor, you can enter the operating systems and architecture for each
+plugin. In the generated <filename>feature.xml</filename> file, it should look like this:
+<programlisting><![CDATA[<plugin
+   id="org.eclipse.core.filesystem.win32.x86"
+   os="win32"
+   arch="x86"
+   ...]]>
+</programlisting> 
+</para>
 
 <figure xml:id="fig_prod_validate">  <title>Plug-in Dependency Validator</title>
   <mediaobject>
@@ -266,7 +285,6 @@ It will open a display of missing dependencies as shown in
 occasionally pressing <quote>Synchronize</quote> and then <quote>Launch an Eclipse Application</quote>
 in your product to see which dependencies are still required.
 </para>
-
 </sect2>
 
 </sect1>
