@@ -81,6 +81,8 @@ Hello=Hallo
 Hello=Bonjour
 </programlisting>
 </para>
+<para>Special characters like the German u-umlaut
+need to be written in unicode as <code>\u00fc</code></para>
 </sect1>
 
 <sect1> <title>Test Localization in IDE</title>
