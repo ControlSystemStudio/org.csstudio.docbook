@@ -67,6 +67,7 @@
             <arg value="wiki/docbook.xsl"/>
             <srcfile/>
             <fileset dir="src">
+                <include name="localization.xml"/>
                 <include name="preferences.xml"/>
                 <include name="intropages.xml"/>
             </fileset>

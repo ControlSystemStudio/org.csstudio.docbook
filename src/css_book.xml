@@ -93,6 +93,8 @@ for selected plugins.
 
 <xi:include href="intropages.xml" />
 
+<xi:include href="localization.xml" />
+
 <!-- TODO Headless build -->
 
 <xi:include href="data.xml" />

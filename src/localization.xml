@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_localization">
+
+<!-- This page is also on the wiki as
+     https://sourceforge.net/apps/trac/cs-studio/wiki/Localization
+  -->
+
+<title>Localization</title>
+
+<para>Since control system tools are used in countries with different
+languages, it is often a good idea to localize the texts in CSS
+plugins. This way, they can be not only in English but also German,
+French, Chinese, Japanese or in other languages.
+</para>
+
+<sect1> <title>Externalize Source Code Strings</title>
+<para>When developing source code for CSS, it is a good idea to enable
+compiler warning for non-localized strings, found in the Eclipse
+preferences under <code>Java</code>, <code>Compiler</code>,
+<code>Errors/Warnings</code>, <code>Code style</code>
+as <quote>Non-externalized strings (missing/unused $NON-NLS$ tag)</quote>.
+</para>
+<para>With this warning enabled, it is easy to spot non-localized texts
+in Java source code. For example, the texts in the following will be marked
+as non-localized:
+<programlisting>final String ID = "org.csstudio.someplug.someid";
+label.setText("Hello");
+</programlisting>
+</para>
+<para>To remove the warnings, there are fundamentally three options:
+<itemizedlist>
+<listitem>Some strings like plugin IDs, host names, certain file names
+are not meant to be localized. The software depends on the fixed value
+of these strings. You can mark them with a NON-NLS comment like this to
+indicate that the text cannot be localized:
+<programlisting>final String ID =
+   "org.csstudio.someplug.someid";  //$NON-NLS-1$
+</programlisting>
+The Eclipse Quick Fix in the context menu of the warning can add
+appropriate NON-NLS comments.
+</listitem>
+<listitem>Sometimes a whole method or class cannot be localized
+because all the texts in the are internal to the application
+and not meant to display in a user interface.
+In that case, adding
+<programlisting>@SuppressWarnings("nls")
+</programlisting>
+to the method or class will suppress all localization warnings.
+</listitem>
+<listitem>Finally, if the text should indeed be localized,
+it is best to use the tool invoked from the menu
+<code>Source</code>, <code>Externalize Strings...</code>
+to extract the texts into a separate <code>Messages</code>
+class. Your code will then look like this:
+<programlisting>
+label.setText(Messages.Hello);
+</programlisting>
+The generated <code>Messages</code> class will load the text
+from a properties file.
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1> <title>Message Properties Files</title>
+<para>The <code>Externalize Strings...</code> tool will create
+a file <filename>messages.properties</filename> that includes the
+extracted test, for example:
+<programlisting># File messages.properties
+Hello=Hello
+</programlisting>
+</para>
+<para>This file will be used as a default.
+You create translations by adding additional property files:
+<programlisting># File messages_de.properties
+Hello=Hallo
+</programlisting>
+<programlisting># File messages_fr.properties
+Hello=Bonjour
+</programlisting>
+</para>
+</sect1>
+
+<sect1> <title>Test Localization in IDE</title>
+<para>To run CSS with a different localization, you typically
+need to install it on a computer with an operating system that
+uses that localization. For example, on a computer with the German
+version of Windows, CSS will use the <code>de</code> localization files.
+</para>
+<para>It is also possible to pass a command-line argument
+to the Eclipse launcher to force a specific localization.
+Products launched within the IDE will typically include
+this as a default program argument:
+<programlisting>-nl ${target.nl}</programlisting>
+</para>
+<para>By changing the run configuration to use
+<programlisting>-nl de_DE</programlisting>
+you can run the product with German localization.
+</para>
+</sect1>
+
+<sect1> <title>Language Codes</title>
+<para>The locale identifier consists of a language and country.
+For the <filename>messages.properties</filename> file names,
+it is often sufficient to only use the language code as in
+<filename>messages_fr.properties</filename> for French,
+but in principle you could also create files
+<filename>messages_fr_FR.properties</filename> and
+<filename>messages_fr_CA.properties</filename> with different
+localizations for France and Canada.
+</para>
+<para>Other example language and country codes:
+<itemizedlist>
+<listitem>en_US: English, USA</listitem>
+<listitem>en_CA: English, Canada</listitem>
+<listitem>de_DE: German, Germany</listitem>
+<listitem>zh_CN: Simplified Chinese, China</listitem>
+<listitem>ja_JP: Japanese, Japan</listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1> <title>Externalize Texts in plugin.xml</title>
+<para>To localize for example the labels of menu items or
+the title of a view, you need to localize the corresponding
+text in the <filename>plugin.xml</filename>:
+<orderedlist>
+<listitem>Create a file <filename>plugin.properties</filename> with content like this:
+<programlisting>TryThis=Try this!
+</programlisting>
+</listitem>
+<listitem>Add this option to the <filename>MANIFEST.MF</filename>
+which instructs Eclipse to use the properties file:
+<programlisting>Bundle-Localization: plugin
+</programlisting>
+</listitem>
+<listitem>Replace fixed texts in the plugin markup with references to the texts
+defined in the properties file using a percent sign:
+<programlisting><![CDATA[<page name="%TryThis">
+...]]>
+</programlisting>
+</listitem>
+<listitem>Create translated files like <filename>plugin_de.properties</filename></listitem>
+</orderedlist>
+</para>
+</sect1>
+
+<sect1> <title>Language Caveats</title>
+<para>It is often not sufficient to simply translate words,
+because the structure of sentences can be very different
+in another language.
+For example, when a message needs to be constructed based on PV names
+and an error, it is suggested to use the <code>NLS</code> formatting
+utility for this:
+<programlisting>final String pv = .. some PV name;
+final String error = .. some error info;
+final String message =
+  NLS.bind("There was an error {0} with PV {1}",
+           error, pv);
+</programlisting>
+This way, the message format can be externalized:
+<programlisting>NLS.bind(Messages.PVErrorFmt, error, pv);
+</programlisting>
+
+By default, the <code>PVErrorFmt</code> would be
+<quote>There was an error {0} with PV {1}</quote>,
+but it can be translated into another language with a different
+sentence structure, for instance
+<quote>The PV {1} produced an error. Original error description: {0}.</quote>
+</para>
+</sect1>
+
+<sect1> <title>Externalize Texts in Online Help</title>
+<para>To localize online help, the default online help subdirectory
+needs to be replicated into subfolders <filename>nl/de</filename>,
+<filename>nl/zh</filename> and so on for the various languages.
+Refer to eclipse online help for details.
+</para>
+</sect1>
+
+</chapter>
