@@ -1,14 +1,15 @@
 <?xml version='1.0'?>
 <chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
-         version="5.0">
+         version="5.0"
+         xml:id="ch_menues">
   <title>CSS menus - org.csstudio.ui.menu<indexterm><primary>org.csstudio.ui.menu</primary></indexterm></title>
   <para>The plugin <quote>org.csstudio.ui.menu</quote> defines through 
   extensions the CSS Menu (which appears in the menu bar) and the 
-  context sensitive pop-up submenu for object adapatable to 
+  context sensitive pop-up submenu for object adaptable to 
   <code>org.csstudio.csdata.ProcessVariable</code>. The plugin <quote>org.csstudio.ui.menu</quote>
   provides examples of how to contribute actions/commands, how to implement
-  a view that displays the pop-up menu, and with the same view one cacn
-  test whether his popup action/commands acutally display.</para>
+  a view that displays the pop-up menu, and with the same view one can
+  test whether a popup action/commands actually displays as intended.</para>
   <sect1>
     <title>The CSS main menu</title>
     <figure id="fig_ui_menu_main">
@@ -33,26 +34,39 @@
     <quote>id</quote> which is needed to define contributions to those 
     menus. Only sub-menus that have contributions are going to be 
     displayed</para>
-    <para>The following examples adds a command to the display 
+    <para>The following example adds a command to the <code>display</code>
     sub-menu:</para>
-    <programlisting>&lt;plugin&gt;
-   ...
-   &lt;extension
-         point=&quot;org.eclipse.ui.menus&quot;&gt;
+    <programlisting><![CDATA[<plugin>
+    ...
+    <extension
+         point="org.eclipse.ui.menus">
       ...
-      &lt;menuContribution
-            allPopups=&quot;false&quot;
-            locationURI=&quot;menu:display&quot;&gt;
-         &lt;command
-               commandId=&quot;org.csstudio.display.waterfall.OpenView&quot;
-               icon=&quot;icons/water.png&quot;
-               style=&quot;push&quot;&gt;
-         &lt;/command&gt;
-      &lt;/menuContribution&gt;
-      ...
-   &lt;/extension&gt;
-   ...
-&lt;/plugin&gt;</programlisting>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:display">
+         <command
+               commandId="org.eclipse.ui.views.showView"
+               icon="icons/my_icon.png"
+               label="My View"
+               style="push"
+               tooltip="Show My View">
+            <parameter
+                  name="org.eclipse.ui.views.showView.viewId"
+                  value="org.csstudio.my_tool.MyView">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>]]>
+    </programlisting>
+    <para>This example shows the rather common case where your menu
+    entry opens a View, using the command <code>org.eclipse.ui.views.showView</code>
+    that is provided by Eclipse. That command expects a command parameter
+    to provide the ID of the view to open.
+    </para>
+    <para>You can of course also add new commands to the menus. In that case,
+    you also need to define a handler for your command.
+    Refer to the Eclipse online help on commands and handlers for details.
+    </para>
   </sect1>
   <sect1>
     <title>The Process Variable popup-menu</title>
@@ -73,45 +87,45 @@
     right type and all the same commands are going to be available in 
     the same order.</para>
     <para>The following example adds a command to the popup menu:</para>
-    <programlisting>&lt;plugin&gt;
+    <programlisting><![CDATA[<plugin>
    ...
-   &lt;extension
-         point=&quot;org.eclipse.ui.menus&quot;&gt;
+   <extension
+         point="org.eclipse.ui.menus">
       ...
-      &lt;menuContribution
-            allPopups=&quot;false&quot;
-            locationURI=&quot;popup:org.csstudio.ui.menu.popup.processvariable&quot;&gt;
-         &lt;command
-               commandId=&quot;org.csstudio.display.waterfall.OpenView&quot;
-               icon=&quot;icons/water.png&quot;
-               style=&quot;push&quot;&gt;
-         &lt;/command&gt;
-      &lt;/menuContribution&gt;
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.csstudio.ui.menu.popup.processvariable">
+         <command
+               commandId="org.csstudio.display.waterfall.SomeCommand"
+               icon="icons/water.png"
+               style="push">
+         </command>
+      </menuContribution>
       ...
-   &lt;/extension&gt;
+   </extension>
    ...
-&lt;/plugin&gt;</programlisting>
+</plugin>]]></programlisting>
     <para>The following example adds an action to the popup menu (note the contribution to the <quote>main</quote> section):</para>
-    <programlisting>&lt;plugin&gt;
+    <programlisting><![CDATA[<plugin>
    ...
-   &lt;extension
-         point=&quot;org.eclipse.ui.popupMenus&quot;&gt;
+   <extension
+         point="org.eclipse.ui.popupMenus">
       ...
-      &lt;objectContribution
-            adaptable=&quot;true&quot;
-            id=&quot;org.csstudio.ui.menu.test.objectContribution1&quot;
-            objectClass=&quot;org.csstudio.csdata.ProcessVariable&quot;&gt;
-         &lt;action
-               class=&quot;org.csstudio.ui.menu.test.TestPVAction&quot;
-               icon=&quot;icons/test.png&quot;
-               id=&quot;org.csstudio.ui.menu.test.testpvaction&quot;
-               label=&quot;Test Action&quot;
-               menubarPath=&quot;org.csstudio.ui.menu.popup.processvariable/main&quot;&gt;
-         &lt;/action&gt;
-      &lt;/objectContribution&gt;
+      <objectContribution
+            adaptable="true"
+            id="org.csstudio.ui.menu.test.objectContribution1"
+            objectClass="org.csstudio.csdata.ProcessVariable">
+         <action
+               class="org.csstudio.ui.menu.test.TestPVAction"
+               icon="icons/test.png"
+               id="org.csstudio.ui.menu.test.testpvaction"
+               label="Test Action"
+               menubarPath="org.csstudio.ui.menu.popup.processvariable/main">
+         </action>
+      </objectContribution>
       ...
-   &lt;/extension&gt;
+   </extension>
    ...
-&lt;/plugin&gt;</programlisting>
+</plugin>]]></programlisting>
   </sect1>
 </chapter>
