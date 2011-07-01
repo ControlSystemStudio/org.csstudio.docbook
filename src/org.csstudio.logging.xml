@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_logging">
+<title>Logging - org.csstudio.logging</title>
+
+<para>CSS application code might need to log messages about warnings,
+fatal errors, but also informational messages.
+The suggestion is to use <code>java.util.logging</code>, the logging
+package that is included with Java.
+</para>
+
+<sect1>  <title>Write Log Messages</title>
+<para>To write log messages from application code, no additional CSS plugin is need.
+Simply invoke the logging API like this:
+<programlisting>
+// Import logger from JRE
+import java.util.logging.Logger;
+
+// Fetch Logger, for example using current class name or plugin ID.
+Logger logger = Logger.getLogger(getClass().getName());
+
+// Log a messages
+logger.warning("Something terrible happened");
+logger.info("FYI, I just did something");
+
+// Can use a formatter for lazy message generation
+logger.log(Level.DEBUG, "Value is {0}", value);
+
+// ... or to include detail of an exception
+catch (Exception ex)
+{
+	logger.log(Level.WARNNIG, "Operation failed", ex);
+}
+</programlisting>
+</para>
+</sect1>
+
+<sect1>  <title>Configure the Log System</title>
+<para>There are several ways to configure <code>java.util.logging</code>,
+for example via *.ini files in the JRE.
+CSS includes a plugin <code>org.csstudio.logging</code> that can configure
+the logging based on Eclipse preferences. This way, you can configure logging
+together with other CSS plugins, see <xref linkend="ch_preferences"/>.
+</para>
+<para>To use <code>java.util.logging</code>, your product needs to invoke
+<programlisting>LogConfigurator.configureFromPreferences()
+</programlisting>
+from within its startup code, usually just before entering the Workbench run loop.
+The LogConfigurator registers a <code>PluginLogListener</code> to add RCP log messages to
+<code>java.util.logging</code>. Then it reads Eclipse preferences to configure logging,
+allowing to log to the console, files and JMS.
+</para>
+<para>For details on how the logging to the console, files and JMS can be configured,
+refer to the file <filename>org.csstudio.logging/preferences.ini</filename>
+</para>
+<para>A related plugin <code>org.csstudio.logging.ui</code> allows adjustments of the log preferences
+from the preferences GUI.
+</para>
+</sect1>
+
+</chapter>
