@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_jms">
+<title>Java Message Server</title>
+
+<para>CSS uses a Java Message Server (JMS)<indexterm><primary>Java Message Server, JMS</primary></indexterm>
+for several purposes.
+Log messages from CSS applications in general can optionally be
+sent to JMS, see <xref linkend="ch_logging"/>.
+The alarm system uses JMS for the communication between the
+alarm server and clients.
+</para>
+
+<sect1>  <title>Apache ActiveMQ Server</title>
+<para>CSS uses Apache ActiveMQ, a free and open-source implementation of JMS
+available from
+<link xlink:href="http://activemq.apache.org">http://activemq.apache.org</link>.
+</para>
+<para>After downloading it, the ActiveMQ server can be started like this:
+<programlisting>cd [activemq_install_dir]
+bin/activemq
+</programlisting>
+</para>
+<para>The page
+<link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer">http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer</link>.
+has more details on how to adjust the default JMS configuration.
+</para>
+</sect1>
+
+<sect1>  <title>Client (CSS) Configuration</title>
+<para>To use JMS for logging or the alarm system, CSS needs the
+URL of the JMS instance. It should be of the form
+<programlisting>failover:(tcp://your_jms_host:61616)
+</programlisting>
+<quote>Failover</quote> with a single server instructs the client
+to re-connect automatically after network problems.
+Actual failover between multiple JMS instances is possible,
+but for details you need to refer to the Apache ActiveMQ documentation.
+</para>
+</sect1>
+
+<sect1>  <title>Testing your Setup</title>
+<para>As a basic test of your JMS setup,
+you can enable JMS logging in your product,
+for example by adding these lines into your
+plugin customization file (see <xref linkend="ch_preferences"/>):
+</para>
+<programlisting>org.csstudio.logging/console_level=FINE
+org.csstudio.logging/jms_level=FINE
+org.csstudio.logging/jms_url=failover:(tcp://your_jms_host:61616)
+</programlisting>
+<para>As a result, CSS should send several log messages to JMS.
+You can verify this by starting the JMS Monitor,
+see <xref linkend="ch_jms_monitor"/>, to view messages
+for the <code>LOG</code> Topic.
+</para>
+</sect1>
+
+<sect1>  <title>Message Types</title>
+<para>All JMS messages used by CSS are of the <code>MapMessage</code>
+type. Fundamentally, this allows messages with arbitrarily named string
+properties for content.
+In reality, however, messages are most useful when the involved applications
+understand the messages.
+For example, every message shall have a <code>TYPE</code> property.
+CSS log messages as sent by the plugin <code>org.csstudio.logging</code>
+(see <xref linkend="ch_logging"/>) have the following properties:
+</para>
+<itemizedlist>
+<listitem><code>TYPE</code>: Set to <quote>log</quote> to identify as log message.</listitem>
+<listitem><code>TEXT</code>: The actual log message.</listitem>
+<listitem><code>SEVERITY</code>: Log level, for example <quote>SEVERE</quote> or <quote>FINE</quote>.
+                                 The exact severity may depend on the underlying logging system.</listitem> 
+<listitem><code>CREATETIME</code>: Time when message was created.
+                           Format must be <code>yyyy-MM-dd HH:mm:ss.SSS</code></listitem> 
+<listitem><code>CLASS</code>: Name of (Java) class were message was created.</listitem>
+<listitem><code>NAME</code>: Name of Java method</listitem>
+<listitem><code>APPLICATION_ID</code>: Application name like <quote>CSS</quote> or <quote>AlarmServer</quote></listitem>
+<listitem><code>HOST</code>: Host name running the application.</listitem>
+<listitem><code>USER</code>: Name of user who was running the application.</listitem>
+</itemizedlist>
+<para>The content of messages exchanged within the alarm system or from for example
+a tool that logs write actions from an operator interface should try to use the same
+properties as much as possible.
+</para>
+</sect1>
+
+<sect1>  <title>JMS logging to RDB</title>
+<para></para>
+</sect1>
+
+<sect1>  <title>Message History Browser</title>
+<para></para>
+</sect1>
+
+</chapter>

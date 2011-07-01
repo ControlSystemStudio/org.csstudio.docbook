@@ -89,6 +89,8 @@ for selected plugins.
 
 <xi:include href="archive/archive.xml" />
 
+<xi:include href="jms/jms.xml" />
+
 <xi:include href="products/products.xml" />
 
 <xi:include href="intropages.xml" />
@@ -103,9 +105,6 @@ for selected plugins.
 
 <!-- TODO JMS Message info -->
 
-<!-- TODO Logging -->
-
-
 </part>
 
 <part>
@@ -116,14 +115,18 @@ CSS plugins.
 </para>
 </partintro>
 
+<!-- Core stuff, how to do things in code -->
 <xi:include href="org.csstudio.core.feature/chapter.xml" />
 <xi:include href="org.csstudio.core.util.feature/chapter.xml" />
 <xi:include href="org.csstudio.logging.xml" />
 <xi:include href="org.csstudio.ui.menu/chapter.xml" />
 <xi:include href="org.csstudio.ui.util/chapter.xml" />
-
-<xi:include href="org.csstudio.archive.engine/chapter.xml" />
 <xi:include href="org.csstudio.openfile/openfile.xml" />
+
+<!-- 'Manual' pages for application plugins -->
+<xi:include href="org.csstudio.archive.engine/chapter.xml" />
+<xi:include href="org.csstudio.debugging.jmsmonitor/chapter.xml" />
+
 </part>
 
 <!-- Appendices -->
