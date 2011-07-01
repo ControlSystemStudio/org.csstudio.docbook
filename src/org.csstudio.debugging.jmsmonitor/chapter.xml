@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_jms_monitor">
+<title>JMS Monitor - org.csstudio.debugging.jmsmonitor</title>
+
+<para>The JMS Monitor is a utility for monitoring raw JMS messages.
+It is a debug tool for developers.
+</para>
+
+<figure xml:id="fig_jmsmonitor">  <title>JMS Message Monitor</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="monitor.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Under its preferences, configure the appropriate JMS connection URL,
+see <xref linkend="ch_jms"/>.
+</para>
+
+<para>After entering a JMS Topic like <code>LOG</code>, <code>ALARM</code>,
+<code>TALK</code> etc., it will display received messages.
+It is possible to enter a list of comma-separated topics.
+</para>
+
+<para>For more, refer to its online help.
+</para>
+
+</chapter>
