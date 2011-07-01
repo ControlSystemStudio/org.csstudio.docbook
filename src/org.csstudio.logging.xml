@@ -39,9 +39,22 @@ catch (Exception ex)
 <sect1>  <title>Configure the Log System</title>
 <para>There are several ways to configure <code>java.util.logging</code>,
 for example via *.ini files in the JRE.
-CSS includes a plugin <code>org.csstudio.logging</code> that can configure
-the logging based on Eclipse preferences. This way, you can configure logging
+CSS includes a plugin <code>org.csstudio.logging</code> that supports logging in
+several ways:
+<itemizedlist>
+<listitem>Configure logging based on Eclipse preferences.
+This way, you can configure logging
 together with other CSS plugins, see <xref linkend="ch_preferences"/>.
+</listitem>
+<listitem>Send log messages to the Eclipse Console View in addition to
+the standard output (terminal window).
+</listitem>
+<listitem>Send log messages to files, allowing rotation between several files.
+</listitem>
+<listitem>Send log messages to JMS, which allows the collection of log messages
+from several sources.
+</listitem>
+</itemizedlist>
 </para>
 <para>To use <code>java.util.logging</code>, your product needs to invoke
 <programlisting>LogConfigurator.configureFromPreferences()
