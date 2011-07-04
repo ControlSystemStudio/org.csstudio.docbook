@@ -87,13 +87,11 @@ for selected plugins.
 <xi:include href="preferences.xml" />
 
 <xi:include href="archive/archive.xml" />
-
 <xi:include href="jms/jms.xml" />
+<xi:include href="alarm/alarm.xml" />
 
 <xi:include href="products/products.xml" />
-
 <xi:include href="intropages.xml" />
-
 <xi:include href="localization.xml" />
 
 <!-- TODO Headless build -->

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_alarm">
+<title>Alarm System</title>
+
+<para>This chapter introduces the CSS alarm system, specifically the
+<quote>Best Ever Alarm System Toolkit</quote> or BEAST<indexterm><primary>BEAST</primary></indexterm>.
+It was developed based on experience with the original EPICS alarm handler ALH
+combined with ideas from the book
+<citetitle pubwork="book">Alarm Management: Seven Effective Methods for Optimum Performance</citetitle>
+by B. Hollifield and E. Habibi, published by ISA in 2007.
+</para>
+
+
+<sect1> <title>Motivation</title>
+<para>The primary goal of the alarm system is simple:</para>
+
+<blockquote><emphasis>Effectively help operators take the correct action at the correct time.</emphasis></blockquote>
+
+<para>This is easier said than done!
+One way to accomplish this is to adopt the following guiding principles
+for an alarm handling philosophy:
+</para>
+
+<itemizedlist>
+<listitem>
+<para>Alarms are presented with guidance, related displays.</para>
+<para>Lacking these, how can operators effectively react to an alarm?</para>
+</listitem>
+<listitem>
+<para>Manageable alarm rate</para>
+<para>The number of alarms should stay below about 150 per day.
+If the alarm rate gets much higher, the alarm system will no longer help operators
+take correct actions but instead overload them with information.
+</para>
+</listitem>
+<listitem>
+<para>Operators will respond to every alarm.</para>
+<para>This is a corollary to the previous item:
+Assuming a manageable alarm rate, operators are expected to
+respond to each alarm.
+</para>
+</listitem>
+</itemizedlist>
+
+<para>To implement such an alarm handling philosophy, a lot of
+effort needs to be put into defining useful alarms.
+Each alarm must have guidance, clearly describing what operators
+need to <emphasis>do</emphasis> in response to an alarm.
+There should not be any <quote>bogus</quote> alarms from systems
+that undergo maintenance,
+or that are currently irrelevant for the operation of the machine.
+Alarms must not <quote>chatter</quote>, causing unnecessary noise by
+going in and out of alarm.
+Operators need convenient access to the currently active alarms and
+their associated information.
+The alarm system tools described in the following try to help:
+</para>
+
+<itemizedlist>
+<listitem>Alarms are presented in user-selectable ways:
+Table of current alarms, sorted as desired,
+but also a tree-view, displaying all or only active alarms.
+In principle, additional views can be added.
+</listitem>
+<listitem>Each alarm is presented with additional information like guidance on how to handle
+the alarm. There are links to related operator screens, web pages, and other CSS tools.
+</listitem>
+<listitem>The alarm system configuration can be edited from within the alarm system user interface.
+</listitem>
+</itemizedlist>
+</sect1>
+
+
+<sect1> <title>Alarm Trigger PVs</title>
+<para>The alarm system handles the display of alarms and associated information.
+The triggers of alarms are simply Process Variables (PVs) in the control system,
+outside of the alarm system per se.
+The alarm system monitors such PVs, and a non-normal severity
+will trigger an alarm.
+</para>
+<para>In some cases, existing control system PVs that already have
+suitable limits can be used as trigger PVs for the alarm system.
+In other cases, new PVs may have to be created to serve as alarm trigger PVs.
+For EPICS, this can be done on IOCs associated with the respective subsystem
+of the machine, or in soft IOCs that are purely meant to serve alarm trigger PVs.
+In any case, alarm trigger PVs must generate a non-normal severity like
+<quote>MINOR</quote> or <quote>MAJOR</quote> to trigger an alarm.
+</para>
+</sect1>
+
+
+<sect1> <title>Alarm System Behavior</title>
+<para>The alarm system will typically
+<emphasis>latch</emphasis> alarms<indexterm><primary>Latching Alarm</primary></indexterm>.
+This means that the alarm trigger PV can return to OK, later re-enter
+the alarm state and so on, but the alarm system will only react when a PV enters
+an alarm state for the first time. Subsequently, the alarm system user
+interface will display the current state of the PV, but it will not
+trigger a new alarm nor issue another annunciation.
+This is meant to reduce noise from the alarm system.
+</para>
+<para>Once operators are able to react to the original alarm,
+operators <emphasis>acknowledge</emphasis><indexterm><primary>Acknowledge Alarm</primary></indexterm>
+the alarm,
+and the alarm trigger PV returns to normal,
+the alarm will <emphasis>clear</emphasis>.<indexterm><primary>Clear Alarm</primary></indexterm>
+This is a typical time line:
+</para>
+<orderedlist>
+<listitem>Alarm trigger PV X enters an alarm state, for example with <quote>MINOR</quote> severity.</listitem>
+<listitem>The alarm system will indicate a new MINOR alarm for PV X.
+If configured to do so, it will also perform a voice annunciation of the alarm.</listitem>
+<listitem>In a perfect world, the PV will stay in alarm until the underlying problem
+has been handled. In reality, the PV may briefly leave the alarm state,
+for example as a result of noise in a sensor.
+The alarm system will indicate this, but it still shows that there was a MINOR alarm
+with the time when it originally happened.
+As the PV re-enters a MINOR severity, there is no new alarm annunciation because
+this is considered part of the original alarm that has not been handled, yet.
+</listitem>
+<listitem>Hopefully, operators can address the underlying issue soon, the alarm trigger PV
+returns to a normal severity, and operators acknowledge the alarm.
+</listitem>
+<listitem>The alarm clears.
+It does not matter if the PV returns to normal, then operators acknowledge the alarm,
+or operators first acknowledge the alarm, then the PV returns to normal.
+The alarm will clear as soon as both conditions are met: PV returns to normal, alarm has been acknowledged.
+</listitem>
+</orderedlist>
+
+<para>Alarms may be configured not to latch,<indexterm><primary>Non-Latching Alarms</primary></indexterm>
+which means there is no need to acknowledge them.
+As soon as the alarm trigger PV returns to normal, the alarm will also clear.
+This mode of operation is primarily meant for alarm trigger PVs that already latch
+within the control system.
+An example would be an alarm trigger PV related to the <quote>trip</quote>
+condition of a device that requires a manual reset by operators to clear.
+That manual reset of the device is functionally equivalent to acknowledging the alarm,
+because an operator has noticed the condition and taken corrective action.
+The alarm trigger PV is unlikely to chatter because it latches until the device is reset.
+Requiring operators to acknowledge the alarm in addition to resetting the alarm trigger PV
+would cause unnecessary work.
+</para>
+
+<para>One might be tempted to configure frequent alarms as non-latching
+to lessen the load on operators who get tired of acknowledging such
+a nuisance alarm.<indexterm><primary>Nuisance Alarm</primary></indexterm>
+Overall, however, it is better to re-engineer such alarms.
+Add a filter to avoid alarms from brief occurrences of the symptom.
+Find a way to alarm on a precursor of the frequent alarm,
+allowing operators to avoid running the machine in a state that
+will later cause frequent occurrences of the nuisance alarm.
+Ideally, fix the underlying hardware or software to avoid the nuisance alarm altogether.
+</para>
+</sect1>
+
+
+<sect1> <title>Technical Overview</title>
+<figure xml:id="fig_beast">  <title>Alarm System Overview</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="beast.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+<para>Fundamental to the operation of the alarm system is the
+<code>AlarmServer</code><indexterm><primary>AlarmServer</primary></indexterm>.
+It reads the alarm system configuration from a relational database
+and monitors alarm system trigger PVs.
+Whenever a new alarm occurs, it informs alarm system user interfaces (GUIs)
+via JMS. For alarms that should be annunciated, it will inform
+annunciation tools via a designated JMS topic.
+</para>
+<para>The Alarm Server performs the latching alarm behavior described in the previous section.
+As the severity of an alarm trigger PV changes, the server updates the GUIs via JMS
+about the current state of the PV, but it maintains the latched alarm state.
+</para>
+<para>When operators acknowledge an alarm in the GUI, they are sending an acknowledge request
+via JMS to the Alarm Server. The server will in turn reply with the updated, eventually the cleared
+alarm state.
+</para>
+<para>In addition to sending state updates via JMS, the Alarm Server also updates
+the alarm state in the relational database. This is done to allow newly started alarm GUI
+clients to obtain the initial state of all alarms. The persisted alarm state in the RDB
+also allows for Alarm Server restarts without loosing the alarm state.
+</para>
+<para>Alarm GUI clients can change the alarm system configuration in the RDB.
+They use JMS to notify the Alarm Server and other GUI clients about the change,
+who then in turn read the updated configuration from the RDB.
+</para>
+<para>As described, all alarm traffic passes through JMS:
+Alarm state updates, annunciations, acknowledgements, configuration changes.
+A generic JMS-to-RDB logger can thus capture all alarm traffic into an RDB
+for later review and anaysis, for example: What happened when? Which alarm was most frequent? 
+</para>
+</sect1>
+
+
+<sect1>  <title>Building the Tools</title>
+<para>
+
+<programlisting>org.csstudio.alarm.beast.server/AlarmServer.product
+org.csstudio.alarm.beast.configtool/AlarmConfigTool.product
+</programlisting>
+
+For first tests, you can run both tools from within the Eclipse IDE as described in
+<xref linkend="chap_compiling"/>, <xref linkend="sec_runnning_in_ide"/>,
+but note that you will have to provide command-line arguments to them.
+After first tests are successful, you can export from from the IDE as described in the same section.
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_alarm_rdb_setup">  <title>Relational Database Setup</title>
+
+<para>Before using the archive tools, you need to create the required table structure in your RDB.
+Currently MySQL, Oracle and PostgreSQL are supported.
+</para>
+
+<programlisting><![CDATA[ ...
+]]></programlisting>
+
+
+</sect1>
+
+</chapter>
