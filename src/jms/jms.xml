@@ -86,8 +86,34 @@ properties as much as possible.
 </para>
 </sect1>
 
-<sect1>  <title>JMS logging to RDB</title>
-<para></para>
+<sect1 xml:id="sec_msg_rdb_schema">  <title>JMS logging to RDB</title>
+<para>The original RDB schema for logging JMS messages as shown in
+<xref linkend="fig_jmsschema"/>was developed for the DESY version of CSS.
+</para>
+
+<figure xml:id="fig_jmsschema">  <title>Message RDB Schema</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="schema.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The column <quote>DATUM</quote> (German for date) holds the time when a message
+was written to the RDB. All other message properties like <code>TEXT</code> and
+<code>CREATETIME</code> are written to the MESSAGE_CONTENT and MSG_PROPERTY_TYPE
+tables.
+This schema is very compact and generic.
+On the other hand, it is operationally often useful to search for all messages
+of TYPE=log or with a certain SEVERITY. Such searches are relatively slow in
+the original schema because they require nested lookups in the MESSAGE_CONTENT
+table.
+</para>
+<para>The SNS version of CSS therefore added commonly used message properties
+directly to the MESSAGE table. Some tools like the message viewer from
+<code>org.csstudio.alarm.beast.msghist</code> automatically determine
+which message properties are in the main MESSAGE table, and which are in the
+MESSAGE_CONTENT table. Other tools like the ones used to write messages from
+JMS to the RDB are site-specific, see <xref linkend="ch_org.cstudio.sns.jms2rdb"/>
+</para>
 </sect1>
 
 <sect1>  <title>Message History Browser</title>

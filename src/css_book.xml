@@ -47,8 +47,7 @@ and the current PDF is at
 </para>
 </acknowledgements>
 
-<part>
-<title>CSS Guide</title>
+<part xml:id="part_guide"> <title>CSS Guide</title>
 <partintro>
 <para>This book has two parts.
 The first part consists of an introduction to CSS.
@@ -107,8 +106,7 @@ for selected plugins.
 
 </part>
 
-<part>
-<title>Plug-in Reference</title>
+<part xml:id="part_plugin_reference">  <title>Plug-in Reference</title>
 <partintro>
 <para>The following chapters contain references for certain
 CSS plugins.
@@ -126,6 +124,7 @@ CSS plugins.
 <!-- 'Manual' pages for application plugins -->
 <xi:include href="org.csstudio.archive.engine/chapter.xml" />
 <xi:include href="org.csstudio.debugging.jmsmonitor/chapter.xml" />
+<xi:include href="org.csstudio.sns.jms2rdb.xml" />
 
 </part>
 

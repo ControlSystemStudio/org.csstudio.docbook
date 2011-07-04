@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_org.cstudio.sns.jms2rdb">
+<title>RDB Logging - org.cstudio.sns.jms2rdb</title>
+
+<para>The plugin <code>org.cstudio.sns.jms2rdb</code> is a tool
+that listens to JMS messages from the log, alarm system or other
+CSS applications and sends them to the RDB.
+</para>
+<para>This tool uses an RDB schema for messages that extends the basic
+schema described in <xref linkend="sec_msg_rdb_schema"/> by adding
+the following commonly used message properties to the MESSAGE table itself:
+
+<itemizedlist>
+<listitem><code>TYPE</code>:
+The message type, for example <quote>log</quote> or <quote>alarm</quote>.
+</listitem>
+<listitem><code>SEVERITY</code>:
+The severity of the message, for example <quote>ERROR</quote> or <quote>MINOR</quote>.
+</listitem>
+<listitem><code>NAME</code>:
+A name associated with the message. For <quote>log</quote> messages,
+this is typically the name of the Java method that logged the information.
+For <quote>alarm</quote> messages, this is the name of the Process Variable
+that triggered the alarm.
+</listitem>
+</itemizedlist>
+</para>
+
+<para>The <filename>dbd</filename> sub directory describes the RDB
+schema for MySQL, Oracle and PostgreSQL.
+For details on how to build and run the tool, refer to the
+<filename>Readme.txt</filename> in the plugin sources.
+</para>
+
+</chapter>
