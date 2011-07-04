@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_org.cstudio.alarm.beast.msghist">
+<title>Message History Browser - org.cstudio.alarm.beast.msghist</title>
+
+<para>The plugin <code>org.cstudio.alarm.beast.msghist</code>
+is a generic browser for the message history.
+It displays JMS messages that were written to the relational database by for example
+the tool described in <xref linkend="ch_org.cstudio.sns.jms2rdb"/>.
+</para>
+
+<figure xml:id="fig_msghist">  <title>Message History Browser</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="msghist.png" width="90%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>By default, the tool displays all messages that were written in the last hour.
+You can adjust the time range via the <quote>Times</quote> button or by directly entering
+a start and end time, using for example a start of <code>-1 days</code> as
+shown in the above figure.
+</para>
+<para>The <quote>Filter</quote> button allows you to restrict the message list
+to for example only log messages, i.e. messages with <code>TYPE</code> equal to <code>log</code>,
+and you can further limit the result to messages originating from a specific <code>HOST</code>.
+</para>
+<para>The context menu of the message table allows displaying the detail of a message,
+i.e. it can show all properties of a message. From the context menu you can also export
+all messages from the table into a file.
+</para>
+<para>Note that there can be many messages, each having many properties.
+Displaying too many messages would exhaust the available computer memory.
+By default, the tool restricts itself to only fetching 100000 properties.
+With the average log message containing 9 properties, this equals roughly 11000 messages.
+You can adjust this limit in the preference settings of the message history browser.
+</para>
+
+</chapter>

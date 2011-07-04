@@ -113,7 +113,13 @@ CSS plugins.
 </para>
 </partintro>
 
-<!-- Core stuff, how to do things in code -->
+<!-- Core stuff, how to do things in code
+     Ordered by 'importance'?
+     1) 'core' in the name
+     2) Very basic, like logging
+     3) Menus, ...
+     4) Odd stuff
+  -->
 <xi:include href="org.csstudio.core.feature/chapter.xml" />
 <xi:include href="org.csstudio.core.util.feature/chapter.xml" />
 <xi:include href="org.csstudio.logging.xml" />
@@ -121,7 +127,10 @@ CSS plugins.
 <xi:include href="org.csstudio.ui.util/chapter.xml" />
 <xi:include href="org.csstudio.openfile/openfile.xml" />
 
-<!-- 'Manual' pages for application plugins -->
+<!-- 'Manual' pages for application plugins
+     Alphabetical order?
+  -->
+<xi:include href="org.csstudio.alarm.beast.msghist/chapter.xml" />
 <xi:include href="org.csstudio.archive.engine/chapter.xml" />
 <xi:include href="org.csstudio.debugging.jmsmonitor/chapter.xml" />
 <xi:include href="org.csstudio.sns.jms2rdb/chapter.xml" />

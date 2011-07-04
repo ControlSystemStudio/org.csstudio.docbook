@@ -118,8 +118,13 @@ JMS to the RDB are site-specific, see <xref linkend="ch_org.cstudio.sns.jms2rdb"
 </para>
 </sect1>
 
-<sect1>  <title>Message History Browser</title>
-<para></para>
+<sect1>  <title>Viewing the Message History</title>
+<para>CSS includes a generic message history browser as part of the
+alarm system, see <xref linkend="ch_org.cstudio.alarm.beast.msghist"/>.
+Once the messages are logged to the relational database, it is of course
+possible to create various tools to create customized reports,
+for example based on JSP technology for web reports.
+</para>
 </sect1>
 
 </chapter>
