@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_org.cstudio.sns.jms2rdb">
+<title>RDB Logging - org.cstudio.sns.jms2rdb</title>
+
+<para>The plugin <code>org.cstudio.sns.jms2rdb</code> is a tool
+that listens to JMS messages from the log, alarm system or other
+CSS applications and sends them to the RDB.
+</para>
+<para>This tool uses an RDB schema for messages that extends the basic
+schema described in <xref linkend="sec_msg_rdb_schema"/> by adding
+the following commonly used message properties to the MESSAGE table itself:
+
+<itemizedlist>
+<listitem><code>TYPE</code>:
+The message type, for example <quote>log</quote> or <quote>alarm</quote>.
+</listitem>
+<listitem><code>SEVERITY</code>:
+The severity of the message, for example <quote>ERROR</quote> or <quote>MINOR</quote>.
+</listitem>
+<listitem><code>NAME</code>:
+A name associated with the message. For <quote>log</quote> messages,
+this is typically the name of the Java method that logged the information.
+For <quote>alarm</quote> messages, this is the name of the Process Variable
+that triggered the alarm.
+</listitem>
+</itemizedlist>
+</para>
+
+<para>The <filename>dbd</filename> sub-directory of the plugin sources
+describes the RDB schema for MySQL, Oracle and PostgreSQL.
+Use the <code>JMS2RDB.product</code> file to generate the binary.
+</para>
+<para>You configure the connection parameters for JMS and your RDB
+via a plugin customization file as described in <xref linkend="ch_preferences"/>.
+Refer to the file <filename>plugin_customization.ini</filename>
+included in the JMS2RDB plugin sources for an example.
+</para>
+<para>Once running, the JMS2RDB tool provides a web browser interface
+as a basic status monitor under the URL
+<programlisting>http://localhost:4913/main
+</programlisting>
+The port number can be adjusted in the preference settings of the tool.
+To connect from another computer, replace <code>localhost</code> with
+the name of the host that is executing the tool.
+</para>
+
+<figure xml:id="fig_jms2rdb">  <title>JMS-2-RDB Web Interface</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="jms2rdb.png" width="50%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The main web page will look similar to <xref linkend="fig_jms2rdb"/>,
+displaying the last message that was received and written to the RDB.
+In case of errors, an addition <quote>Last Error</quote> section will display
+for example the last database access error.
+</para>
+
+<para>To stop the tool, access the URL
+<programlisting>http://localhost:4913/stop
+</programlisting>
+</para>
+
+</chapter>

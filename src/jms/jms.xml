@@ -23,27 +23,29 @@ bin/activemq
 </programlisting>
 </para>
 <para>The page
-<link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer">http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer</link>.
+<link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer">http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer</link>
 has more details on how to adjust the default JMS configuration.
+For example, you probably want to disable parts of JMS that are not required for operation
+with CSS.
 </para>
 </sect1>
 
 <sect1>  <title>Client (CSS) Configuration</title>
 <para>To use JMS for logging or the alarm system, CSS needs the
-URL of the JMS instance. It should be of the form
+URL of your JMS instance. It should be of the form
 <programlisting>failover:(tcp://your_jms_host:61616)
 </programlisting>
 <quote>Failover</quote> with a single server instructs the client
-to re-connect automatically after network problems.
-Actual failover between multiple JMS instances is possible,
+to automatically re-connect after network problems.
+Actual failover between multiple JMS instances is also possible,
 but for details you need to refer to the Apache ActiveMQ documentation.
 </para>
 </sect1>
 
 <sect1>  <title>Testing your Setup</title>
 <para>As a basic test of your JMS setup,
-you can enable JMS logging in your product,
-for example by adding these lines into your
+you can enable JMS logging in your CSS product,
+for example by adding these lines to your
 plugin customization file (see <xref linkend="ch_preferences"/>):
 </para>
 <programlisting>org.csstudio.logging/console_level=FINE

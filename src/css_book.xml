@@ -124,7 +124,7 @@ CSS plugins.
 <!-- 'Manual' pages for application plugins -->
 <xi:include href="org.csstudio.archive.engine/chapter.xml" />
 <xi:include href="org.csstudio.debugging.jmsmonitor/chapter.xml" />
-<xi:include href="org.csstudio.sns.jms2rdb.xml" />
+<xi:include href="org.csstudio.sns.jms2rdb/chapter.xml" />
 
 </part>
 
