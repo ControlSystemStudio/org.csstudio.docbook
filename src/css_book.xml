@@ -88,19 +88,18 @@ for selected plugins.
 
 <xi:include href="archive/archive.xml" />
 <xi:include href="jms/jms.xml" />
+<xi:include href="auth/auth.xml" />
 <xi:include href="alarm/alarm.xml" />
 
 <xi:include href="products/products.xml" />
 <xi:include href="intropages.xml" />
 <xi:include href="localization.xml" />
 
-<!-- TODO Headless build -->
-
 <xi:include href="data.xml" />
 
 <xi:include href="data_exchange.xml" />
 
-<!-- TODO JMS Message info -->
+<!-- TODO JMS Alarm Message info -->
 
 </part>
 

@@ -184,6 +184,25 @@ These encrypted preferences can be stored in either of two places:
 org.csstudio.auth/secure_storage_location=CONFIGURATION_LOCATION
 </programlisting>
 </para>
+
+<sect2> <title>org.csstudio.sns.passwordprovider</title>
+<para>The Eclipse <code>SecurePreferencesFactory</code> that is used
+for the secure storage of passwords as described above requires a password provider.
+This password is sued to encrypt and descrypt the preferences.
+Eclipse provides implementations for Windows or OS X that can interface with OS-specific
+key stores, including
+<itemizedlist>
+<listitem>org.eclipse.equinox.security.macosx</listitem>
+<listitem>org.eclipse.equinox.security.win32.x86</listitem>
+</itemizedlist>
+On other operating systems, Eclipse will fall back to a dialog box that queries the user for a
+master password.
+The plugin <code>org.csstudio.sns.passwordprovider</code> provides a password without
+requiring user input, which can be very convenient.
+Since the password can be derived from reading the code, it is not 100% secure
+</para>
+</sect2>
+
 </sect1>
 
 </chapter>
