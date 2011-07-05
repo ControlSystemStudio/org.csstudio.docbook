@@ -84,8 +84,9 @@ to use. You should set this preference in the
 CSS product:
 </para>
 <programlisting>
-# Select jaasAuthentication config
-org.csstudio.platform.jaasAuthentication/jaasconfig=Dummy
+# Select 'Dummy' JAAS Authentication
+org.csstudio.platform.jaasAuthentication/jaas_config_source=File
+org.csstudio.platform.jaasAuthentication/jaas_config_file_entry=Dummy
 </programlisting>
 
 <para>To add your authentication method, you could extend
