@@ -283,18 +283,24 @@ You can copy that directory to other computers and run it there.
 One method of deployment would be to offer a ZIP file of the exported product on a web page. 
 </para>
 
-<para>Note that there is currently a limitation for command-line products on Windows.
+<sect2> <title>Command-line Products for Windows</title>
+<para>
 Command-line applications, in Eclipse called
 <quote>headless</quote><indexterm><primary>Headless RCP Application</primary></indexterm> RCP applications,
-are invoked from a terminal window.
+are invoked from a terminal window, i.e. the Linux shell, Mac OS X terminal, or Windows Command Prompt.
 They are configured via command-line arguments, and they print information to the terminal.
-This works fine on Linux and Mac OS X, but in the Windows <filename>cmd.exe</filename> you will by default
-not see any output from headless RCP applications.
+</para>
+<para>
+<emphasis role="strong">
+Note that there is currently a limitation for command-line products on Windows!
+</emphasis>
+Headless RCP applications work fine on Linux and Mac OS X, but in the Windows command line tool
+<filename>cmd.exe</filename> you will by default <emphasis>not see any output from headless RCP applications</emphasis>.
 The problem<indexterm><primary>Headless RCP Application Problem on Windows</primary></indexterm>
 is related to the fact that Java for Windows includes both
 <filename>javaw.exe</filename> and <filename>java.exe</filename> because Windows distinguishes
 between GUI and console applications. <code>javaw -version</code> invoked in <code>cmd.exe</code>
-will not display any output.
+will not display any output, either.
 </para>
 
 <para>Eclipse for Windows likewise includes launchers  
@@ -308,8 +314,16 @@ the bug report on <quote>Support for exporting eclipsec.exe in RCP apps</quote>,
 
 <para>For the time being, the only solution is to manually replace the generated launcher, for example
 <filename>AlarmServer.exe</filename>, with a copy of <filename>eclipsec.exe</filename>:
-<programlisting>copy \path\to\eclipsec.exe AlarmServer.exe</programlisting>
 </para>
+<programlisting>copy \path\to\eclipsec.exe AlarmServer.exe</programlisting>
+<para>After replacing the original executable with a copy of <filename>eclipsec.exe</filename>,
+you can invoke the <filename>AlarmServer.exe</filename> from within the Windows Command Prompt,
+and you will see its command line output inside the Command Prompt window.
+If you start the <filename>AlarmServer.exe</filename> via double-clicks from the Windows Explorer,
+i.e. not from within a Command Prompt, it will actually open a new Command Prompt in which it can
+then display command line output.
+</para>
+</sect2>
 
 </sect1>
 
@@ -352,8 +366,24 @@ executable because the Windows file system lacks that notion.
 is eventually necessary for each site that periodically publishes CSS product updates.
 It automates the build process, guaranteeing that the products are indeed exported for each supported platform.
 It can also be used as part of a nightly or integration build.
+</para>
+<para>
+A headless build, however, is more complicated to set up than the product export from the IDE.
+The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
+Instead, it is command-line driven and expects to find all feature and plugin projects
+in subdirectories of the build directory which have to be named <filename>features</filename>
+respectively <filename>plugins</filename>.
+This usually means that you need a shell script or a build file for <code>ant</code>
+to copy all feature and plugin projects that are part of your product into such a build directory layout.
+In addition, you need a file <filename>build.properties</filename> to specify which
+product or feature to build, which target architectures to use, and how to name the generated
+archive files.
+</para>
+<para>
 For details, check the Eclipse online help for Headless Build,
-and refer to the scripts in the <filename>build</filename> subdirectory of the CSS sources.
+or refer to the scripts that other CSS sites use to build their products,
+which can be found in the <filename>build</filename> and <filename>products</filename>
+subdirectories of the CSS sources.
 </para>
 </sect1>
 
