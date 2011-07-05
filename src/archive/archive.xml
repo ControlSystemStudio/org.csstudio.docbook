@@ -61,7 +61,7 @@ org.csstudio.archive.config.rdb/ArchiveConfigTool.product
 For first tests, you can run both tools from within the Eclipse IDE as described in
 <xref linkend="chap_compiling"/>, <xref linkend="sec_runnning_in_ide"/>,
 but note that you will have to provide command-line arguments to them.
-After first tests are successful, you can export from from the IDE as described in the same section.
+After first tests are successful, you can export them from the IDE as described in the same section.
 Finally, you will need one of the CSS end-user products that includes the Data Browser to
 look at the archived data, but for now we concentrate on the tools
 needed to collect data.
