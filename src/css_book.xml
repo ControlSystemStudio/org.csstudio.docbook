@@ -60,6 +60,38 @@ to install, maintain and extend CSS.
 <para>The second part of the book has reference chapters
 for selected plugins.
 </para>
+<para>For more information on Eclipse RCP, the technology underlying CSS,
+and CSS in general, you might also want to refer to:
+<itemizedlist>
+<listitem>Books
+   <itemizedlist>
+   <listitem>Clayberg and Rubel,
+             <citetitle pubwork="book">eclipse: Building Commercial Quality Plug-ins</citetitle>
+             and the 2008 update 
+             <citetitle pubwork="book">eclipse Plug-ins</citetitle>
+             were very good, but details are now out of date.
+   </listitem>
+   <listitem>McAffer, Lemieux and Aniszczyk,
+             <citetitle pubwork="book">Eclipse Rich Client Platform</citetitle>
+             is a 2010 update.
+   </listitem>
+   <listitem>McAffer, VanderLei and Archer,
+             <citetitle pubwork="book">OSGi and Equinox</citetitle>
+             concentrates on the plugin architecture at the basis
+             of Eclipse.
+   </listitem>
+   </itemizedlist>
+</listitem>
+<listitem>The Eclipse IDE online help section <quote>Platform Plug-in Developer Guide</quote>
+</listitem>
+<listitem>The CSS wiki on
+<link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki">http://sourceforge.net/apps/trac/cs-studio/wiki</link>.
+</listitem>
+<listitem>Finally, a Google search often gives good results because Eclipse/RCP
+is used all over the world by many developers.
+</listitem>
+</itemizedlist>
+</para>
 </partintro>
 
 <!-- 
