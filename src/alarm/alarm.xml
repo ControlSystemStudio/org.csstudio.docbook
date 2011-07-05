@@ -196,31 +196,74 @@ for later review and anaysis, for example: What happened when? Which alarm was m
 </sect1>
 
 
+<sect1>  <title>Relational Database Setup</title>
+<para>Before using the archive tools, you need to create the required table structure in your RDB.
+Refer to the sources for the plugin <code>org.csstudio.alarm.beast</code>.
+It's <filename>dbd</filename> subdirectory contains
+schema definitions for MySQL, Oracle and PostgreSQL.
+</para>
+</sect1>
+
+
 <sect1>  <title>Building the Tools</title>
 <para>
-
-<programlisting>org.csstudio.alarm.beast.server/AlarmServer.product
-org.csstudio.alarm.beast.configtool/AlarmConfigTool.product
+<programlisting>org.csstudio.alarm.beast.configtool/AlarmConfigTool.product
+org.csstudio.alarm.beast.server/AlarmServer.product
 </programlisting>
 
 For first tests, you can run both tools from within the Eclipse IDE as described in
 <xref linkend="chap_compiling"/>, <xref linkend="sec_runnning_in_ide"/>,
 but note that you will have to provide command-line arguments to them.
-After first tests are successful, you can export from from the IDE as described in the same section.
+After first tests are successful, you can export them from the IDE as described in the same section.
+Finally, you will need to include the alarm system client GUI (Alarm Table, Alarm Tree, Annunciator)
+into your end-user CSS product.
 </para>
 </sect1>
 
 
-<sect1 xml:id="sec_alarm_rdb_setup">  <title>Relational Database Setup</title>
-
-<para>Before using the archive tools, you need to create the required table structure in your RDB.
-Currently MySQL, Oracle and PostgreSQL are supported.
+<sect1>  <title>Creating New Alarm Configuration</title>
+<para>The initial alarm configuration needs to be imported into the RDB via
+the <code>AlarmConfigTool</code>. This alarm configuration may be empty.
+It can later be edited from within the alarm system user interface.
+The alarm system user interface cannot, however, create a new alarm configuration.
+A new alarm configuration can only be created by importing it via the Alarm Config Tool.
 </para>
-
-<programlisting><![CDATA[ ...
+<para>The Alarm Config Tool can import alarm configurations from an XML file format.
+A minimal, empty configuration with name <quote>demo</quote> would look like this,
+usually saved to a file called <filename>demo.xml</filename>:
+</para>
+<programlisting><![CDATA[<config name="demo">
+</config>
 ]]></programlisting>
 
+<para>Import such a configuration file into the RDB like this:
+</para>
+<programlisting><![CDATA[AlarmConfigTool -pluginCustomization /path/to/my/settings.ini -import -root demo -file demo.xml
+]]></programlisting>
 
+<para>In this example we assume that you have a file <filename>settings.ini</filename>
+to hold your site-specific preferences, for example the RDB connection parameters to
+connect to the RDB that holds your alarm system configuration.
+See also <xref linkend="ch_preferences"/>.
+</para>
+
+<para>The config tool has more command-line options to list available configurations
+or to export a configuration to a file.
+</para>
+<programlisting><![CDATA[AlarmConfigTool -list
+AlarmConfigTool -export -root demo -file demo.xml
+]]></programlisting>
+
+<para>While it is usually most convenient to edit an alarm configuration from the
+alarm client user interface, bigger changes to the alarm configuration are
+sometimes easier by exporting the existing configuration to an XML file,
+editing it, then re-importing it. 
+</para>
+<para>The plugin <code>org.csstudio.alarm.beast.configtool</code> contains a file
+<filename>AlarmConfigurationSchema.xsd</filename> with a scheme of the alarm configuration
+XML format. This can be used as a reference or to check an alarm configuration XML file
+with XML tool before importing it via the alarm config tool.
+</para>
 </sect1>
 
 </chapter>
