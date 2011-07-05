@@ -57,6 +57,14 @@ You can verify this by starting the JMS Monitor,
 see <xref linkend="ch_jms_monitor"/>, to view messages
 for the <code>LOG</code> Topic.
 </para>
+<para>While you should probably disable this in a production setup,
+the default configuration of ActiveMQ includes a web browser interface.
+It is accessible at
+<link xlink:href="http://localhost:8161/admin">http://localhost:8161/admin</link>
+on the host where JMS is running.
+It can display who is connected to JMS and what topic each connection is reading
+or writing.
+</para>
 </sect1>
 
 <sect1>  <title>Message Types</title>
