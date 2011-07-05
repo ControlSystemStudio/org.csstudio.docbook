@@ -193,6 +193,73 @@ Alarm state updates, annunciations, acknowledgements, configuration changes.
 A generic JMS-to-RDB logger can thus capture all alarm traffic into an RDB
 for later review and anaysis, for example: What happened when? Which alarm was most frequent? 
 </para>
+
+<sect2> <title>Alarm Tree <quote>Root</quote></title>
+<para>The RDB can hold more than one alarm system configuration.
+Each alarm configuration is identified by the name of its
+<quote>Root</quote><indexterm><primary>Alarm Tree Root</primary></indexterm>
+element, for example CCR for a Central Control Room configuration.
+</para>
+<para>The Alarm Server and associated user interface clients must use
+the same alarm tree root.
+They will construct the names of JMS topics used to communicate by
+adding suffixes to the alarm tree root name.
+For example, with an alarm tree root of CCR, the server and clients
+will use the following JMS topics:
+</para>
+<itemizedlist>
+<listitem>CCR_SERVER:
+Used by the server to send alarm state updates to clients.
+</listitem>
+<listitem>CCR_CLIENT:
+Used by clients to send acknowledgement requests or configuration change notifications
+to the server.
+</listitem>
+<listitem>CCR_TALK:
+Used by the server to send annunciation messages to annunciators.
+</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2> <title>Multiple Parallel Alarm Configurations</title>
+<para>Exactly one alarm server needs to be running for each alarm system configuration,
+i.e. for each alarm tree root.
+Clients are bound to a specific alarm configuration via
+a preference setting that selects their alarm tree root name.
+Optionally, it is possible to enable users to change the alarm configuration
+at runtime via a selector in the Alarm Tree display.
+</para>
+</sect2>
+
+<sect2> <title><quote>Global</quote> Alarms</title>
+<para>
+  <emphasis>The following is under development, not in operational use:</emphasis>
+</para>
+<para>An alarm server can send information about alarms that stay un-acknowledged for
+a configurable time to a <quote>GLOBAL_SERVER</quote> alarm topic in JMS.
+A corresponding global alarm table user interface can display such alarms
+and allow operators to quickly switch to that alarm system configuration,
+where they then have access to the alarms guidance etc.
+</para>
+<para>The use case for this is a central control room combined with
+several auxiliary, sub-system-specific control rooms. For example
+a cryogenic or conventional facility control room in addition to a
+bigger <quote>main</quote> control room.
+Most of the time, the auxiliary control rooms use their own alarm
+system configuration, specific to their needs, and all alarms
+are handled locally.
+</para>
+<para>At night or on weekends, however, the auxiliary control rooms
+are not manned. At those times, alarms are not locally acknowledged,
+and after some timeout they will appear in the global alarm table
+of the main control room.
+</para>
+<para>A listener to JMS messages on the GLOBAL_SERVER topic can also
+be used to trigger automated email notifications or send
+cell phone text messages in response to unhandled, i.e. un-acknowledged
+global alarms.
+</para>
+</sect2>
 </sect1>
 
 
@@ -221,6 +288,31 @@ into your end-user CSS product.
 </sect1>
 
 
+<sect1>  <title>Alarm System Preferences</title>
+<para>Most of the alarm system related preference settings
+are explained and listed with their defaults in the file
+<filename>preferences.ini</filename> of the plugin
+<code>org.csstudio.alarm.beast</code>.
+You will have to adjust the following, most important settings settings
+for your site:
+</para>
+<itemizedlist>
+<listitem>URL, user and password for connecting to the RDB
+that holds your alarm configuration.
+</listitem>
+<listitem>URL of your JMS server.</listitem>
+<listitem>Name of your alarm tree <quote>Root</quote>.</listitem>
+</itemizedlist>
+
+<para>This is typically done by adding the site-specific settings
+to the <filename>plugin_customization.ini</filename> file of
+your product, see <xref linkend="ch_preferences"/>.
+For command-line tools like the alarm config tool you can also
+create a file <filename>settings.ini</filename> as mentioned below.
+</para>
+</sect1>
+
+
 <sect1>  <title>Creating New Alarm Configuration</title>
 <para>The initial alarm configuration needs to be imported into the RDB via
 the <code>AlarmConfigTool</code>. This alarm configuration may be empty.
@@ -236,21 +328,23 @@ usually saved to a file called <filename>demo.xml</filename>:
 </config>
 ]]></programlisting>
 
-<para>Import such a configuration file into the RDB like this:
+<para>Import such a configuration file into the RDB like this,
+assuming that you have a file <filename>settings.ini</filename>
+that holds your site-specific RDB connection parameters:
 </para>
 <programlisting><![CDATA[AlarmConfigTool -pluginCustomization /path/to/my/settings.ini -import -root demo -file demo.xml
 ]]></programlisting>
 
-<para>In this example we assume that you have a file <filename>settings.ini</filename>
-to hold your site-specific preferences, for example the RDB connection parameters to
-connect to the RDB that holds your alarm system configuration.
-See also <xref linkend="ch_preferences"/>.
-</para>
-
 <para>The config tool has more command-line options to list available configurations
-or to export a configuration to a file.
+or to export a configuration to a file:
 </para>
-<programlisting><![CDATA[AlarmConfigTool -list
+<programlisting><![CDATA[# Display all parameters
+AlarmConfigTool -help
+
+# List alarm tree root names
+AlarmConfigTool -list
+
+# Export alarm configuration to XML file
 AlarmConfigTool -export -root demo -file demo.xml
 ]]></programlisting>
 
@@ -259,9 +353,10 @@ alarm client user interface, bigger changes to the alarm configuration are
 sometimes easier by exporting the existing configuration to an XML file,
 editing it, then re-importing it. 
 </para>
-<para>The plugin <code>org.csstudio.alarm.beast.configtool</code> contains a file
-<filename>AlarmConfigurationSchema.xsd</filename> with a scheme of the alarm configuration
-XML format. This can be used as a reference or to check an alarm configuration XML file
+<para>The sources for the plugin <code>org.csstudio.alarm.beast.configtool</code>
+contain a schema file for the alarm configuration XML file format,
+<filename>AlarmConfigurationSchema.xsd</filename>.
+This can be used as a reference or to check an alarm configuration XML file
 with XML tool before importing it via the alarm config tool.
 </para>
 </sect1>
