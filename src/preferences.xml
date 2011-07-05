@@ -120,19 +120,69 @@ Details depend on the preference store that is selected by the code that impleme
 </sect1>
 
 
-<sect1>  <title>Note: Passwords</title>
+<sect1>  <title>Secure Storage of Passwords</title>
 <para>The CSS <code>SecureStorage</code> and <code>PasswordFieldEditor</code> allow to keep preferences for passwords encrypted.
 It is for example used to store passwords for accessing the relational database of the SNS alarm and archive system.
-The typical use case is like this:
+These encrypted preferences can be stored in either of two places:
+</para>
 <itemizedlist>
-<listitem>System administrator installs CSS</listitem>
-<listitem>System administrator starts CSS and enters the passwords once in the preference GUI</listitem>
+<listitem><para><code>INSTALL_LOCATION</code>:</para>
+	<para>This is the directory where CSS is installed, for example
+	<filename>/usr/local/css/CSS3.0.0</filename>.
+	Using the install location has the advantage that all users of CSS on that computer will
+	have the password available for use without actually knowing it.
+	</para>
+	<para>
+	The typical scenario is this:
+	<itemizedlist>
+	<listitem>System administrator installs CSS.</listitem>
+	<listitem>System administrator starts CSS and enters the passwords once in the preference GUI.</listitem>
+	<listitem>Users can now run CSS. CSS plugins have access to the password, but users cannot see the password.</listitem>
+	</itemizedlist>
+	</para>
+	<para>The disadvantage is that if a user were to try to change any of the related preferences from the GUI,
+	CSS will try to write the password and fail because ordinary users have no write permission in the
+	install location.
+	</para>
+</listitem>
+<listitem><para><code>CONFIGURATION_LOCATION</code>:</para>
+	<para>The exact directory name of this location is determined
+	automatically based on where the user can write.
+	It can for example be in an <filename>.eclipse</filename>
+	sub-directory of the user home directory.
+	Using the configuration location has the advantage that every user of CSS
+	can enter his or her own password. The password they entered usually
+	applies to their instance of CSS, but may also affect instances
+	started by other users.
+	</para>
+	<para>
+	The typical scenario is this:
+	<itemizedlist>
+	<listitem>System administrator installs CSS, maybe with some passwords build into the
+	          product's <filename>plugin_customization.ini</filename>.
+	</listitem>
+	<listitem>User can run CSS. CSS plugins have access to the built-in password.</listitem>
+	<listitem>User knows another password, enters that password in the preference GUI.</listitem>
+	<listitem>For that user, CSS plugins now use the password that the user entered.</listitem>
+	</itemizedlist>
+	</para>
+	<para>The disadvantage of this approach it its unpredictability.
+	The configuration location can default to the CSS installation location
+	<emphasis>if that user has write permissions</emphasis> to that area of the file system.
+	If such a user enters a password, it will be used by all instances of CSS on that computer.
+	If a user with lesser file access privileges enters a password, it will only be written to a
+	configuration location in that users home directory and <emphasis>not</emphasis> apply
+	to other users.
+	</para>
+</listitem>
 </itemizedlist>
 
-Since the <code>SecureStorage</code> and <code>PasswordFieldEditor</code> store the passwords in an encrypted file
-in the CSS install location, these passwords now apply to all instances of CSS.
-Contrary to the default way of storing preference settings from the GUI,
-they are not held in the user's workspace, so there is no need for each user to know and enter the passwords again.
+<para>The location for secure storage can be configured via this setting: 
+<programlisting>
+# Can be either "INSTALL_LOCATION" or "CONFIGURATION_LOCATION".
+# By default it is "CONFIGURATION_LOCATION".
+org.csstudio.auth/secure_storage_location=CONFIGURATION_LOCATION
+</programlisting>
 </para>
 </sect1>
 
