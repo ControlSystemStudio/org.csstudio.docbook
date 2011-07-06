@@ -88,22 +88,22 @@
     the same order.</para>
     <para>The following example adds a command to the popup menu:</para>
     <programlisting><![CDATA[<plugin>
-   ...
-   <extension
-         point="org.eclipse.ui.menus">
-      ...
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.csstudio.ui.menu.popup.processvariable">
-         <command
-               commandId="org.csstudio.display.waterfall.SomeCommand"
-               icon="icons/water.png"
-               style="push">
-         </command>
-      </menuContribution>
-      ...
-   </extension>
-   ...
+ ...
+ <extension
+     point="org.eclipse.ui.menus">
+  ...
+  <menuContribution
+   allPopups="false"
+   locationURI="popup:org.csstudio.ui.menu.popup.processvariable">
+   <command
+    commandId="org.csstudio.display.waterfall.SomeCommand"
+    icon="icons/water.png"
+    style="push">
+   </command>
+  </menuContribution>
+  ...
+ </extension>
+ ...
 </plugin>]]></programlisting>
     <para>To handle the received PV names in a command handler,
     see <xref linkend="chap_org.csstudio.ui.util"/>
@@ -112,25 +112,26 @@
     (note the contribution to the <code>main</code> section):
     </para>
     <programlisting><![CDATA[<plugin>
-   ...
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      ...
-      <objectContribution
-            adaptable="true"
-            id="org.csstudio.ui.menu.test.objectContribution1"
-            objectClass="org.csstudio.csdata.ProcessVariable">
-         <action
-               class="org.csstudio.ui.menu.test.TestPVAction"
-               icon="icons/test.png"
-               id="org.csstudio.ui.menu.test.testpvaction"
-               label="Test Action"
-               menubarPath="org.csstudio.ui.menu.popup.processvariable/main">
-         </action>
-      </objectContribution>
-      ...
-   </extension>
-   ...
+...
+<extension
+    point="org.eclipse.ui.popupMenus">
+ ...
+ <objectContribution
+   adaptable="true"
+   id="org.csstudio.ui.menu.test.objectContribution1"
+   objectClass="org.csstudio.csdata.ProcessVariable">
+   <action
+     class="org.csstudio.ui.menu.test.TestPVAction"
+     icon="icons/test.png"
+     id="org.csstudio.ui.menu.test.testpvaction"
+     label="Test Action"
+     menubarPath=
+       "org.csstudio.ui.menu.popup.processvariable/main">
+   </action>
+ </objectContribution>
+ ...
+</extension>
+...
 </plugin>]]></programlisting>
 
   </sect1>

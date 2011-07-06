@@ -14,13 +14,19 @@
     when adapting the selection from one plug-in to the other during events
     like drag'n'drog and context menu command/actions.</para>
     <para>For example, this command handler convert a selection to a specific type:</para>
-    <programlisting>public class MyCommandHandler extends AbstractHandler {
-    @Override
-    public Object execute(final ExecutionEvent event) throws ExecutionException {
-        final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-        final ProcessVariable[] pvs = AdapterUtil.convert(selection, ProcessVariable.class);
-		...
-	}
+    <programlisting>
+public class MyCommandHandler extends AbstractHandler
+{
+   @Override
+   public Object execute(ExecutionEvent event)
+      throws ExecutionException
+   {
+       ISelection selection =
+          HandlerUtil.getActiveMenuSelection(event);
+       ProcessVariable[] pvs =
+          AdapterUtil.convert(selection, ProcessVariable.class);
+	   ...
+}
 </programlisting>
     <para>If no selection is available, or no conversion is available, and empty array
     is returned. If each item in the selection is adaptable to a PV[], those arrays
@@ -42,15 +48,18 @@
 </programlisting>
     <para>The source will take care of broadcasting the selection in all possible
     adaptable types.</para>
-    <para>To declare a drop:</para>
+    <para>To accept a drop:</para>
     <programlisting>        Control control = ...
 
         // Accept PVs for a drop
-        new ControlSystemDropTarget(control, MyData.class, ProcessVariable[].class) {
+        new ControlSystemDropTarget(control,
+            MyData.class,
+            ProcessVariable[].class) {
             @Override
             public void handleDrop(Object item) {
                 if (item instanceof ProcessVariable[]) {
-                    control.setText(Arrays.toString((ProcessVariable[]) item));
+                    control.setText(
+                       Arrays.toString((ProcessVariable[]) item));
                 }
                 if (item instanceof MyData) {
                     control.setText(((MyData) item).getText());
