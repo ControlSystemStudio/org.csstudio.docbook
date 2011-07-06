@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 <chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
-         version="5.0">
+         version="5.0"
+         xml:id="chap_org.csstudio.ui.util">
   <title>Common SWT/JFace utilities - org.csstudio.ui.util</title>
   <para>The plugin <quote>org.csstudio.ui.util</quote> defines common
   ui elements can be used in different applications.</para>
@@ -13,10 +14,11 @@
     when adapting the selection from one plug-in to the other during events
     like drag'n'drog and context menu command/actions.</para>
     <para>For example, this command handler convert a selection to a specific type:</para>
-    <programlisting>	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		ProcessVariable[] pvs = AdapterUtil.convert(selection, PocessVariable.class);
+    <programlisting>public class MyCommandHandler extends AbstractHandler {
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+        final ProcessVariable[] pvs = AdapterUtil.convert(selection, ProcessVariable.class);
 		...
 	}
 </programlisting>
@@ -38,7 +40,7 @@
             }
         };
 </programlisting>
-    <para>The source will take care of broacasting the selection in all possible
+    <para>The source will take care of broadcasting the selection in all possible
     adaptable types.</para>
     <para>To declare a drop:</para>
     <programlisting>        Control control = ...

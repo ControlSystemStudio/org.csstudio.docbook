@@ -105,7 +105,12 @@
    </extension>
    ...
 </plugin>]]></programlisting>
-    <para>The following example adds an action to the popup menu (note the contribution to the <quote>main</quote> section):</para>
+    <para>To handle the received PV names in a command handler,
+    see <xref linkend="chap_org.csstudio.ui.util"/>
+    </para>
+    <para>The following example adds an action to the popup menu
+    (note the contribution to the <code>main</code> section):
+    </para>
     <programlisting><![CDATA[<plugin>
    ...
    <extension
@@ -127,5 +132,6 @@
    </extension>
    ...
 </plugin>]]></programlisting>
+
   </sect1>
 </chapter>
