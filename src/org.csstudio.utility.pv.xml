@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_utility.pv">
+<title>PV Access - org.csstudio.utility.pv</title>
+
+<para>This plugin provides one of the CSS APIs for accessing live control
+system data, i.e. read process variable samples from front-end computers.
+It's emphasis is on fairly straight-forward access to individual PVs,
+using a listener for received updates.
+</para>
+
+<sect1> <title>Usage</title>
+<para>The <code>org.csstudio.utility.pv</code> plugin defines
+the API for accessing PVs, an extension point to implement
+such PVs, and a <code>PVFactory</code> to access available
+implementations.
+</para>
+<para>Typical usage looks like this:</para>
+<programlisting>// Create PV
+final PV pv = PVFactory.createPV(pv_name);
+// Register listener for updates
+pv.addListener(new PVListener()
+{
+    public void pvDisconnected(PV pv)
+    {
+        System.out.println(pv.getName() + " is disconnected");
+    }
+    public void pvValueUpdate(PV pv)
+    {
+        IValue value = pv.getValue();
+        System.out.println(pv.getName() + " = " + value);
+        if (value instanceof IDoubleValue)
+        {
+            IDoubleValue dbl = (IDoubleValue) value;
+            System.out.println(dbl.getValue());
+        }
+        // ... or use ValueUtil
+    }
+});
+// Start the PV
+pv.start();
+
+...
+
+pv.stop();
+</programlisting>
+</sect1>
+
+
+<sect1> <title>Available Implementations</title>
+<para>The plugin <code>org.csstudio.utility.pv</code> defines an interface
+for accessing live control system data.
+The archive engine for example uses that library for subscribing to value updates from PVs
+that you want to archive.
+</para>
+<para>The <code>utility.pv</code> plugin does not, however, contain any implementation.
+Instead, it defines an Eclipse Extension Point that allows other plugins
+to provide pluggable implementations.
+The plugin <code>org.csstudio.utility.pv.epics</code> implements
+live data access based on EPICS Channel Access Version 3.
+The plugin <code>org.csstudio.utility.pv.simu</code> implements simulated PVs
+like
+</para>
+<programlisting>sim://ramp</programlisting>
+<para>Refer to online help provided by the plugin
+<code>org.csstudio.utility.pvmanager.ui</code>
+for the syntax of simulated PVs.
+</para>
+
+<para>This way, one can build an archive engine that supports EPICS,
+or EPICS and simulated PVs, or only simulated PVs by simply including the desired plugins.
+There is no need to change the actual archive engine code at all.
+</para>
+</sect1>
+
+<sect1> <title>Common Problems</title>
+<para>While the modular plug-in approach is very flexible, there can be one disadvantage:
+The archive engine code for example only depends on <code>org.csstudio.utility.pv</code>,
+the <emphasis>definition</emphasis> of the API for accessing live data.
+When bundling the archive engine code into a product, this plugin must be included.
+</para>
+<para>The <emphasis>implementing</emphasis> plugins like
+<code>org.csstudio.utility.pv.epics</code> are optional,
+allowing you to build an archive engine that does not interface to EPICS
+but another network protocol of your choice.
+If you fail to include <emphasis>any</emphasis> implementing plugins,
+the product will built without errors but later issue runtime error messages
+</para>
+<programlisting>No extensions to org.csstudio.utility.pv.pvfactory found
+</programlisting>
+
+<para>This error means:
+The <code>org.csstudio.utility.pv</code> could not locate any implementation,
+no factory classes for creating actual live data PVs.
+You need to include at least one implementing plugin like
+<code>org.csstudio.utility.pv.epics</code> or
+<code>org.csstudio.utility.pv.simu</code>.
+</para>
+</sect1>
+</chapter>

@@ -153,6 +153,7 @@ CSS plugins.
 <xi:include href="org.csstudio.core.util.feature/chapter.xml" />
 <xi:include href="org.csstudio.logging.xml" />
 <xi:include href="org.csstudio.ui.menu/chapter.xml" />
+<xi:include href="org.csstudio.utility.pv.xml" />
 <xi:include href="org.csstudio.ui.util/chapter.xml" />
 <xi:include href="org.csstudio.openfile/openfile.xml" />
 
