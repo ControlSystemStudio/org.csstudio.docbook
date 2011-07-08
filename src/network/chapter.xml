@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0"
+         xml:id="chap_network">
+<title>Network Usage by CSS</title>
+
+<para>As a control system tool, CSS naturally performs
+a certain amount of network communication.
+For the most part, the CSS application that end users run
+acts as a network client, while tools like the Alarm Server
+will obviously also need to serve data.
+</para>
+
+<sect1> <title>Windows Firewall Warning</title>
+
+<para>Even when running CSS as a client tool, you might
+run into the Windows Firewall warning<indexterm><primary>Firewall Warning</primary></indexterm>
+shown in <xref linkend="fig_firewall"/>.
+</para>
+
+<figure xml:id="fig_firewall">  <title>Windows Firewall Warning</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="firewall.png" width="40%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The message appears because even a client tool like CSS
+does sometimes <emphasis>listen</emphasis> on network ports,
+i.e. act as a server.
+This usually happens for the following reasons:
+</para>
+
+<itemizedlist>
+<listitem>You configured logging to JMS (see <xref linkend="ch_logging"/> and <xref linkend="ch_jms"/>).
+While connecting to JMS, CSS will also listen.
+<!-- ... and I have no good explanation as to why -->
+</listitem>
+<listitem>You opened the online help.
+Internally, this is implemented by CSS acting as a web server,
+and the help viewer is an ordinary web browser.
+</listitem>
+</itemizedlist>
+
+<para>You can usually cancel that firewall warning,
+meaning Windows will <emphasis role="strong">block</emphasis> access
+from other computers on the network to your instance of CSS.
+Logging to JMS on another computer as well as local viewing
+of the online help will be unaffected.
+</para>
+
+</sect1>
+
+
+<sect1> <title>Required Firewall Exceptions</title>
+<para>You might have to open firewall exceptions
+for all the tools that <emphasis>serve</emphasis> data,
+including
+</para>
+
+<itemizedlist>
+<listitem>Your RDB server</listitem>
+<listitem>Your JMS server</listitem>
+<listitem>Archive Engines for access to their status web server</listitem>
+</itemizedlist>
+
+<para>For details you will have to refer to the documentation of your
+firewall: Linux iptable, Windows firewall).
+</para>
+</sect1>
+
+</chapter>
