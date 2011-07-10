@@ -6,9 +6,12 @@
 
 <para>As a control system tool, CSS naturally performs
 a certain amount of network communication.
-For the most part, the CSS application that end users run
-acts as a network client, while tools like the Alarm Server
-will obviously also need to serve data.
+For the most part, the CSS application run by end users
+acts as a network <emphasis>client</emphasis>,
+while tools like the Alarm Server
+will obviously also need to <emphasis>serve</emphasis> data.
+CSS as a client tool can run without administrator privileges or
+firewall exceptions.
 </para>
 
 <sect1> <title>Windows Firewall Warning</title>
@@ -45,9 +48,9 @@ and the help viewer is an ordinary web browser.
 meaning Windows will <emphasis role="strong">block</emphasis> access
 from other computers on the network to your instance of CSS.
 Logging to JMS on another computer as well as local viewing
-of the online help will be unaffected.
+of the online help will not be affected by the firewall blocking
+outside access to your CSS client.
 </para>
-
 </sect1>
 
 
@@ -58,13 +61,16 @@ including
 </para>
 
 <itemizedlist>
-<listitem>Your RDB server</listitem>
-<listitem>Your JMS server</listitem>
-<listitem>Archive Engines for access to their status web server</listitem>
+<listitem>Your RDB server: Check ports used by your RDB.</listitem>
+<listitem>Your JMS server: Usually port 61616.</listitem>
+<listitem>Archive Engines: Allow access to the status web server
+that you configure for each respective  each archive engine instance.
+</listitem>
 </itemizedlist>
 
-<para>For details you will have to refer to the documentation of your
-firewall: Linux iptable, Windows firewall).
+<para>For details on how to allow such accss,
+you will have to refer to the documentation of your
+firewall: Linux iptable, Windows firewall.
 </para>
 </sect1>
 
