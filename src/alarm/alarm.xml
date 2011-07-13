@@ -264,10 +264,15 @@ global alarms.
 
 
 <sect1>  <title>Relational Database Setup</title>
-<para>Before using the archive tools, you need to create the required table structure in your RDB.
+<para>Before using the alarm system tools, you need to create the required table structure in your RDB.
 Refer to the sources for the plugin <code>org.csstudio.alarm.beast</code>.
-It's <filename>dbd</filename> subdirectory contains
+Its <filename>dbd</filename> subdirectory contains
 schema definitions for MySQL, Oracle and PostgreSQL.
+Pick the file that is appropriate for your RDB, and execute the commands listed in the file.
+</para>
+<para>When done, you should have the alarm tables defined in your RDB.
+You have to use basic RDB administration skills to create a user and password for
+an account that the alarm tools can use to read and modify the alarm system configuration.
 </para>
 </sect1>
 
@@ -358,6 +363,66 @@ contain a schema file for the alarm configuration XML file format,
 <filename>AlarmConfigurationSchema.xsd</filename>.
 This can be used as a reference or to check an alarm configuration XML file
 with XML tool before importing it via the alarm config tool.
+</para>
+</sect1>
+
+
+
+<sect1>  <title>Putting it all together</title>
+<para>So far, we described the alarm system in general as
+well as the setup of its infrastructure.
+In the following sections, we will describe how to run the
+alarm server and how to use the alarm client GUI.
+</para>
+<para>Since this is a distributed system, it is important to
+remember its components:
+</para>
+
+<itemizedlist>
+<listitem>Control System: Often overlooked when you create your first
+alarm system test setup, you need for example an EPICS soft IOC that
+creates alarms.
+</listitem>
+<listitem>Configuration in RDB: The previuos section described the
+Alarm Config Tool that you use to create an initial alarm system configuration.
+</listitem>
+<listitem>Alarm Config Tool: As described before, this is used to create
+the initial configuration.
+</listitem>
+<listitem>JMS Server: See <xref linkend="ch_jms"/>.
+</listitem>
+<listitem>Alarm Server: Its operation will be described in the following sections.
+</listitem>
+<listitem>CSS Alarm GUI: Your CSS product needs to include the alarm tree and alarm table
+plugins to allow access to the alarm system.
+In addition, at least <quote>dummy</quote> authentication and authorization
+needs to be configured to permit changes to the alarm configuration from the client GUI.
+See <xref linkend="chap_auth"/>.
+</listitem>
+</itemizedlist>
+</sect1>
+
+
+<sect1>  <title>Alarm Server</title>
+<para>To be written...
+</para>
+</sect1>
+
+
+<sect1>  <title>Alarm Tree View</title>
+<para>To be written...
+</para>
+</sect1>
+
+
+<sect1>  <title>Alarm Table View</title>
+<para>To be written...
+</para>
+</sect1>
+
+
+<sect1>  <title>Annunciator</title>
+<para>To be written...
 </para>
 </sect1>
 
