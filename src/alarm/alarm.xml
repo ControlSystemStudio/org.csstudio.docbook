@@ -16,7 +16,9 @@ by B. Hollifield and E. Habibi, published by ISA in 2007.
 <sect1> <title>Motivation</title>
 <para>The primary goal of the alarm system is simple:</para>
 
-<blockquote><emphasis>Effectively help operators take the correct action at the correct time.</emphasis></blockquote>
+<blockquote>
+<emphasis>Effectively help operators take the correct action at the correct time.</emphasis>
+</blockquote>
 
 <para>This is easier said than done!
 One way to accomplish this is to adopt the following guiding principles
@@ -279,17 +281,55 @@ an account that the alarm tools can use to read and modify the alarm system conf
 
 
 <sect1>  <title>Building the Tools</title>
-<para>
+<para>You need these command-line tools:
 <programlisting>org.csstudio.alarm.beast.configtool/AlarmConfigTool.product
 org.csstudio.alarm.beast.server/AlarmServer.product
 </programlisting>
-
-For first tests, you can run both tools from within the Eclipse IDE as described in
+</para>
+<para>For first tests, you can run both tools from within the Eclipse IDE as described in
 <xref linkend="chap_compiling"/>, <xref linkend="sec_runnning_in_ide"/>,
 but note that you will have to provide command-line arguments to them.
 After first tests are successful, you can export them from the IDE as described in the same section.
-Finally, you will need to include the alarm system client GUI (Alarm Table, Alarm Tree, Annunciator)
+</para>
+<para>Finally, you will need to include the alarm system client GUI (Alarm Table, Alarm Tree, Annunciator)
 into your end-user CSS product.
+</para>
+</sect1>
+
+
+<sect1>  <title>Authentication and Authorization</title>
+<para>The Alarm Config Tool and the Alarm Server obviously
+need an account with write access to the alarm tables in the RDB
+because they modify the alarm configuration or state.
+</para>
+<para>The alarm client GUI (Alarm Table, ...) is primiarily read-only,
+so a corresponding read-only RDB account would be sufficient.
+The GUI does, however, use CSS CSS authentication and authorization
+to allow a user to <quote>Log On</quote>, and qualified users
+are then permitted to modify the alarm configuration.
+It is in fact a prime feature of the alarm system that selected users
+can modify the alarm configuration on-line.
+For this to function, the CSS alarm GUI acutally
+requires an RDB account with write access.
+The <emphasis>CSS alarm GUI should therefore be provided with a write-access RDB account</emphasis>,
+and CSS authentication and authorization is then used to limit the use
+of that account within CSS.
+</para>
+<para>The alarm GUI uses these Authorization IDs:
+</para>
+<itemizedlist>
+<listitem><code>alarm_ack</code> -
+Users with this authorization can acknowledge alarms.
+</listitem>
+<listitem><code>alarm_config</code> -
+Users with this authorization can edit the alarm system configuration.
+</listitem>
+</itemizedlist>
+
+<para>For initial tests, you can configure CSS authentication and authorization
+to use a <quote>dummy</quote> mode where every user can authenticate and gain these rights.
+Eventually, however, you might want to configure proper authentication and authorization.
+Refer to <xref linkend="chap_auth"/> for details.
 </para>
 </sect1>
 
@@ -339,7 +379,8 @@ usually saved to a file called <filename>demo.xml</filename>:
 assuming that you have a file <filename>settings.ini</filename>
 that holds your site-specific RDB connection parameters:
 </para>
-<programlisting><![CDATA[AlarmConfigTool -pluginCustomization /path/to/my/settings.ini -import -root demo -file demo.xml
+<programlisting><![CDATA[AlarmConfigTool -pluginCustomization /path/to/my/settings.ini \
+-import -root demo -file demo.xml
 ]]></programlisting>
 
 <para>The config tool has more command-line options to list available configurations
@@ -369,7 +410,6 @@ with XML tool before importing it via the alarm config tool.
 </sect1>
 
 
-
 <sect1>  <title>Putting it all together</title>
 <para>So far, we described the alarm system in general as
 well as the setup of its infrastructure.
@@ -385,13 +425,12 @@ remember its components:
 alarm system test setup, you need for example an EPICS soft IOC that
 creates alarms.
 </listitem>
-<listitem>Configuration in RDB: The previuos section described the
-Alarm Config Tool that you use to create an initial alarm system configuration.
+<listitem>Configuration in RDB: Previous sections described the RDB table
+setup and how to use the Alarm Config Tool to create an initial alarm system configuration.
 </listitem>
-<listitem>Alarm Config Tool: As described before, this is used to create
-the initial configuration.
-</listitem>
-<listitem>JMS Server: See <xref linkend="ch_jms"/>.
+<listitem>JMS Server: See <xref linkend="ch_jms"/> how to start JMS.
+The Alarm Server and the Alarm GUI need to be configured with the URL
+of your JMS server to communicate.
 </listitem>
 <listitem>Alarm Server: Its operation will be described in the following sections.
 </listitem>
@@ -406,7 +445,48 @@ See <xref linkend="chap_auth"/>.
 
 
 <sect1>  <title>Alarm Server</title>
-<para>To be written...
+<para>The Alarm Server reads an alarm configuration, monitors the PVs of that configuration
+and notifies alarm clients about changes in the alarm state.
+It persists the alarm state in the RDB. For example, information about latched alarms
+is written to the RDB. When the Alarm Server is stopped and re-started, it will
+initialize from the RDB and learn about the previous state of all alarms.
+This way a previously latched alarm is recognized and not reported as a new alarm.
+</para>
+<para>The Alarm Server is a command-line tool that is configured via Eclipse preferences,
+i.e. usually via a customization file like this:
+</para>
+<programlisting>AlarmServer -consoleLog -pluginCustomization /path/to/alarm_server.ini
+</programlisting>
+
+<para>The alarm server plugin <code>org.csstudio.alarm.beast.server</code>
+includes an example plugin customization file <filename>plugin_customization.ini</filename>:
+</para>
+<programlisting># Alarm System 'root', i.e. configuration name
+org.csstudio.alarm.beast/root_component=Annunciator
+
+# Alarm System RDB Connection
+org.csstudio.alarm.beast/rdb_url=jdbc:mysql://localhost/alarm
+org.csstudio.alarm.beast/rdb_user=alarm
+org.csstudio.alarm.beast/rdb_password=$alarm
+org.csstudio.alarm.beast/rdb_schema=ALARM
+
+# Alarm System JMS Connection
+org.csstudio.alarm.beast/jms_url=failover:(tcp://localhost:61616)
+org.csstudio.alarm.beast/jms_user=alarm
+org.csstudio.alarm.beast/jms_password=$alarm
+
+# Channel Access
+# Network traffic can be optimized by only monitoring ALARM updates
+org.csstudio.platform.libs.epics/use_pure_java=false
+org.csstudio.platform.libs.epics/monitor=ALARM
+org.csstudio.platform.libs.epics/addr_list=127.0.0.1
+
+# Logging preferences
+org.csstudio.logging/console_level=CONFIG
+org.csstudio.logging/jms_url=
+</programlisting>
+
+<para>For more on the Eclipse preference mechanism, see <xref linkend="ch_preferences"/>.
 </para>
 </sect1>
 
@@ -427,5 +507,11 @@ See <xref linkend="chap_auth"/>.
 <para>To be written...
 </para>
 </sect1>
+
+<sect1>  <title>JMS Alarm Log</title>
+<para>To be written...
+</para>
+</sect1>
+
 
 </chapter>

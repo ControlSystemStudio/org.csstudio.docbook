@@ -338,13 +338,15 @@ role in the <quote>alarm</quote> group.
 restricted actions with entries based on the cssAuthorizeID schema.
 </para>
 <para>Example:</para>
-<programlisting>dn: auid=alarm_ack,ou=AlarmSystem,ou=CSSAuthorizeID,ou=CSSAuthorization,dc=test,dc=ics
+<programlisting>dn: auid=alarm_ack,ou=AlarmSystem,ou=CSSAuthorizeID,
+   ou=CSSAuthorization,dc=test,dc=ics
 objectClass: cssAuthorizeID
 auid: alarm_ack
 cssGroupRole: (alarm, developer)
 cssGroupRole: (alarm, operator)
 
-dn: auid=alarm_config,ou=AlarmSystem,ou=CSSAuthorizeID,ou=CSSAuthorization,dc=test,dc=ics
+dn: auid=alarm_config,ou=AlarmSystem,ou=CSSAuthorizeID,
+   ou=CSSAuthorization,dc=test,dc=ics
 objectClass: cssAuthorizeID
 auid: alarm_config
 cssGroupRole: (alarm, administrator)
