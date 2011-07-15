@@ -77,7 +77,8 @@ the alarm. There are links to related operator screens, web pages, and other CSS
 
 <sect1> <title>Alarm Trigger PVs</title>
 <para>The alarm system handles the display of alarms and associated information.
-The triggers of alarms are simply Process Variables (PVs) in the control system,
+The triggers<indexterm><primary>Alarm Trigger PV</primary></indexterm>
+of alarms are simply Process Variables (PVs) in the control system,
 outside of the alarm system per se.
 The alarm system monitors such PVs, and a non-normal severity
 will trigger an alarm.
@@ -601,13 +602,81 @@ from the RDB.
 
 
 <sect1>  <title>Alarm Tree View</title>
-<para>To be written...
+<para>The Alarm Tree<indexterm><primary>Alarm Tree View</primary></indexterm>
+display can be opened from the menu
+<code>CSS</code>, <code>Alarm</code>, <code>Alarm Tree</code>.
+It is the primary display for viewing and configuring the complete
+alarm tree.
+</para>
+
+<figure xml:id="fig_alarm_tree">  <title>Alarm Tree</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="AlarmTree.png" width="50%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The alarm tree displays the hierarchical structure of the alarm system.
+Alarms are arranged into
+</para>
+<itemizedlist>
+<listitem>Areas - Top-level elements of the alarm hierarchy.
+</listitem>
+<listitem>Systems, Subsystems - Below the top-level areas, there can be
+multiple levels of systems and subsystems to organize your alarm configuration.
+</listitem>
+<listitem>PVs - Finally, the alarm trigger PVs generate actual alarms.
+</listitem>
+</itemizedlist>
+
+<para>It is suggested to use physical areas, because that way the general
+localization of an alarm in the machine is obvious.
+The systems or subsystems could for example be Vacuum or Cooling,
+i.e. again physical systems of your machine.
+</para>
+
+<para>When configuring the guidance or related displays of an item in the alarm
+configuration, this will affect all entries below the respective item.
+For example, when adding a display link to an area, this link will be
+available for each system, subsystem and PV below that area.
+This way it is easy to assign overview displays for an area,
+or add guidance with contact information for a system
+to those elements in the alarm tree without need to
+duplicate the information for each PV.
+</para>
+
+<para>The alarm tree needs to be used to add, rename or remove entries of the alarm configuration.
+To operators, the alarm tree can be useful if many alarms are active, because
+its hierarchical view can allow operators to identify the affected areas or subsystems
+better than a plain list of alarms could do.
+</para>
+
+<para>For details on how to use the alarm tree, refer to its online help.
 </para>
 </sect1>
 
 
 <sect1>  <title>Alarm Table View</title>
-<para>To be written...
+<para>In an ideal operational setup, there are only very few alarms.
+If alarms trigger, they may be from very different areas of the machine.
+In this scenario, operators are often not interested in all the possible alarms
+as they are displayed by the Alarm Tree.
+Instead, they only need to know the currently active alarms.
+</para>
+
+<figure xml:id="fig_alarm_table">  <title>Alarm Table</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="AlarmTable.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The Alarm Table<indexterm><primary>Alarm Table View</primary></indexterm>
+display is the primary operator interface to the alarm system
+in an operational setup for a machine that is generally running fine.
+Most of the time, the alarm table will be empty, because there are no alarms.
+If alarms occur, the alarm table allows operators to inspect them quickly.
+</para>
+
+<para>For details on how to use the alarm table, refer to its online help.
 </para>
 </sect1>
 
