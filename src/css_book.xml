@@ -119,6 +119,7 @@ is used all over the world by many developers.
 <xi:include href="preferences.xml" />
 
 <xi:include href="network/chapter.xml" />
+<xi:include href="rdb.xml" />
 
 <xi:include href="archive/archive.xml" />
 <xi:include href="jms/jms.xml" />

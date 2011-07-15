@@ -264,7 +264,8 @@ global alarms.
 
 
 <sect1>  <title>Relational Database Setup</title>
-<para>Before using the alarm system tools, you need to create the required table structure in your RDB.
+<para>Before using the alarm system tools, you need to create the required table structure in your RDB,
+see also <xref linkend="ch_rdb"/>.
 Refer to the sources for the plugin <code>org.csstudio.alarm.beast</code>.
 Its <filename>dbd</filename> subdirectory contains
 schema definitions for MySQL, Oracle and PostgreSQL.
@@ -302,8 +303,9 @@ You will have to adjust the following, most important settings settings
 for your site:
 </para>
 <itemizedlist>
-<listitem>URL, user and password for connecting to the RDB
+<listitem>URL, user, password and schema for connecting to the RDB
 that holds your alarm configuration.
+See <xref linkend="ch_rdb_url_and_schema"/>.
 </listitem>
 <listitem>URL of your JMS server.</listitem>
 <listitem>Name of your alarm tree <quote>Root</quote>.</listitem>

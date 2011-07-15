@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_rdb">
+
+<title>Relational Database (RDB)</title>
+
+<para>Several CSS tools interface to a relational database.
+The archive system described in <xref linkend="chap_archive"/>
+can store data in an RDB.
+The alarm system described in <xref linkend="chap_alarm"/>
+keeps its configuration and persistent state there.
+</para>
+<para>To end users of CSS, this is mostly transparent,
+but if you install and administer CSS for your site,
+basic RDB administration skills will be required.
+</para>
+
+<sect1> <title>Supported Databases</title>
+<para>CSS includes JDBC libraries for the following
+databases, and the alarm and archive system includes
+example database definition (DBD) files to create
+the required tables for these database dialects:
+<itemizedlist>
+<listitem>MySQL: This database is often the easiest
+to set up for initial tests and to support smaller
+operational setups. Free, open-source.
+</listitem>
+<listitem>Oracle: This database system might be the
+most powerful, with virtually unlimited table sizes.
+It is, however, not free.
+</listitem>
+<listitem>PostgreSQL: This database might be a good
+compromise. Bigger table sizes. Free, open-source.
+</listitem>
+</itemizedlist>
+Your personal preference might of course differ,
+and it is also important to consider what database
+system is already supported at your site.
+</para>
+</sect1>
+
+<sect1> <title>RDB User Accounts</title>
+<para>You will need to configure at least three types of RDB users:
+<itemizedlist>
+<listitem>Administrator account:
+A user that can create tables, update indices, reset sequences etc.
+</listitem>
+<listitem>Write-access users:
+The ArchiveEngine needs a user account that can write samples
+to the archive related tables.
+The AlarmServer needs a user account that can persist the alarm
+state.
+For each system you might want to create a user that can write
+to the necessary tables of that system, but only that system,
+and without general administrative rights.
+</listitem>
+<listitem>Read-only access:
+The CSS data browser needs a user that can read archived data.
+You might want to create various reports for the RDB data.
+All of these could use one shared read-only account,
+a name and password that you can freely distribute to end users
+who want to create their own reports on the data with MS Access,
+JSP, PHP, ...
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 xml:id="ch_rdb_url_and_schema"> <title>RDB URLs and Schemata</title>
+<para>Whatever database you use, in the end you need to provide CSS tools
+or users who want to access the data from other tools
+with the following configuration information:
+</para>
+<itemizedlist>
+<listitem>URL:
+Depending on the RDB system this will be a URL of the format
+<programlisting><![CDATA[jdbc:mysql://[host]:[port]/[database]
+]]></programlisting>
+for MySQL,
+<programlisting>jdbc:postgresql://[host]:[port]/[database]
+</programlisting>
+for PostgreSQL or
+<programlisting>jdbc:oracle:thin:@//[host]:[port]/[service]
+</programlisting>
+for Oracle.
+CSS tools will use the start of that URL to detect the RDB dialect:
+MySQL, Oracle or PostgreSQL.
+</listitem>
+<listitem>User name: A user name known to the RDB.
+To end users, you will typically provide the name of a read-only account.
+</listitem>
+<listitem>Password: Associated password
+</listitem>
+<listitem>Schema: A prefix for RDB table names that might be needed by Oracle
+to access the tables.
+</listitem>
+</itemizedlist>
+
+<para>To elaborate on the <quote>Schema</quote>, let's use an example.
+In the <code>ALARM</code> database, there is a <code>PV</code> table.
+When using MySQL, one can connect with a URL
+<programlisting>jdbc:mysql://my.rdb.host/alarm
+</programlisting>
+as any user and directly read from the <code>PV</code> table.
+Similar with PostgreSQL.
+</para>
+<para>With Oracle, the URL usually addresses an Oracle service,
+not a database schema:
+<programlisting>jdbc:oracle:thin:@//my.rdb.host:1521/prod
+</programlisting>
+</para>
+<para>With Oracle, only the schema owner, that is a user with
+the same name as the database, can directly access the tables in a schema.
+All other users need to prefix the table name with the schema name,
+i.e. use <code>ALARM.PV</code> to read from the PV table.
+</para>
+
+<para>To support all types of database dialects, the CSS tools
+allow configuration of a URL as well as a schema.
+For Oracle, you need to set that schema to the respective table prefix.
+For MySQL and PostgreSQL, you typically define that schema as empty,
+because the URL already includes the schema name in its
+<code>[database]</code> section.
+</para>
+</sect1>
+
+</chapter>

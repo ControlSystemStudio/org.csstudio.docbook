@@ -72,7 +72,8 @@ needed to collect data.
 <sect1 xml:id="sec_archive_rdb_setup">  <title>Relational Database Setup</title>
 
 <para>Before using the archive tools, you need to create the required table structure in your RDB.
-Currently MySQL, Oracle and PostgreSQL are supported.
+Currently MySQL, Oracle and PostgreSQL are supported, see also
+<xref linkend="ch_rdb"/>.
 </para>
 
 <para>The commands for creating the RDB table structures are in files in the <code>dbd</code> sub-directory
@@ -119,32 +120,23 @@ supports a stored procedure for server-side data reduction which is not availabl
 </para>
 
 <para>Whatever database you use, in the end you need to provide all CSS archive tools
-with the following configuration information:</para>
+with the following configuration information
+as elaborated in <xref linkend="ch_rdb_url_and_schema"/>:
+</para>
 <itemizedlist>
-<listitem>URL:
-Depending on the RDB system this will be a URL of the format
-<programlisting><![CDATA[jdbc:mysql://[host]:[port]/[database]
-]]></programlisting>
-for MySQL,
-<programlisting>jdbc:postgresql://[host]:[port]/[database]
-</programlisting>
-for PostgreSQL or
-<programlisting>jdbc:oracle:thin:@//[host]:[port]/[database]
-</programlisting>
-for Oracle. The archive tools will use the start of that URL to detect the RDB dialect: MySQL, Oracle, PostgreSQL.
-</listitem>
-<listitem>User name: A user name known to the RDB. Typically you configure at least one user with write access for archive engines, and one
-with read-only access for client programs.</listitem>
-<listitem>Password: Associated password</listitem>
-<listitem>Schema: A prefix for RDB table names that might be needed by Oracle to access the tables
-because the database name provided in the URL refers to a system ID and not the table schema.
-In this case, set the schema to for example <code>chan_arch.</code>, including the trailing dot.
-For MySQL and PostgreSQL, the URL typically includes the database and no further table
-prefix is needed, in which case it should be left empty.
+<listitem>URL</listitem>
+<listitem>User name</listitem>
+<listitem>Password</listitem>
+<listitem>Schema
 </listitem>
 </itemizedlist>
 
-<para>See <xref linkend="ch_preferences"/> for details on how to provide
+<para>For the Archive Engine and Archive Config Tool,
+you need to provide the user name and password
+of an RDB account that has write access to the archive tables.
+For the Data Browser or other tools that read data,
+a read-only account is sufficient.
+See <xref linkend="ch_preferences"/> for details on how to provide
 these RDB settings for the archive plugins.
 The command-line tools will also accept these parameters on the command-line.
 </para>
