@@ -204,8 +204,8 @@ element, for example CCR for a Central Control Room configuration.
 </para>
 <para>The Alarm Server and associated user interface clients must use
 the same alarm tree root.
-They will construct the names of JMS topics used to communicate by
-adding suffixes to the alarm tree root name.
+They will construct the names of JMS topics<indexterm><primary>Alarm System JMS Topics</primary></indexterm>
+used to communicate by adding suffixes to the alarm tree root name.
 For example, with an alarm tree root of CCR, the server and clients
 will use the following JMS topics:
 </para>
@@ -487,6 +487,115 @@ org.csstudio.logging/jms_url=
 </programlisting>
 
 <para>For more on the Eclipse preference mechanism, see <xref linkend="ch_preferences"/>.
+</para>
+<para>If you started the Alarm Server successfully, its terminal output should
+resemble this, displaying the JMS topics used by the alarm server:
+</para>
+<programlisting>Alarm Server 3.0.0
+Configuration Root: demo
+JMS Server Topic:   demo_SERVER
+JMS Client Topic:   demo_CLIENT
+JMS Talk Topic:     demo_TALK
+JMS Global Topic:   GLOBAL_SERVER
+Read 50003 PVs in 1.69 seconds: 29589.0 PVs/sec
+</programlisting>
+
+<para>The alarm server communicates with the alarm GUI via JMS
+messages described in the following section.
+The alarm GUI will either show alarm updates, or it will indicate
+a server timeout if the alarm server does not communicate.
+To debug the setup, the JMS Monitor (<xref linkend="ch_jms_monitor"/>)
+can be used to monitor the JMS server, client and talk topics.
+The JMS server topic should show alarm state changes or at least
+periodic IDLE messages.
+</para>
+</sect1>
+
+
+<sect1>  <title>Alarm System JMS Message Types</title>
+<para>The Alarm Server sends this type of JMS <code>MapMessage</code>
+for alarm state changes:
+</para>
+<itemizedlist>
+<listitem><code>TYPE</code>: Set to <quote>alarm</quote> to identify as alarm message.</listitem>
+<listitem><code>TEXT</code>: STATE in normal mode, STATE_MAINTENANCE in maintenance mode.</listitem>
+<listitem><code>CONFIG</code>: Name of the alarm configuration, i.e. alarm root.</listitem>
+<listitem><code>NAME</code>: PV name that has changed alarm state</listitem>
+<listitem><code>CURRENT_SEVERITY</code>: Current severity of the PV.</listitem>
+<listitem><code>CURRENT_STATUS</code>: Current status of the PV.</listitem>
+<listitem><code>SEVERITY</code>: Alarm severity of the PV.
+For latched or acknowledged alarms, this can differ from the current severity.
+</listitem>
+<listitem><code>STATUS</code>: Alarm status of the PV.</listitem>
+<listitem><code>EVENTTIME</code>: Time of the original alarm, i.e. when SEVERITY became active.</listitem>
+<listitem><code>APPLICATION_ID</code>: AlarmServer.</listitem>
+<listitem><code>HOST</code>: Host name running the alarm server.</listitem>
+<listitem><code>USER</code>: Name of user who is running the alarm server.</listitem>
+</itemizedlist>
+
+<para>In the absense of alarm state changes, the Alarm Server sends
+an IDLE message, by default every 10 seconds.
+If the alarm client GUI does not see any message from the alarm server
+for twice the IDLE period, it declares a server timeout.
+</para>
+<itemizedlist>
+<listitem><code>TYPE</code>: Set to <quote>alarm</quote> to identify as alarm message.</listitem>
+<listitem><code>TEXT</code>: IDLE in normal mode, IDLE_MAINTENANCE in maintenance mode.</listitem>
+<listitem><code>CONFIG</code>: Name of the alarm configuration, i.e. alarm root.</listitem>
+<listitem><code>APPLICATION_ID</code>: AlarmServer.</listitem>
+<listitem><code>HOST</code>: Host name running the alarm server.</listitem>
+<listitem><code>USER</code>: Name of user who is running the alarm server.</listitem>
+</itemizedlist>
+
+<para>Alarm clients send this message to acknowledge
+or un-acknowledge an alarm:
+</para>
+<itemizedlist>
+<listitem><code>TYPE</code>: Set to <quote>alarm</quote> to identify as alarm message.</listitem>
+<listitem><code>TEXT</code>: ACK respectively UN-ACK.</listitem>
+<listitem><code>CONFIG</code>: Name of the alarm configuration, i.e. alarm root.</listitem>
+<listitem><code>NAME</code>: PV name</listitem>
+<listitem><code>APPLICATION_ID</code>: CSS.</listitem>
+<listitem><code>HOST</code>: Host name running CSS.</listitem>
+<listitem><code>USER</code>: Name of user who is running CSS.</listitem>
+</itemizedlist>
+
+<para>Alarm clients send this message to enable
+or disable maintenance mode:
+</para>
+<itemizedlist>
+<listitem><code>TYPE</code>: Set to <quote>alarm</quote> to identify as alarm message.</listitem>
+<listitem><code>TEXT</code>: MODE.</listitem>
+<listitem><code>VALUE</code>: MAINTENANCE or NORMAL.</listitem>
+<listitem><code>CONFIG</code>: Name of the alarm configuration, i.e. alarm root.</listitem>
+<listitem><code>APPLICATION_ID</code>: CSS.</listitem>
+<listitem><code>HOST</code>: Host name running CSS.</listitem>
+<listitem><code>USER</code>: Name of user who is running CSS.</listitem>
+</itemizedlist>
+
+<para>After modifying the alarm configuration, alarm clients
+send this message to the server:
+</para>
+<itemizedlist>
+<listitem><code>TYPE</code>: Set to <quote>alarm</quote> to identify as alarm message.</listitem>
+<listitem><code>TEXT</code>: CONFIG.</listitem>
+<listitem><code>CONFIG</code>: Name of the alarm configuration, i.e. alarm root.</listitem>
+<listitem><code>NAME</code>: Path to the modified configuration item.</listitem>
+<listitem><code>APPLICATION_ID</code>: CSS.</listitem>
+<listitem><code>HOST</code>: Host name running CSS.</listitem>
+<listitem><code>USER</code>: Name of user who is running CSS.</listitem>
+</itemizedlist>
+
+<para>Note that other clients are also listening to this message,
+so the server as well as other clients will react by
+updating their configuration from the RDB.
+If the path contains a specific configuration item like
+<quote>/area/system/subsystem/pv</quote>,
+only the configuration for that item needs to be updated
+from the RDB.
+If the path is empty, a bigger change to the configuration
+means that the complete alarm configuration needs to be updated
+from the RDB.
 </para>
 </sect1>
 
