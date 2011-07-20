@@ -33,7 +33,7 @@ all the settings for your site, you would follow
 </para>
 
 
-<sect1>  <title>Plugin Defaults</title>
+<sect1>  <title>Plugin Defaults: preferences.ini</title>
 
 <para>Each plugin with configurable settings should have a file
 <filename>preferences.ini</filename><indexterm><primary>preferences.ini</primary></indexterm>
@@ -58,6 +58,8 @@ url=http://localhost/superdata
 
 The Eclipse preference service for a plugin will automatically use such a file
 as long as it has the correct name and is located in the plugins root directory.
+So for a pluging called <filename>org.csstudio.x.y</filename>, that file
+must be called <filename>org.csstudio.x.y/preferences.ini</filename>.
 </para>
 
 <para>Note that Eclipse offers more ways to establish defaults, but they are discouraged for CSS
@@ -73,11 +75,12 @@ Putting the defaults into <filename>preferences.ini</filename> seems the best wa
 </sect1>
 
 
-<sect1>  <title>Product (Site) Defaults</title>
+<sect1>  <title>Product (Site) Defaults: plugin_customization.ini</title>
 
 <para>When bundling plugins into a site-specific product, a file
 <filename>plugin_customization.ini</filename><indexterm><primary>plugin_customization.ini</primary></indexterm>
-in the plugin that defines that product is automatically used by Eclipse to override settings from individual plugins.
+in the plugin that defines that product is automatically used by Eclipse
+to override settings from individual plugins.
 
 <programlisting># Example plugin_customization.ini
 
@@ -92,12 +95,39 @@ name of the affected plugin.
 If you wonder about the names of preference settings supported by each plugin,
 consult the <filename>preferences.ini</filename> of the respective plugin.
 </para>
-<para>This way, your product has the settings for your site built-in.
+<para>The file has to be in the plugin that defines the product.
+For example, assume you have a product X that is defined in
+<filename>org.csstudio.x.y/X.product</filename>.
+Eclipse will look for a file
+<filename>org.csstudio.x.y/plugin_customization.ini</filename>,
+i.e. a customization file in the root directory of the plugin
+that defines the product, for settings to override values
+from individual plugins.
+</para>
+<para>In the compiled version of the product, plugins are
+usually JAR files in a <filename>plugins</filename> sub-directory
+of the installed product.
+The customization file will then be found inside
+<filename>plugins/org.csstudio.x.y_*.jar</filename>
+where the <code>*</code> represents some version number and date.
+End users will not open and modify that JAR file and the
+<filename>plugin_customization.ini</filename> file inside the JAR.
+This way, your product has the settings for your site <quote>built-in</quote>.
+</para>
+
+<para>In principle, you <emphasis>could</emphasis> actually un-zip
+the JAR file, edit the customization file, and re-zip it.
+As a CSS maintainer for your site, you may occasionally be tempted
+to do this. The downside is that such changes are easily forgotten,
+and the next time you build a product, you would have to re-do
+the un-zip, edit, re-zip hack. A better approach to applying changes
+to the build-in settings of a product is described in the next section.
 </para>
 </sect1>
 
 
-<sect1 xml:id="sec_cmdline_plugin_customization">  <title>Slight Tweaks to the Site Defaults</title>
+<sect1 xml:id="sec_cmdline_plugin_customization">
+  <title>Slight Tweaks to the Site Defaults: -pluginCustomization</title>
 
 <para>If a select installation at a site requires a few extra changes, for example
 a test network installation needs settings that differ from your main campus
@@ -108,10 +138,29 @@ and run the product with a command-line option
 
 <programlisting>my_product -pluginCustomization /path/to/testnet.ini</programlisting>
 </para>
+
+<para>While that customization file has the same format as 
+<filename>plugin_customization.ini</filename>,
+its name and location are arbitrary.
+You can call it anything and place it anywhere,
+as long as you provide the full path to it via the
+-pluginCustomization command line option.
+</para>
+<para>In fact you want to <emphasis role="strong">always provide the full name</emphasis>
+to the file, even if it is in what you consider the current directory,
+because the Java runtime that is started by the Eclipse RCP launcher
+could have a very different idea of its current directory.
+</para>
+<para>If Eclipse does not find your -pluginCustomization file,
+it is simply ignored, there will be no error message!
+So if the settings that you think you put into a -pluginCustomization file
+are not having the desired effect, triple check that you indeed provided the
+full and correct path to the file.
+</para>
 </sect1>
 
 
-<sect1 xml:id="sec_preference_gui">  <title>End User Settings</title>
+<sect1 xml:id="sec_preference_gui">  <title>End User Settings: Preference Pages</title>
 <para>Finally, the GUI code can offer Preference Pages via which the end user can change the settings.
 Typically, these end-user settings are saved in the user's workspace, i.e. they persist for the
 current user but will not affect the settings of other users or even the site-wide defaults.
