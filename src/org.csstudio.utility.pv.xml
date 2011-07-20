@@ -2,7 +2,7 @@
 <chapter xmlns="http://docbook.org/ns/docbook"
          xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
          xml:id="ch_utility.pv">
-<title>PV Access - org.csstudio.utility.pv</title>
+<title>PV Access - org.csstudio.utility.pv<indexterm><primary>org.csstudio.utility.pv</primary></indexterm></title>
 
 <para>This plugin provides one of the CSS APIs for accessing live control
 system data, i.e. read process variable samples from front-end computers.
@@ -57,10 +57,15 @@ that you want to archive.
 <para>The <code>utility.pv</code> plugin does not, however, contain any implementation.
 Instead, it defines an Eclipse Extension Point that allows other plugins
 to provide pluggable implementations.
-The plugin <code>org.csstudio.utility.pv.epics</code> implements
-live data access based on EPICS Channel Access Version 3.
-The plugin <code>org.csstudio.utility.pv.simu</code> implements simulated PVs
-like
+The plugin
+<code>org.csstudio.utility.pv.epics</code><indexterm><primary>org.csstudio.utility.pv.epics</primary></indexterm>
+implements live data access based on
+EPICS Channel Access<indexterm><primary>Channel Access, EPICS</primary></indexterm>
+Version 3.
+</para>
+<para>The plugin
+<code>org.csstudio.utility.pv.simu</code><indexterm><primary>org.csstudio.utility.pv.simu</primary></indexterm>
+implements simulated PVs like
 </para>
 <programlisting>sim://ramp</programlisting>
 <para>Refer to online help provided by the plugin
@@ -74,7 +79,32 @@ There is no need to change the actual archive engine code at all.
 </para>
 </sect1>
 
-<sect1> <title>Common Problems</title>
+
+<sect1> <title>Common Issues</title>
+
+<sect2> <title>CA Repeater</title>
+<para>Channel Access uses a
+<filename>caRepeater</filename><indexterm><primary>caRepeater</primary></indexterm>
+to monitor beacons from CA servers.
+If you run CSS without a CA repeater, you might see error messages
+</para>
+<programlisting>failed to start executable - "caRepeater" Cannot find the file
+</programlisting>
+
+<para>This error means:
+You have not started a CA repeater on the computer where you run CSS.
+In practice, CSS will work just fine most of the time.
+In case of network errors or IOC reboots, however,
+it might not re-connect to some PVs after the network or IOC
+problem should have been resolved until you re-open the affected tools.
+</para>
+<para>In an operational control room setup, you should assert that all computers
+launch an instance of the EPICS caRepeater on bootup.
+</para>
+</sect2>
+
+
+<sect2> <title>No Implementations in Product</title>
 <para>While the modular plug-in approach is very flexible, there can be one disadvantage:
 The archive engine code for example only depends on <code>org.csstudio.utility.pv</code>,
 the <emphasis>definition</emphasis> of the API for accessing live data.
@@ -97,5 +127,8 @@ You need to include at least one implementing plugin like
 <code>org.csstudio.utility.pv.epics</code> or
 <code>org.csstudio.utility.pv.simu</code>.
 </para>
+</sect2>
+
+
 </sect1>
 </chapter>
