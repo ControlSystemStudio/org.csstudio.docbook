@@ -4,34 +4,110 @@
          xml:id="chap_compiling">
 <title>Compiling, Running, Debugging CSS</title>
 
-<para>Once you have the CSS source code and the prerequisite building tools, there are these fundamental
-options for building and executing CSS products:
+<para>End users of CSS, i.e. people who run CSS on their office computer,
+should not have to compile CSS.
+They can down-load a version of CSS that is already configured for use
+in offices at their site from a local web site, and updates to CSS
+will automatically be down-loaded from that same web site.
+</para>
 
+<para>To reach that stage, somebody at each institute that uses CSS
+obviously needs to prepare such a local down-load site,
+compile CSS with suitable settings and place the binaries on the web site.
+Compilation from sources is also required for those parts of CSS that the end-user
+does not see: Archive Engine, Alarm Server and tools to configure
+the archive and alarm system.
+</para>
+
+<para>Fundamentally, the compilation of sources into stand-alone RCP products
+that you can then deploy onto other computers is easy:
+</para>
 <orderedlist>
-<listitem>You can run CSS products from within the Eclipse integrated development environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>.
-This is the preferred method during development because it allows full source code debugging and minimizes
+<listitem>Get Java and Eclipse</listitem>
+<listitem>Get the CSS source code</listitem>
+<listitem>Start Eclipse, import the sources</listitem>
+<listitem>Open the <filename>*.product</filename> file for CSS, ArchiveEngine, ...
+and <quote>Export</quote> as a stand-alone binary.</listitem>
+</orderedlist>
+
+<para>Instead of going to the last step, i.e. exporting a product from within the Eclipse
+Integrated Development Environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>
+into a deployable product, you have more options.
+</para>
+<para>While you are still developing and testing the version of CSS that you
+assemble for use at your site, you can run the product within the IDE.
+You can execute it without first exporting it into a stand-alone binary.
+Running a product within the IDE is the preferred method during development
+because it allows full source code debugging and minimizes
 the turn-around time from editing the code to executing the product.
 This is also what you should do when first trying to run CSS from source code.
-</listitem>
-<listitem>You can <quote>Export</quote> a CSS product from within the IDE into a stand-alone package
-that you can deploy on other computers.
-After you managed to run a CSS product in the IDE, exporting it from the IDE is the easiest way
-to create a production version.</listitem>
-<listitem>While the product export from the IDE is initially very convenient, it remains
+</para>
+<para>Once the product is acceptable for use at your site, you export
+it from the IDE and install the result on the desired computers.
+This is what you typically do for tools like the Archive Engine, Alarm Handler
+or other non-end-user tools: Export and install.
+</para>
+<para>While the product export from the IDE is initially very convenient, it remains
 a manual process. The <quote>Headless Build</quote> of a CSS product is a script-driven
-process that can be used to for example support nightly integration builds.
+process that can automate the product compilation.
+It can also be used for automated integration builds.
 As mentioned in <xref linkend="sec_rcp"/>, Eclipse products are operating system specific.
-Eventually, most sites will implement a headless built for their primary end user products,
+Eventually, most sites will implement a headless built for their primary end-user products,
 because automated product generation is more repeatable, especially when creating several
 products for various operating systems.
-</listitem>
-</orderedlist>
+As a result of a headless build you typically get not only the binary products,
+like CSS for your site for Windows and Linux in 32 and 64 bit versions.
+In addition, you get a repository from which existing CSS products that are already
+installed at your site can down-load updates.
 </para>
+
+
+<sect1>  <title>Prerequisites</title>
+
+<para>You will need
+<itemizedlist>
+<listitem>Java Development Kit (JDK)<indexterm><primary>Java Development Kit, JDK</primary></indexterm>.
+It should be the JDK, not just a java Runtime Environment (JRE).
+It should be the Sun/Oracle or Apple JDK.
+OpenJDK, the GNU Compiler for the Java (GCJ)
+and other environments are currently not fully compatible
+with the Sun/Oracle JDK.
+</listitem>
+<listitem>Eclipse IDE for RCP/Plugin Developers.
+This has recently been called <quote>Eclipse for RCP and RAP Developers</quote>.
+Other versions like <quote>Eclipse IDE for Java EE Developers</quote>
+can be very useful if you also plan to do Web/Tomcat type of work,
+but the RCP version of the Eclipse IDE is the one that includes
+the full RCP source code and online help.
+</listitem>
+</itemizedlist>
+Both the JDK and the RCP IDE might have to be of a specific version, ask other CSS developers
+for the currently supported versions. 
+At the time of this writing it has to be
+Java Version 1.6 also known as Java 6,
+and Eclipse 3.6 also known as Helios.
+</para>
+</sect1>
 
 
 <sect1>  <title>Obtaining the Source Code</title>
 
-<para>The CSS sources are in a shared Source Forge<indexterm><primary>Source Forge</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
+<para>For your first steps in CSS, it might be best to obtain a
+<emphasis>snapshot of the sources</emphasis> from one of the CSS sites.
+Such a snapshot will include what you need to build the products
+used at that site.
+When you access the CSS source repository, you can see the latest version
+of all sources from all CSS sites, which can be overwhelming.
+</para>
+
+<para>To obtain a source snapshot, follow the links
+to collaborator sites on 
+<link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki">http://sourceforge.net/apps/trac/cs-studio/wiki</link>
+and look for their source down-load.
+</para>
+
+<para>The complete CSS sources are in a shared
+Source Forge<indexterm><primary>Source Forge</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
 repository using the Mercurial version control system.
 The project web site is
 <link xlink:href="http://cs-studio.sourceforge.net/">http://cs-studio.sourceforge.net/</link>
@@ -59,8 +135,8 @@ at <link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki">http://sou
 
 <para>In the following, we assume you are either already familiar with working on a 
 Source Forge-hosted project, or you obtained a snapshot of the source code by other means,
-for example via download from a site that uses CSS.
-If you download the complete
+for example via down-load from a site that uses CSS.
+If you down-load the complete
 source code from the Source Forge repository, you will receive a directory tree similar to this:</para>
 <programlisting>core/features/org.csstudio.core.feature
 core/features/org.csstudio. ... .feature
@@ -87,7 +163,9 @@ built/...
 </itemizedlist>
 
 <para>If on the other hand you unpack a source code snapshot from a specific site, the
-result might be a directory including only those sources used to build that site's products:</para>
+result might be a flat directory including only those sources used to build that
+site's products:
+</para>
 <programlisting>org.csstudio.data
 org.csstudio.logging
 org.csstudio...
@@ -96,19 +174,6 @@ org.csstudio.opibuilder
 org.csstudio.trends.databrowser2
 org.csstudio.basic.epics.product
 </programlisting>
-</sect1>
-
-
-<sect1>  <title>Prerequisites</title>
-
-<para>In addition to the sources, you will need
-<itemizedlist>
-<listitem>Java JDK. This should be the Sun/Oracle or Apple JDK, not just a JRE.</listitem>
-<listitem>Eclipse IDE for RCP/Plug-in Developers</listitem>
-</itemizedlist>
-Both the JDK and the RCP IDE might have to be of a specific version, ask other CSS developers
-for the currently supported versions. 
-</para>
 </sect1>
 
 
