@@ -77,10 +77,10 @@ with the following configuration information:
 Depending on the RDB system this will be a URL of the format
 <programlisting><![CDATA[jdbc:mysql://[host]:[port]/[database]
 ]]></programlisting>
-for MySQL,
+for MySQL (default port is 3306),
 <programlisting>jdbc:postgresql://[host]:[port]/[database]
 </programlisting>
-for PostgreSQL or
+for PostgreSQL (default port is 5432) or
 <programlisting>jdbc:oracle:thin:@//[host]:[port]/[service]
 </programlisting>
 for Oracle.
