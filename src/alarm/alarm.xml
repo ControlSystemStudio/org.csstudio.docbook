@@ -362,13 +362,32 @@ create a file <filename>settings.ini</filename> as mentioned below.
 
 
 <sect1>  <title>Creating New Alarm Configuration</title>
-<para>The initial alarm configuration needs to be imported into the RDB via
-the <code>AlarmConfigTool</code>. This alarm configuration may be empty.
-It can later be edited from within the alarm system user interface.
-The alarm system user interface cannot, however, create a new alarm configuration.
-A new alarm configuration can only be created by importing it via the Alarm Config Tool.
+<para>Each alarm setup starts with a new, empty configuration in the RDB.
+The CSS alarm user interface will then allow to edit that configuration,
+but the initial, empty configuaration needs to be created in the RDB.
 </para>
-<para>The Alarm Config Tool can import alarm configurations from an XML file format.
+<para>One way to create a new configuration is an SQL shell.
+Assume you want to create a configuration called <quote>demo</quote>,
+first check that it does not already exist:
+</para>
+<programlisting>SELECT * FROM ALARM_TREE
+  WHERE NAME='demo' AND PARENT_CMPNT_ID IS NULL;
+</programlisting>
+<para>Find the next available component ID:
+</para>
+<programlisting>SELECT MAX(COMPONENT_ID) FROM ALARM_TREE;
+</programlisting>
+<para>Then create a new alarm tree root like this,
+remembering to use the <emphasis role="strong">next</emphasis>
+available component ID:
+</para>
+<programlisting>INSERT INTO ALARM_TREE (NAME, COMPONENT_ID)
+VALUES ('demo', 1021);
+</programlisting>
+
+<para>While such direct SQL manipulations will work, it may be easier to
+use the <code>AlarmConfigTool</code>.
+The Alarm Config Tool can import alarm configurations from an XML file format.
 A minimal, empty configuration with name <quote>demo</quote> would look like this,
 usually saved to a file called <filename>demo.xml</filename>:
 </para>
@@ -687,8 +706,30 @@ If alarms occur, the alarm table allows operators to inspect them quickly.
 </sect1>
 
 <sect1>  <title>JMS Alarm Log</title>
-<para>To be written...
+<para>The JMS2RDB tool described in
+<xref linkend="ch_org.cstudio.sns.jms2rdb"/>
+can be used to log all alarm traffic
+to the RDB.
+This way, detail of alarm state changes and operator
+acknowledge actions will be available in the CSS log
+for later analysis.
+The message history display
+described in <xref linkend="ch_org.cstudio.alarm.beast.msghist"/>
+allows direct access to the log, although it can be time consuming
+the decode the raw messages.
 </para>
+<para>At the SNS, a JSP-based collection of reports can display
+how many alarms were active over the last days or weeks,
+which alarms represent the <quote>Top 10</quote> of the most
+frequent alarms, and how one alarm behaved in detail,
+including histograms of alarm durations.
+</para>
+<para>This reporting package, however, is currently part of a bigger,
+more SNS-specific reporting package. Contact Kay Kasemir if you
+are interested in collaborating on a more portable version of
+these reports.
+</para>
+
 </sect1>
 
 

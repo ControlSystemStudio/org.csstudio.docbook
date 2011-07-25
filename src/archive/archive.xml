@@ -433,7 +433,16 @@ stop the engine.
 
 
 <sect1> <title>Web-Based Archive Monitor and Editor</title>
-<para>TODO</para>
+<para>At the SNS, a JSP-based collection of reports can display
+graphs of the archive system performance, for example: Which archive engine
+wrote how many samples to the archive over the last hour?
+It also includes a web-based editor for the alarm system configuration.
+</para>
+<para>This reporting package, however, is currently part of a bigger,
+more SNS-specific reporting package. Contact Kay Kasemir if you
+are interested in collaborating on a more portable version of
+these reports.
+</para>
 </sect1>
 
 
