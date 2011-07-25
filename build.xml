@@ -59,7 +59,30 @@
         </copy>
     </target>
 
-    <!-- Generate Wiki -->
+    <!-- Generate Eclipse help format -->
+    <target name="eclipse" depends="prepare">
+        <apply executable="${xsltproc}">
+            <arg value="--xinclude"/>
+        	<arg value="--output"/>
+        	<targetfile/>
+            <arg value="myeclipse.xsl"/>
+        	<srcfile/>
+            <fileset dir="src">
+                <include name="org.csstudio.utility.chat/chapter.xml" />
+            </fileset>
+            <mapper type="glob" from="*.xml" to="${out}/*.html"/>
+        </apply>
+    	<copy todir="${out}" flatten="true">
+            <fileset dir="src">
+                <include name="**/*.png"/>
+            </fileset>
+            <fileset dir=".">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
+    </target>
+	
+	<!-- Generate Wiki -->
     <target name="wiki" depends="prepare">
         <apply executable="${xsltproc}">
             <arg value="--output"/>
