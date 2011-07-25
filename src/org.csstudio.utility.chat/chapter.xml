@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_chat">
+
+<title>Chat - org.csstudio.utility.chat<indexterm><primary><code>org.csstudio.utility.chat</code></primary></indexterm></title>
+
+<para>The Chat tool is a basic online group chat client for CSS.
+The emphasis is on use in a control room context:
+</para>
+<itemizedlist>
+<listitem>Easily log onto control room chat group.</listitem>
+<listitem>Simply exchange screen-shots and files.</listitem>
+</itemizedlist>
+<para>Technically, it is an XMPP chat protocol client
+that can communicate with other clients that support
+the same protocol (Pidgin, Google chat, Mac OS iChat, ...).
+</para>
+
+<figure xml:id="fig_chat">  <title>Chat Client (left) communicating with <quote>Pidgin</quote> (right)</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="chat.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<sect1 xml:id="chat_usage"> <title>Basic Usage</title>
+<para>Start the chat client from the menu <code>CSS</code>,
+<code>Utilities</code>, <code>Group Chat</code>.
+</para>
+<para>The suggested user name that is initially displayed in the <code>Name:</code>
+field of the chat tool is the name of the user logged onto the computer
+suffixed by the network name of the computer.
+The default password will be a dollar sign followed by the user name,
+and the tool will attempt to create an account for that user and password
+on the chat server.
+The idea is that most users can simply press the <quote>Return</quote>
+respectively <quote>Enter</quote> key in the user name field to log on
+with the suggested user name and password.
+Advanced users may enter a user name and password
+that was registered with the chat server by other means.
+</para>
+<para>Once connected to the group chat, you can see other participants
+who are connected to the chat in the <code>Participants</code> list.
+Enter text to send in the <code>Send:</code> field, completing lines to
+send with the <quote>Return</quote> key.
+</para>
+</sect1>
+
+<sect1> <title>Sending Files</title>
+<para>By right-clicking on one of the entries
+in the <code>Participants</code> list you can access
+a context menu that allows you to <quote>Contact</quote>
+another chat participant.
+A separate chat panel will open for communicating with only that user,
+outside of the group chat.
+Note that the other participant will be asked if she accepts
+the invitation to an individual chat, and may decline.
+</para>
+</sect1>
+
+<sect1> <title>Individual Chats</title>
+<para>By right-clicking on one of the entries
+in the <code>Participants</code> list you can access
+a context menu with options <quote>Send File</quote>
+and <quote>Send Screenshot</quote>.
+When selecting to send a screen-shot, an image of your
+current desktop will be sent to the receiver.
+When sending a file, you will be prompted for the name
+of the file that you want to send.
+Note that in either case the receiving participant of the chat
+will be asked if she accepts the file that you sent,
+and may decline.
+</para>
+</sect1>
+
+<sect1> <title>XMPP Server Setup - Openfire</title>
+<para>XMPP is an open technology for real-time communication.
+More information can be found at
+<link xlink:href="http://xmpp.org">http://xmpp.org</link>,
+including lists of XMPP server implementations
+and other chat clients compatible with XMPP.
+</para>
+<para><code>Openfire</code>, available from
+<link xlink:href="http://www.igniterealtime.org/projects/openfire">http://www.igniterealtime.org/projects/openfire</link>,
+is an open source, Java-based XMPP server
+for Windows, Linux and Mac OS X.
+For Windows, it includes an executable <filename>bin/openfire.exe</filename>
+to start and stop the server and to access its web interface via
+a <quote>Launch Admin</quote> button.
+</para>
+<para>When starting Openfire for the first time, you need
+to configure the following via its web interface:
+</para>
+<itemizedlist>
+<listitem>Domain - Set to either <code>localhost</code>
+for initial tests on one computer, or set to the complete
+and correct host name.
+</listitem>
+<listitem>Database - Selecting the <quote>embedded</quote>
+database seems to work fine.
+</listitem>
+<listitem>Administrator account - Use for example <quote>admin@localhost</quote>
+and a password of your choice.
+</listitem>
+</itemizedlist>
+
+<para>From now on, to log into the admin web interface of Openfire,
+you have to use just <quote>admin</quote> and the password that you configured,
+<emphasis role="strong">not</emphasis> <quote>admin@localhost</quote>!
+</para>
+
+<para>In the Openfire online admin interface you should check
+the setting under <quote>Server</quote>, <quote>Server Settings</quote>,
+<quote>Registration &amp; Login</quote>.
+By default, users should be allowed to automatically create new accounts.
+The CSS chat client will use this option to attempt automatic account
+creation with the suggested user name and password as described in
+<xref linkend="chat_usage"/>.
+If you choose to disable automated account creation, you need to create
+user accounts in the Openfire admin interface.
+</para>
+
+<para>The CSS chat client expects to connect to a chat room
+called <quote>css</quote>.
+From the Openfire online admin interface,
+select the <quote>Group Chat</quote> tab.
+Press <quote>Create New Room</quote>:
+</para>
+<itemizedlist>
+<listitem>Enter <code>css</code> as the room ID.</listitem>
+<listitem>You will also need to enter a room name, description
+and topic, which you can all set to <quote>CSS</quote>.
+</listitem>
+<listitem>Under <code>Show Real JIDs of Occupants to:</code>,
+select <quote>Anyone</quote>.
+This will allow the chat clients to directly contact
+chat group participants for individual chats and file
+exchange.
+</listitem>
+<listitem>Before you save the room settings, take note
+of the full name of the group chat.
+It should use the chat room ID followed by <code>@conference</code>
+and the host name of the server, similar to
+<programlisting>css@conference.localhost
+</programlisting>
+</listitem>
+</itemizedlist>
+
+<para>To reset the Openfire configuration, 
+for example after forgetting the admin password,
+stop openfire. In the file <filename>conf/openfire.xml</filename>,
+locate the <code>setup</code> entry. Set it to <code>false</code>,
+start Openfire again and when you now access the admin web interface,
+you can configure a new admin password.
+</para>
+</sect1>
+
+
+<sect1> <title>Chat Client Settings</title>
+<para>The CSS chat clients has the following preference settings:
+</para>
+
+<itemizedlist>
+<listitem>chat_server - Host name that runs the chat server,
+for example <quote>localhost</quote>.
+</listitem>
+<listitem>group - Name of the chat group to join,
+for example <quote>css@conference.localhost</quote>.
+</listitem>
+</itemizedlist>
+</sect1>
+
+
+<sect1> <title>Example using Pidgin</title>
+<para>Pidgin, available from
+<link xlink:href="http://pidgin.im">http://pidgin.im</link>,
+is an open-source chat client for various operating systems
+that can be used to test an XMPP server setup.
+</para>
+<para>To configure Pidgin for a connection with Openfire,
+use the Pidgin menu bar to create an account with the following
+settings:
+</para>
+<itemizedlist>
+<listitem>Procotol - XMPP</listitem>
+<listitem>Username, password - Either enter a name and password
+that has already been added to Openfire,
+or enter a new name and password with the option
+to <quote>Create this new account on server</quote>.
+</listitem>
+<listitem>Domain - Enter name of XMPP server host, for example <quote>localhost</quote>.</listitem>
+</itemizedlist>
+<para>In the <quote>Advanced</quote> account setup panel,
+check that the XMPP connect port is set to 5222
+and the file transfer proxies is set to the host name
+of your XMPP server port 7777, for example
+<code>localhost:7777</code>.
+</para>
+
+</sect1>
+
+
+
+
+
+
+
+</chapter>
