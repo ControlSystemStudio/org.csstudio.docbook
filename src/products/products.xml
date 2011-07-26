@@ -14,6 +14,11 @@ Why is there more than one CSS product?
 Why can it be difficult to select the required Plug-ins?
 </para>
 
+<figure xml:id="fig_product">  <title>Composition of a Product</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="product.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
 
 <sect1> <title>Site-Specific Plugin Selection and Settings</title>
 <para>Plug-in contain the Java code and associated content like online help
@@ -24,7 +29,21 @@ System integrators at different site might prefer some Plug-ins over others,
 for example one operator interface tool over another.
 </para>
 
-<para>A product also contains the default settings, the
+<para>A product is a collection of plugins.
+A product definition file can in fact directly list the desired plugins.
+In practice, however, plugins are usually first combined into Features,
+and the product is then assembled from these features.
+Features allow grouping of plugins by functionality.
+This way it is easier to add or remove a certain functionality
+from the product.
+For example, an <quote>optional</quote> feature can list plugins
+that are not needed by every user of a product.
+When building the product, such an optional feature may be
+excluded from the product, but it is made available in an online
+update repository. Users who down-load the product can then add
+the optional feature as desired.
+</para>
+<para>Products also contains the default settings, the
 <filename>plugin_customization.ini</filename> file described
 in <xref linkend="ch_preferences"/>.
 To users of CSS it is most convenient when the suitable settings
@@ -47,7 +66,6 @@ from which its CSS instances pull updates that apply to their local CSS
 product.
 </para>
 </sect1>
-
 
 <sect1> <title>Plug-in Dependencies<indexterm><primary>Dependencies, direct and hidden</primary></indexterm></title>
 <para>
