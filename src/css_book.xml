@@ -116,7 +116,7 @@ is used all over the world by many developers.
 
 <xi:include href="css_intro/introduction.xml" />
 <xi:include href="compiling/compiling.xml" />
-<xi:include href="preferences.xml" />
+<xi:include href="preferences/preferences.xml" />
 
 <xi:include href="network/chapter.xml" />
 <xi:include href="rdb.xml" />

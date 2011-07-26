@@ -33,6 +33,13 @@ all the settings for your site, you would follow
 </para>
 
 
+<figure xml:id="fig_preferences">  <title>Hierarchical Preferences</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="preferences.png" width="90%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+
 <sect1>  <title>Plugin Defaults: preferences.ini</title>
 
 <para>Each plugin with configurable settings should have a file
@@ -127,7 +134,7 @@ to the build-in settings of a product is described in the next section.
 
 
 <sect1 xml:id="sec_cmdline_plugin_customization">
-  <title>Slight Tweaks to the Site Defaults: -pluginCustomization</title>
+  <title>Command-line Adjustments: -pluginCustomization</title>
 
 <para>If a select installation at a site requires a few extra changes, for example
 a test network installation needs settings that differ from your main campus
