@@ -79,7 +79,7 @@ or even an entirely different storage system.
 </sect1>
 
 
-<sect1>  <title>org.csstudio.archivereader<indexterm><primary>org.csstudio.archivereader</primary></indexterm></title>
+<sect1>  <title>org.csstudio.archive.reader<indexterm><primary>org.csstudio.archive.reader</primary></indexterm></title>
 
 <para>This plugin defines the API and extension point for reading
 archived data. It is for example used by the Data Browser to obtain
@@ -88,7 +88,7 @@ historic data for a channel.
 </sect1>
 
 
-<sect1>  <title>org.csstudio.archivereader.rdb<indexterm><primary>org.csstudio.archivereader.rdb</primary></indexterm></title>
+<sect1>  <title>org.csstudio.archive.reader.rdb<indexterm><primary>org.csstudio.archive.reader.rdb</primary></indexterm></title>
 
 <para>This plugin implements the archive reader API
 for the RDB table structure used by the RDB-based archive engine.
