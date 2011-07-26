@@ -17,11 +17,22 @@ alarm server and clients.
 available from
 <link xlink:href="http://activemq.apache.org">http://activemq.apache.org</link>.
 </para>
-<para>After downloading it, the ActiveMQ server can be started like this:
+<para>Fundamentally, ActiveMQ is a portable Java application, but the
+scripts to start it are slightly different for Windows and other operating
+systems, so assert that you download the version suitable for your computer.
+After downloading it, the ActiveMQ server can be started like this:
+</para>
 <programlisting>cd [activemq_install_dir]
 bin/activemq
 </programlisting>
+<para>At least that used to be the case. With recent versions,
+an additional argument <code>start</code> to start
+respectively <code>stop</code> to stop the server seems
+to be required.
+As a very basic test on Unix and OS X, you can check if the server is listening
+on port 61616:
 </para>
+<programlisting>netstat -an | fgrep 61616</programlisting>
 <para>The page
 <link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer">http://sourceforge.net/apps/trac/cs-studio/wiki/JavaMessageServer</link>
 has more details on how to adjust the default JMS configuration.
