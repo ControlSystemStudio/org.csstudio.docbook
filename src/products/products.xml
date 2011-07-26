@@ -135,29 +135,83 @@ followed by your site name and ending in <code>.product</code>,
 for example <code>org.csstudio.mysite.product</code>.
 </para>
 <para>Add these dependencies:
+</para>
 <variablelist>
   <varlistentry><term><code>org.eclipse.core.runtime</code></term>
   <listitem>Defines the application extension point.</listitem>
   </varlistentry>
 
+  <varlistentry><term><code>org.eclipse.ui.intro</code>,
+   <code>org.eclipse.ui.intro.universal</code></term>
+  <listitem>Will later be used to implement the <quote>Welcome</quote> screen.</listitem>
+  </varlistentry>
+
   <varlistentry><term><code>org.csstudio.startup</code></term>
-  <listitem>Provides CSS-compliant application code.</listitem>
+  <listitem>Provides basic CSS-compliant application code.</listitem>
+  </varlistentry>
+
+  <varlistentry><term><code>org.csstudio.utility.product</code></term>
+  <listitem>Provides extensions to the basic CSS-compliant application code.</listitem>
   </varlistentry>
 </variablelist>
+
+<para>Fundamentally, the application code of an RCP product
+is allowed to do pretty much anything.
+CSS end-user products, however, are expected to have
+a main window, a menu bar as described in <xref linkend="ch_menues"/>,
+and support for online help.
+A CSS product should support opening documents from the command line,
+see <xref linkend="ch_openfile"/>.
+To simplify the creation of a compliant product,
+the <code>org.csstudio.startup</code> plugin provides
+the essential application code and extension points for
+customizing it according to local needs.
+Commonly used implementations of these extension points
+in turn are provided by the plugin
+<code>org.csstudio.utility.product</code>.
+Using these two plugins, a site-specific product can
+often be created without having to implement any
+application code.
 </para>
 </sect2>
 
 <sect2>  <title>Implement Application</title>
-<para>Extend the <code>org.eclipse.core.runtime.applications</code> extension point.
+<para>In the new product plugin, extend the <code>org.eclipse.core.runtime.applications</code>
+extension point.
 As an ID, you can simply enter <quote>application</quote> which will result
 in a complete ID of <code>org.csstudio.mysite.product.application</code>.
 Add a <quote>run</quote> element with value
 <code>org.csstudio.startup.application.Application</code>,
 i.e. use the skeleton implementation from the CSS startup plugin.
 </para>
-<para>
-TODO:
-Describe the "common startup" module settings
+
+<para>The plugin <code>org.csstudio.startup</code>
+defines an extension point for customizing the behavior
+of its application code.
+In the new product plugin, extend this point which is called
+<code>org.csstudio.startup.module</code>
+and add parameters to it so that the corresponding section of
+your <filename>plugin.xml</filename> file looks as follows:
+</para>
+<programlisting><![CDATA[<extension point="org.csstudio.startup.module">
+  <startupParameters
+    class="org.csstudio.utility.product.StartupParameters">
+  </startupParameters>
+  <project
+    class="org.csstudio.startup.module.defaults.DefaultProject">
+  </project>
+  <workbench
+    class="org.csstudio.utility.product.Workbench">
+  </workbench>
+</extension>]]>
+</programlisting>
+
+<para>The startup parameters code will parse command-line parameters.
+The default project code asserts that your product has at
+least one <quote>CSS</quote> project in its workspace.
+The workbench code, finally, is the most important part: It
+opens the window, configures it, and executes the main loop
+of the RCP application.
 </para>
 </sect2>
 
@@ -224,10 +278,17 @@ plugins need.
 By separating these supporting plugins from the application plugins that
 the end user sees, it will be easier to maintain your product in the long run.
 </para>
-<para>One core plugin that you will have to add is <code>org.csstudio.startup</code>,
-and we will soon add more.
+<para>Some plugin that you will have to add:
 </para>
-<para>Add the <code>core</code> feature as a dependency to your <filename>*.product</filename>.
+<itemizedlist>
+<listitem> <code>org.csstudio.startup</code> - Required by our product</listitem>
+<listitem> <code>org.csstudio.utility.product</code> - ditto</listitem>
+<listitem> <code>org.csstudio.ui.menu</code> - Define CSS menu structure</listitem>
+<listitem> <code>org.csstudio.ui.help</code> - Define CSS help structure</listitem>
+</itemizedlist>
+
+<para>We will soon add more core plugins.
+Add the <code>core</code> feature as a dependency to your <filename>*.product</filename>.
 </para>
 </sect2>
 

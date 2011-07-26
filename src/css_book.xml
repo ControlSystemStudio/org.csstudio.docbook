@@ -134,8 +134,6 @@ is used all over the world by many developers.
 
 <xi:include href="data_exchange.xml" />
 
-<!-- TODO JMS Alarm Message info -->
-
 </part>
 
 <part xml:id="part_plugin_reference">  <title>Plug-in Reference</title>
