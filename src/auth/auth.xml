@@ -305,13 +305,15 @@ and assigns users to them in entries based on the <code>cssRole</code> schema.
 </para>
 <para>Example:
 </para>
-<programlisting>dn: cn=developer,ou=alarm,ou=CSSGroupRole,ou=CSSAuthorization,dc=test,dc=ics
+<programlisting>dn: cn=developer,ou=alarm,ou=CSSGroupRole,ou=CSSAuthorization,
+   dc=test,dc=ics
 objectClass: cssRole
 cn: developer
 memberUid: Fred
 memberUid: Jane
 
-dn: cn=operator,ou=alarm,ou=CSSGroupRole,ou=CSSAuthorization,dc=test,dc=ics
+dn: cn=operator,ou=alarm,ou=CSSGroupRole,ou=CSSAuthorization,
+   dc=test,dc=ics
 objectClass: cssRole
 cn: operator
 memberUid: operator
