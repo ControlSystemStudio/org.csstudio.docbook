@@ -67,6 +67,24 @@ JSP, PHP, ...
 </para>
 </sect1>
 
+<sect1> <title>Network Access</title>
+<para>CSS or Java JDBC tools in general tend to connect to the
+database from the network. Even if CSS is running on the same
+computer that also hosts the database, it will still connect
+to <code>localhost</code> via network system calls.
+</para>
+<para>You should therefore check that the database is network
+accessible. Details depend on the database. With MySQL,
+try for example</para>
+<programlisting>mysql -h localhost -u root -p
+</programlisting>
+<para>With Postgres, use the <code>psql</code> shell, and
+edit the <filename>pg_hba.conf</filename> file to allow
+<code>md5</code> or <code>password</code> access to the Postgres
+server from the network, including <code>localhost</code>.
+</para>
+</sect1>
+
 <sect1 xml:id="ch_rdb_url_and_schema"> <title>RDB URLs and Schemata</title>
 <para>Whatever database you use, in the end you need to provide CSS tools
 or users who want to access the data from other tools
@@ -119,7 +137,7 @@ i.e. use <code>ALARM.PV</code> to read from the PV table.
 <para>To support all types of database dialects, the CSS tools
 allow configuration of a URL as well as a schema.
 For Oracle, you need to set that schema to the respective table prefix.
-For MySQL and PostgreSQL, you typically define that schema as empty,
+<emphasis role="strong">For MySQL and PostgreSQL, you typically define the schema as empty,</emphasis>
 because the URL already includes the schema name in its
 <code>[database]</code> section.
 </para>
