@@ -22,16 +22,24 @@ databases, and the alarm and archive system includes
 example database definition (DBD) files to create
 the required tables for these database dialects:
 <itemizedlist>
-<listitem>MySQL: This database is often the easiest
+<listitem><para>MySQL: This database is often the easiest
 to set up for initial tests and to support smaller
 operational setups. Free, open-source.
+</para>
+<para>The Community Version 5 should be usable.</para>
 </listitem>
-<listitem>Oracle: This database system might be the
+<listitem><para>Oracle: This database system might be the
 most powerful, with virtually unlimited table sizes.
 It is, however, not free.
+</para>
+<para>Oracle 10 and 11 should work.</para>
 </listitem>
-<listitem>PostgreSQL: This database might be a good
+<listitem><para>PostgreSQL: This database might be a good
 compromise. Bigger table sizes. Free, open-source.
+</para>
+<para>Postgres has to be at least version 8.4
+to support sequences.
+</para>
 </listitem>
 </itemizedlist>
 Your personal preference might of course differ,
