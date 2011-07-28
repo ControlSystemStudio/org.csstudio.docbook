@@ -218,12 +218,22 @@ change until eternity.
 In reality, it is often better to store fewer samples.
 </para>
 
+<para>The archive engine supports the following sample modes
+by which it collects samples from a channel.
+</para>
+
 <sect2>  <title>Monitored</title>
 <para>In monitored mode, each received sample is written to the store. With a perfectly
 configured data source, for example an EPICS <code>ADEL</code> that only passes
 significant changes to the archive engine, this mode is ideal:
 Significant changes in value are written to the archive, while noise in the signal
 is suppressed to minimize wasted resources.
+</para>
+<para>When configuring a monitored channel,
+the <emphasis>estimated</emphasis> time period between changes
+needs to be configured to allow the archive engine to reserve
+a suitable memory buffer where it stores received samples
+until they are written to the storage.
 </para>
 </sect2>
 
@@ -235,11 +245,19 @@ In some cases, however, this is not possible, and for those cases the archive en
 itself can check for changes in the value, writing only samples that differ from the
 last written sample by at least some configurable margin.
 </para>
+<para>As with plain monitored channels,
+the <emphasis>estimated</emphasis> time period between changes
+needs to be configured.
+</para>
 </sect2>
 
 <sect2>  <title>Scanned/Sampled</title>
 <para>In scanned mode, the archive engine still receives each update from the data source,
 but it only writes the most recent sample at periodic times, for example once every 5 minutes.
+</para>
+<para>For a scanned channel you configure
+the period at which the archive engine should check
+the channel for its current value.
 </para>
 
 <para>This mode is a compromise. If a channel has no significant change for hours, why
@@ -252,6 +270,77 @@ in the data, the archived data is likely to miss it when only storing a value ev
 where using the monitored mode would add too many samples to the archive.
 Periodic sampling is clearly imperfect, but sometimes a workable compromise.
 </para>
+</sect2>
+
+<sect2> <title>Writing Samples to Storage</title>
+<para>Samples obtained by the various samples modes are
+<emphasis role="strong">not</emphasis> immediately written to storage,
+for example the RDB, because writing each individual sample right away
+would be too slow.
+Instead, samples are initially kept in memory, then written to storage
+in bulk.
+By default, this
+write period<indexterm><primary>write period, Archive Engine</primary></indexterm>
+is 30 seconds.
+</para>
+<para>The period configured for scanned channels or the estimated change period
+for monitored channels is used to allocate the in-memory buffer that the engine
+uses to collect samples between writes.
+The in-memory buffer is a ring buffer that is written each write period.
+If a monitored channel sends many more samples than configured via the estimated
+update period of a channel, the archive engine sample buffer for that channel
+will overrun older in-memory samples for that channel.
+The archive engine actually uses a buffer reserve to allocate a slightly
+bigger in-memory buffer to avoid such overruns:
+<programlisting>
+ buffer_size = write_period / scan_period * buffer_reserve
+</programlisting>
+The default buffer reserve<indexterm><primary>buffer reserve, Archive Engine</primary></indexterm>
+is 2.
+With the default write period of 30 seconds,
+a channel with an estimated change period of 2 seconds would
+thus expect to need to buffer 15 samples between writes to storage,
+but the the actual buffer size would be 30 to prevent ring buffer overwrites
+during times where writing to storage is slightly delayed, or a few more samples
+are received than originally expected.
+The in-memory buffer still has a fixed size, it will not grow when more samples
+are received to keep a constant memory footprint for the archive engine.
+</para>
+
+<para>When writing accumulated samples for all channels to storage,
+i.e. by default every 30 seconds, the samples are written in batches.
+For RDB-based storage, the JDBC statements are batched to reduce the number
+of individual commits to the RDB.
+The default batch size<indexterm><primary>batch size, Archive Engine</primary></indexterm>
+is 500.
+</para>
+</sect2>
+
+<sect2> <title>Time Stamp Checks</title>
+<para>When viewing archived data, the time stamps of historic samples
+are obviously quite important.
+The Archive Engine simply receives time-stamped data from
+front end computers and has no way to determine if those time stamps
+are correct.
+It enforces, however, a few basic rules:
+</para>
+
+<itemizedlist>
+<listitem>Zero time stamps: Time stamps with zero seconds,
+for example EPICS time stamps with zero seconds since the
+EPICS epoch of 1970, are ignored.
+</listitem>
+<listitem>Time stamps that go back-in-time, i.e. time stamps
+that are before samples that have already been inserted into the
+archive, are ignored.
+</listitem>
+<listitem>Futuristic time stamps<indexterm><primary>ignored future, Archive Engine</primary></indexterm>,
+that is time stamps that are too far ahead of the clock of the host
+that is executing the archive engine, are ignored.
+By default, this ignored future is 1 day.
+</listitem>
+</itemizedlist>
+
 </sect2>
 </sect1>
 
@@ -387,7 +476,21 @@ number provided as a command-line argument.
 </para>
 
 <para>The engine web server provides several web pages, mostly linked
-from the <code>.../main</code> URL. Note that the engine only serves a blank
+from the <code>.../main</code> URL, that allow you to see:
+<itemizedlist>
+<listitem>Is the engine running? Since when?</listitem>
+<listitem>Are all channels connected? Which are disconnected?</listitem>
+<listitem>What is the last data that a channel has received?
+What is the last sample that was written to the storage?
+</listitem>
+</itemizedlist>
+
+In case of problems, the last item is usually helpful to determine:
+Does the front end computer send correct time stamps?
+Does the data change to qualify for writing a new sample to the storage?
+</para>
+
+<para>Note that the engine only serves a blank
 page at its root URL. For example, accessing <code>http://localhost:4813</code>
 will result in an empty page. You have to start browsing at <code>http://localhost:4813/main</code>.
 Starting at <code>.../main</code>, one can drill down to the status of groups and individual channels.
@@ -447,7 +550,29 @@ these reports.
 
 
 <sect1> <title>Viewing Data in CSS</title>
-<para>TODO</para>
+<para>The CSS Data Browser uses the plugin
+<code>org.csstudio.archive.reader</code>
+to access archived data in general.
+The plugin
+<code>org.csstudio.archive.reader.rdb</code>
+provides access to data stored in an RDB
+written by the archive engine described in this chapter,
+i.e. it implements reading from URLs of the form
+<code>jdbc:....</code>.
+</para>
+<para>For a successful retrieval, you need the following:
+</para>
+<itemizedlist>
+<listitem>Include <code>org.csstudio.archive.reader.rdb</code>
+in your CSS product.
+</listitem>
+<listitem>Configure it with the correct (read-only) RDB user and password.
+</listitem>
+<listitem>Configure the Data browser to use URLs like
+<code>jdbc:mysql://localhost/archive</code>
+to read from the archive.
+</listitem>
+</itemizedlist>
 </sect1>
 
 </chapter>
