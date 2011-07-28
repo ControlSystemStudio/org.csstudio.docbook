@@ -28,10 +28,18 @@ that triggered the alarm.
 </itemizedlist>
 </para>
 
+<sect1>  <title>Relational Database Setup</title>
 <para>The <filename>dbd</filename> sub-directory of the plugin sources
 describes the RDB schema for MySQL, Oracle and PostgreSQL.
-Use the <code>JMS2RDB.product</code> file to generate the binary.
 </para>
+</sect1>
+
+<sect1>  <title>Building the Tool</title>
+<para>Use the <code>JMS2RDB.product</code> file to generate the binary.
+</para>
+</sect1>
+
+<sect1>  <title>Running the Tool</title>
 <para>You configure the connection parameters for JMS and your RDB
 via a plugin customization file as described in <xref linkend="ch_preferences"/>.
 Refer to the file <filename>plugin_customization.ini</filename>
@@ -62,5 +70,6 @@ for example the last database access error.
 <programlisting>http://localhost:4913/stop
 </programlisting>
 </para>
+</sect1>
 
 </chapter>
