@@ -45,30 +45,6 @@ data.
 </para>
 
 
-<sect1>  <title>Building the Tools</title>
-
-<para>The Archive Engine is the central sampling tool that reads values from PVs and writes them to the
-archive data storage.
-It is implemented as an Eclipse product.
-You will probably also want to build ArchiveConfigTool, 
-the tool used to import engine configuration files into the relational database.
-They are defined in these product files:
-
-<programlisting>org.csstudio.archive.engine/ArchiveEngine.product
-org.csstudio.archive.config.rdb/ArchiveConfigTool.product
-</programlisting>
-
-For first tests, you can run both tools from within the Eclipse IDE as described in
-<xref linkend="chap_compiling"/>, <xref linkend="sec_runnning_in_ide"/>,
-but note that you will have to provide command-line arguments to them.
-After first tests are successful, you can export them from the IDE as described in the same section.
-Finally, you will need one of the CSS end-user products that includes the Data Browser to
-look at the archived data, but for now we concentrate on the tools
-needed to collect data.
-</para>
-</sect1>
-
-
 <sect1 xml:id="sec_archive_rdb_setup">  <title>Relational Database Setup</title>
 
 <para>Before using the archive tools, you need to create the required table structure in your RDB.
@@ -139,6 +115,30 @@ a read-only account is sufficient.
 See <xref linkend="ch_preferences"/> for details on how to provide
 these RDB settings for the archive plugins.
 The command-line tools will also accept these parameters on the command-line.
+</para>
+</sect1>
+
+
+<sect1>  <title>Building the Tools</title>
+
+<para>The Archive Engine is the central sampling tool that reads values from PVs and writes them to the
+archive data storage.
+It is implemented as an Eclipse product.
+You will probably also want to build ArchiveConfigTool, 
+the tool used to import engine configuration files into the relational database.
+They are defined in these product files:
+
+<programlisting>org.csstudio.archive.engine/ArchiveEngine.product
+org.csstudio.archive.config.rdb/ArchiveConfigTool.product
+</programlisting>
+
+For first tests, you can run both tools from within the Eclipse IDE as described in
+<xref linkend="chap_compiling"/>, <xref linkend="sec_runnning_in_ide"/>,
+but note that you will have to provide command-line arguments to them.
+After first tests are successful, you can export them from the IDE as described in the same section.
+Finally, you will need one of the CSS end-user products that includes the Data Browser to
+look at the archived data, but for now we concentrate on the tools
+needed to collect data.
 </para>
 </sect1>
 
