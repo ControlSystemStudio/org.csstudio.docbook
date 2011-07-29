@@ -674,6 +674,7 @@ better than a plain list of alarms could do.
 </sect1>
 
 
+
 <sect1>  <title>Alarm Table View</title>
 <para>In an ideal operational setup, there are only very few alarms.
 If alarms trigger, they may be from very different areas of the machine.
@@ -700,10 +701,162 @@ If alarms occur, the alarm table allows operators to inspect them quickly.
 </sect1>
 
 
-<sect1>  <title>Annunciator</title>
-<para>To be written...
+
+<sect1>  <title>Alarm Area Panel</title>
+<para>The Alarm Area Panel<indexterm><primary>Alarm Area Panel View</primary></indexterm>
+can be used as a top-level display of the current alarm state.
+A preference setting of the panel is used to configure which
+level of the alarm tree hierarchy it should display.
+</para>
+
+<figure xml:id="fig_alarm_panel">  <title>Alarm Area Panel</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="AlarmPanel.png" width="40%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>It will typically be used to display the first level of the alarm
+hierarchy, that is all <quote>Area</quote> components of the alarm tree.
+For each area, it displays the name, coloring the panel to indicate the
+alarm state of that area as in <xref linkend="fig_alarm_panel"/>.
+</para>
+
+<para>The tool can also be used to display a single panel with the
+alarm state of the overall alarm tree, i.e. the root element,
+by configuring it to use level 0 of the alarm tree hierarchy.
+When set to level 2 of the alarm tree, it will display all <quote>System</quote>
+components. With level 3 it would display all <quote>Sub-System</quote> components,
+but this and higher alarm tree components are not useful in practice.
+</para>
+
+<para>For details on how to use the alarm table, refer to its online help.
 </para>
 </sect1>
+
+
+
+<sect1>  <title>Annunciator</title>
+<para>This tool performs voice annunciation of alarms.
+It usually listens to the JMS <code>..._TALK</code> topic 
+associated with an alarm tree configuration and speaks
+received alarms to the operator.
+</para>
+<para>The annunciator can be configured to listen to one or more topics.
+It will typically listen to one specific alarm tree <code>..._TALK</code> topic
+like <code>CCR_TALK</code>, but in principle it can listen to talk topics
+from multiple alarm tree configurations.
+It could also annunciate messages that are sent to JMS topics by means other
+than the alarm system.
+</para>
+
+<figure xml:id="fig_annunciator_view">  <title>Annunciator View</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="annunciator_view.png" width="80%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+
+<para>The annunciator is available in two forms:
+</para>
+<itemizedlist>
+<listitem>Eclipse View: The Annunciator view can be opened from the CSS Alarm menu
+as long as your CSS product includes the plugin
+<code>org.csstudio.alarm.beast.annunciator</code>.
+</listitem>
+<listitem>Headless Application: The Annunciator application is started from the command line.
+To create the headless executable, export the <filename>Annunciator.product</filename>
+product from the annnuciator plugin.
+</listitem>
+</itemizedlist>
+
+<para>The annunciator view is convenient for use within CSS and has the added advantage
+of displaying a list of recently received alarm messages.
+It will, however, stop annunciating as soon as the annnuciator view is closed
+or hidden.
+</para>
+<para>The headless Annunciator application needs to be launched separately from
+the CSS user interface, but has the advantage that it will annunciate even when
+the CSS user interface is closed.
+For end users, the annunciator view may be more convenient, but in a control room
+it is suggested to run at least one copy of the headless Annunciator application.
+</para>
+
+<para>The annunciation of a message takes some time.
+When several messages are received for annunciation, they are ordered by
+their severity.
+When too many messages arrive, especially from the alarm system, there is usually
+little use in annunciating them because the bigger message is: There are MANY
+messages, do something about it!
+If the queue length exceeds a configurable threshold, the queue is therefore
+cleared and only a single <quote>There are ... more messages</quote> statement
+is announced.
+</para>
+
+<sect2> <title>Preferences</title>
+<para>Either version of the annunciator is configured via preferences.
+Refer to the <filename>preferences.ini</filename> file of the annunciator
+plugin or the CSS preference GUI when using the view to configure the following,
+where the first two are essential for the operation of the tool:
+<itemizedlist>
+<listitem>URL of the JMS server from which the annunciator receives messages.
+</listitem>
+<listitem>JMS topics to which it listens. This is a comma-separated list like
+<code>CCR_TALK, Demo_TALK</code>
+</listitem>
+<listitem>Translations file. This file can be used to provide pronunciation help.
+Refer to the online help for details.
+</listitem>
+<listitem>List of message severties, separated by comma, ordered by priority (highest first)
+to define how the annunciator should prioritize when receiving several concurrent messages.
+</listitem>
+<listitem>Threshold for ignoring flurry of messages. When more than this number
+of messages queue up, a shorter <quote>There are .. more messages</quote> statement is annunciated.
+</listitem>
+<listitem>The number of messages kept in the Annunciator View display of recent messages.
+</listitem>
+</itemizedlist>
+</para>
+<para>Also note the separate preferences of the speech library mentioned below.
+</para>
+</sect2>
+
+
+<sect2> <title>Message Texts</title>
+<para>Fundamentally, messages are annunciated as received.
+The alarm server will usually include the alarm severity
+in the message. For example, an alarm with description
+<programlisting>Running low on cookies</programlisting>
+will be annunciated as <quote>MINOR alarm: Running low on cookies</quote>
+when it enters a MINOR alarm state.
+</para>
+<para>If an alarm description starts with an asterix as in
+<programlisting>*Running low on cookies</programlisting>
+the alarm server will only send the basic alarm description without including
+the severity, i.e. <quote>Running low on cookies</quote>.
+</para>
+
+<para>We mentioned that messages will be suppressed when too many messages arrive.
+Very important messages can be prefixed with an initial exclamation mark:
+<programlisting>!Running low on cookies</programlisting>
+Such messages will always be annunciated and not be dropped when there too many other
+messages.
+</para>
+</sect2>
+
+<sect2> <title>Speech Systems</title>
+<para>The annunciator uses the plugin
+<code>org.csstudio.utility.speech</code>
+for the text-to-speech conversions.
+That plugin can be configured to use either
+the pure Java FreeTTS library that it provides,
+or an external tool.
+When selecting the external tool, a program called <code>say</code>
+is expected to be found on the PATH.
+It must accept the text to annunciate as a command line argument.
+</para>
+</sect2>
+</sect1>
+
 
 <sect1>  <title>JMS Alarm Log</title>
 <para>The JMS2RDB tool described in
