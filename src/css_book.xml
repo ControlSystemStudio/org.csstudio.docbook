@@ -125,6 +125,7 @@ is used all over the world by many developers.
 <xi:include href="jms/jms.xml" />
 <xi:include href="auth/auth.xml" />
 <xi:include href="alarm/alarm.xml" />
+<xi:include href="boy/boy.xml" />
 
 <xi:include href="products/products.xml" />
 <xi:include href="intropages.xml" />

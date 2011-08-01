@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_boy">
+<title>BOY Operator Display</title>
+
+<para>The Best OPI, Yet (BOY) is an operator interface editor and runtime.
+To end users, this might be the most interesting component of
+CSS. It can be the primary user interface to the control system:
+Start CSS, then open BOY displays to monitor and control
+the system. BOY also makes it fairly easy for end-users to
+create their own operator interface displays.
+</para>
+
+<figure xml:id="fig_boy_widgets">  <title>Example of BOY Widgets</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="Widgets.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>BOY includes extensive online help that covers everything from first steps
+to extending BOY by implementing your own custom widgets.
+Go through the installation of the example display files and the
+<quote>Getting Started</quote> section of the online help,
+because this chapter will not duplicate that information.
+Instead, we concentrate on setup suggestions.
+</para>
+
+
+<sect1>  <title>Setup</title>
+<para>To use BOY, your CSS product needs to include the
+<code>org.csstudio.opibuilder.*</code> plugins and their dependencies.
+The converter plugins described in <xref linkend="sec_boy_converters"/>
+are optional.
+</para>
+
+<para>You should prepare the following files for your site and
+place them in a location that is accessible by all users.
+</para>
+
+<itemizedlist>
+<listitem>Color definitions - A file that defines color macros.</listitem>
+<listitem>Font definitions - A file that defines font macros.</listitem>
+<listitem>Schema - An <filename>*.opi</filename> file that defines defaults for widget properties.</listitem>
+<listitem>Top OPIs - A list of <filename>*.opi</filename> shortcuts.</listitem>
+</itemizedlist>
+
+<para>The definition of color and font macros allows you
+to create uniform display files. By using a macro <code>Background</code>
+for the display background color and a macro <code>Title</code>
+for the font of a title label your display files will appear
+consistent. In addition, you can later adjust colors and fonts
+by simply updating the definition file instead of having
+to edit each individual display.
+</para>
+<para>You can start with the files that are included in the BOY examples,
+i.e. <filename>/BOY Examples/color.def</filename>
+and <filename>/BOY Examples/font.def</filename>,
+but copying them into a location is accessible
+by all CSS installations at your site.
+</para>
+<para>The files could be in a network file system location,
+but since the detailed path name syntax for such shared
+file system location often differs between operating systems,
+a web location might be more practical.
+BOY can read files from <code>http://</code>, <code>https://</code>
+and <code>ftp://</code> URLs.
+</para>
+<para>Note that the fonts listed in the font definition file need
+to be fonts that are actually available on the computer that executes CSS,
+but available fonts differ between operating systems.
+The font definition file allows you to specify different values
+depending on the operating system, for example
+</para>
+<programlisting>//Title Font for Linux GTK 
+Title(linux_gtk) = Sans-bold-18
+//Title Font for MacOS
+Title(macosx) = Lucida Grande-bold-18
+</programlisting>
+
+<para>A practical solution for display files that need to
+look the same across platforms can be the use of Microsoft Office fonts.
+Windows and Mac OS X computers that have Microsoft Office installed already
+provide these fonts, and they are also available for Linux,
+see <link xlink:href="http://corefonts.sourceforge.net">http://corefonts.sourceforge.net</link>.
+But even with same fonts installed there can be slight differences.
+For example, the OS X version of Microsoft Office fonts seem to use a different size,
+for which you can compensate in the font definition file by using OS-specific settings:
+</para>
+<programlisting>//Title Font for Windows and Linux
+Default=Verdana-regular-10
+Default(linux_gtk)=Verdana-regular-10
+// OS X needs different size to get same look
+Default(macosx_cocoa)=Verdana-regular-14
+</programlisting>
+
+<para>The Scheme file allows you to define the defaults for widget properties
+in newly created OPI files.
+For example, you can use a schema file to use macro names for the default fonts and colors
+of widgets.
+</para>
+
+<para>The default for the Top OPIs will point to the BOY example files
+like <filename>/BOY Examples/main.opi</filename>.
+You probably want to adjust them to load certain top-level OPI files
+of your site, like <filename>http://my_opi_server/opis/start_screen.opi</filename>
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_boy_converters">  <title>Team Support</title>
+<para>By including Eclipse <quote>Team</quote><indexterm><primary>Team Support (CVS, ...)</primary></indexterm>
+support like the Concurrent Versions System
+(CVS)<indexterm><primary>CVS</primary></indexterm>
+or support for another version system,
+you can keep your OPI files in a software repository,
+then check them out into the CSS workspace,
+edit them there, and commit changes back to the repository.
+</para>
+</sect1>
+
+
+<sect1 xml:id="sec_boy_converters">  <title>Converters</title>
+<para>The plugin <code>org.csstudio.opibuilder.converter</code>
+can convert <filename>*edl</filename> displays of the EPICS Extensible Display Manager (EDM)
+to the BOY <filename>*.opi</filename> file format,
+and <code>org.csstudio.opibuilder.adl2boy</code> performs this
+for <filename>*.adl</filename> displays of MEDM.
+</para>
+<para>Such conversions are naturally limited because a converter can only
+attempt a basic translation of for example rectangles in an EDM display
+into rectangles in a BOY display.
+It cannot tell if the rectangles in the EDM display were meant to
+create a visual group of widgets that are better transformed into
+a Grouping Container widget in BOY.
+</para>
+
+</sect1>
+
+</chapter>

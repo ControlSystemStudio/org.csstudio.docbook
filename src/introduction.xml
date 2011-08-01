@@ -10,16 +10,20 @@ It is organized in a way that it might help somebody who is about
 to install Control System Studio (CSS) at a site.
 It starts with a general overview of what CSS <emphasis>is</emphasis>,
 and then walks through the steps to compile pieces of CSS from source code,
-how to set up an archive engine.
+how to set up an archive engine, configure an alarm server and so on.
 </para>
 
-<para>As an end user in a the control room, you should be able to simply start
+<para>As an end user in the control room, you should be able to simply start
 CSS. In your office, you might be able to download CSS from some local web page
 for installation onto your office PC.
 In either case, the CSS product that you get has already been pre-configured
 for your site.
-You can skip the initial chapters on installation etc. and jump ahead to the later
-chapters that talk about how to use CSS.
+As an end user, if you have questions about how to use CSS or some particular
+part of it, please refer to the online help that is accessible from within CSS
+via the menu <code>Help</code>, <code>Help Contents</code>.
+This book may still include some useful information about the details of
+a CSS installation, but the online help should be the primary source
+of information for end users.
 </para>
 
 </chapter>

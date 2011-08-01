@@ -10,7 +10,21 @@
 <para>As already explained in <xref linkend="sec_rcp"/>,
 a product combines selected Plug-ins with configuration files
 and an OS-specific launcher.
-Why is there more than one CSS product?
+</para>
+<para>There are several CSS products:
+Archive Engine, Archive Config Tool,
+Alarm Server, Alarm Config Tool are all examples
+for CSS products.
+When we talk about
+<emphasis role="strong">The CSS Product</emphasis><indexterm><primary>CSS Product</primary></indexterm>,
+however, we usually refer to the CSS user interface product
+that the end users see.
+A product that is just called <code>css</code> or maybe <code>css-xyz</code> because it has
+been pre-configured for users at an institute called XYZ.
+A product that includes Probe, Data Browser,
+maybe the alarm table and tree displays.
+</para>
+<para>Why is there more than one CSS product?
 Why can it be difficult to select the required Plug-ins?
 </para>
 

@@ -15,7 +15,7 @@ One tool displays the value of a PV, one displays details of the PV configuratio
 while another concentrates on the alarm state of a PV.
 Each individual tool deserves some attention, and the
 Experimental Physics and Industrial Control System toolkit, EPICS<indexterm><primary>EPICS</primary></indexterm>,
-offers each functionality as a separate tool.
+indeed offers each functionality as a separate tool.
 A key point of CSS is the integration of such functionalities.
 </para>
 
