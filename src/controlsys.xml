@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Control System</title>
+
+<para>CSS interfaces to a control system. It is predominantly a client to the
+control system, reading data from control system
+Process Variables. While CSS includes server tools like the Alarm
+Server, that in turn is again a client to the control system.
+</para>
+
+<para>When installing or learning to use CSS, a certain familiarity with the
+control system is assumed.
+For example, you will need to know the names of process variables that
+CSS can read or write.
+You might want to create new process variables that can serve as alarm triggers.
+</para>
+
+<para>Like other control system client tools, CSS can use the meta data
+that comes with PVs.
+A PV value usually includes not only the basic value, for example a
+number like 3.13,
+but also a time stamp, a status/severity (OK, alarm, error), and
+information that display tools
+can use (value range, alarm limits, units). You need to understand
+what meta data your control
+system provides, and how to configure it.
+
+For EPICS, this means you should be able to create simple EPICS
+databases and execute
+them with the <code>softIoc</code> command.
+
+In the absence of a real control system, a few initial steps with CSS
+will be possible by
+using simulated PVs like <code>sim://sine</code>.
+See <xref linkend="ch_utility.pv"/> for more on PVs.
+</para>
+
+</chapter>
