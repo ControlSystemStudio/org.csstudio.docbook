@@ -108,7 +108,7 @@ of your site, like <filename>http://my_opi_server/opis/start_screen.opi</filenam
 </sect1>
 
 
-<sect1 xml:id="sec_boy_converters">  <title>Team Support</title>
+<sect1>  <title>Team Support</title>
 <para>By including Eclipse <quote>Team</quote><indexterm><primary>Team Support (CVS, ...)</primary></indexterm>
 support like the Concurrent Versions System
 (CVS)<indexterm><primary>CVS</primary></indexterm>
