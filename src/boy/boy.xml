@@ -72,9 +72,9 @@ but available fonts differ between operating systems.
 The font definition file allows you to specify different values
 depending on the operating system, for example
 </para>
-<programlisting>//Title Font for Linux GTK 
+<programlisting>// Title Font for Linux GTK 
 Title(linux_gtk) = Sans-bold-18
-//Title Font for MacOS
+// Title Font for MacOS
 Title(macosx) = Lucida Grande-bold-18
 </programlisting>
 
@@ -87,7 +87,7 @@ But even with same fonts installed there can be slight differences.
 For example, the OS X version of Microsoft Office fonts seem to use a different size,
 for which you can compensate in the font definition file by using OS-specific settings:
 </para>
-<programlisting>//Title Font for Windows and Linux
+<programlisting>// Title Font for Windows and Linux
 Default=Verdana-regular-10
 Default(linux_gtk)=Verdana-regular-10
 // OS X needs different size to get same look
