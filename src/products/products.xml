@@ -2,9 +2,10 @@
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xml:id="ch_products">
-<title>Products</title>
+<title>Site-Specific Products</title>
 
-<para>This chapter describes how and why Plug-ins get combined into a Product.
+<para>This chapter describes how and why Plug-ins get combined into a Product
+that is specific for a site.
 </para>
 
 <para>As already explained in <xref linkend="sec_rcp"/>,
