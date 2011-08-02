@@ -129,6 +129,7 @@ is used all over the world by many developers.
 
 <xi:include href="products/products.xml" />
 <xi:include href="intropages.xml" />
+<xi:include href="update_repo/update_repo.xml" />
 <xi:include href="localization.xml" />
 
 <xi:include href="data.xml" />

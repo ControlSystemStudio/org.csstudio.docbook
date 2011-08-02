@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"  version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_update_repo">
+<title>Update Repository</title>
+
+<para>The update repository is part of the P2<indexterm><primary>P2</primary></indexterm>
+provisioning system.
+Products that use P2 maintain their installation state.
+P2 tracks all the plugins and their versions that constitute the product.
+The product can be updated to a newer version from an update site,
+and in case of problems a product configuration can also be reverted
+to a previous state.
+</para>
+
+
+<sect1> <title>Create P2 Update Repository</title>
+<para>When you export a product from the IDE as described in
+<xref linkend="sec_prod_export_from_ide"/>,
+or when you perform a headless build of a product
+as per <xref linkend="sec_headless_build"/>,
+you can select to not only build the product
+but also generate an update repository.
+</para>
+<para>In the IDE export, check the option
+<quote>Generate metadata repository</quote>.
+Eclipse will export the product and in addition
+create a directory called <filename>repository</filename>.
+</para>
+<para>In the headless build, set
+<programlisting>p2.gathering=true
+</programlisting>
+in your <filename>build.properties</filename> file,
+and Eclipse will create a directory <filename>buildRepo</filename>.
+</para>
+
+<para>The update repository contains files <filename>content.xml</filename>
+and <filename>artifacts.xml</filename> (or jar file equivalents)
+as well as sub-directories with features, plugins and binaries.
+</para>
+
+<para>By publishing this directory structure on a web server,
+P2-enabled products can then use the URL to that directory
+for online updates.
+</para>
+</sect1>
+
+
+<sect1> <title>Enabling P2 Updates in a Product</title>
+<para>To enable an RCP product to use an update site,
+you need to do this:
+
+<orderedlist>
+<listitem>
+<para>Include the P2 client tools.</para>
+<para>By including the feature
+<programlisting>org.eclipse.equinox.p2.user.ui</programlisting>
+in your product, you have the complete P2 GUI to support
+for example the menu <code>Help</code>, <code>Check for Updates</code>
+and <code>Help</code>, <code>Install new Software...</code>
+</para>
+</listitem>
+
+<listitem>
+<para>Configure for your update site.</para>
+<para>Ideally, your product is already configured to
+look for updates on your update site, and maybe even
+performs this automatically with little user interaction.
+</para>
+<para>To include your update site in the configuration of
+your product, create a file <filename>p2.inf</filename>
+in your product plugin. The build tools will use this
+to configure the product at the end of the build:
+<programlisting># Define P2 repository, see
+# http://wiki.eclipse.org/Equinox/p2/Engine/Touchpoint_Instructions
+# http://www.ralfebert.de/blog/eclipsercp/p2_updates_tutorial/
+instructions.configure=\
+ addRepository(type:0,name: My Update Site,\
+  location:http${#58}//www.my.site/css/updates/);\
+ addRepository(type:1,name: My Update Site,\
+  location:http${#58}//www.my.site/css/updates/);
+</programlisting>
+</para>
+
+<para>If you want your product to check for updates on each startup,
+prompting the user if she would like to perform the update,
+add this to the <filename>plugin_customization.ini</filename>
+of your product:
+<programlisting>## P2 Updates: Enable check on startup.
+# Only check, don't download
+org.eclipse.equinox.p2.ui.sdk.scheduler/enabled=true
+org.eclipse.equinox.p2.ui.sdk.scheduler/schedule=on-startup
+org.eclipse.equinox.p2.ui.sdk.scheduler/download=false
+</programlisting>
+</para>
+</listitem>
+</orderedlist>
+
+</para>
+</sect1>
+
+
+<sect1> <title>Version Numbers</title>
+<para>When you use online updates of our product,
+you need to pay attention to the version numbers of your
+plugins.
+When you change a plugin, you need to increment its version number
+so that P2 can detect a new version and support an update to that
+new version.
+</para>
+<para>It is a good idea to use version numbers that end in <code>.qualifier</code>
+like
+<programlisting>1.2.3.qualifier
+</programlisting>
+The headless build will replace that qualifier with the current date and time,
+guaranteeing that the plugin has a unique version number even if you occasionally
+forget to increment the version number.
+</para>
+</sect1>
+
+
+<sect1> <title>Maintaining an Update Site</title>
+<para>Your update repository can contain all the plugins
+for more than one version of a product.
+It can even contain the components for different products.
+This can be useful to allow updates of older versions
+of a product to either the latest or an intermediate version.
+You can update from say version 1.0 to 1.1, then to 1.2, then to 1.3,
+revert to 1.0, then directly update to 1.3.
+</para>
+<para>To create a repository that contains multiple versions,
+you can simply leave an existing <filename>repository</filename>
+respectively <filename>buildRepo</filename> directory in place
+when you perform the new build.
+Eclipse P2 will add to the existing repository, it will not replace it.
+</para>
+<para>You might, however, prefer to have better control over the
+content of your repository:
+</para>
+<para>What if you want to reduce the size of your repository
+by deleting some older versions?
+</para>
+<para>What happens to the repository when a build fails?
+</para>
+
+<para>One suggestion is to always build a new repository
+via the headless build. Start with an empty repository,
+then copy the repository generated for a specific version into 
+versioned subdirectories on the web server:
+</para>
+<programlisting>
+/path/to/web/root/css/updates/repo1.0
+/path/to/web/root/css/updates/repo1.1
+/path/to/web/root/css/updates/repo1.2
+/path/to/web/root/css/updates/repo1.3
+...
+</programlisting>
+
+<para>This way it is easy to delete the repository for a selected version.
+Next, combine those versions that you intend to expose to users with
+the P2 mirror application.
+A script similar to this will copy or add one repository to another:
+</para>
+<programlisting># Mirror one P2 repository to another
+# Mirror the metadata
+java -jar $ECLIPSE/plugins/org.eclipse.equinox.launcher_*.jar \
+  -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication \
+  -source  $SOURCE -destination $DEST
+# Mirror the artifacts
+java -jar $ECLIPSE/plugins/org.eclipse.equinox.launcher_*.jar \
+  -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication \
+  -verbose \
+  -compare \
+  -source  $SOURCE -destination $DEST
+</programlisting>
+
+<para>Given such a mirror script, you can assemble a repository as desired:
+</para>
+<programlisting>cd /path/to/web/root/css/updates
+# Delete old repository
+rm -rf content.xml artifacts.xml binary features plugins
+# Include versions 1.0 and 1.3 in combined repository
+mirror.sh repo1.0 .
+mirror.sh repo1.3 .
+</programlisting>
+
+</sect1>
+
+
+</chapter>

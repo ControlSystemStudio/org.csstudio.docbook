@@ -179,13 +179,14 @@ org.csstudio.basic.epics.product
 
 <sect1 xml:id="sec_runnning_in_ide">  <title>IDE Example</title>
 
-<para>Running an RCP product, and this includes CSS products, from the Eclipse IDE is fundamentally simple:
+<para>Running any Eclipse RCP product from the Eclipse IDE is fundamentally simple:
 Open the product definition file, click <quote>Launch ...</quote>, done.
 The most difficult part is the initial Workspace setup.
 </para>
 
 <para>When you start the Eclipse IDE for the first time, you will be prompted for a <code>Workspace</code><indexterm><primary>Workspace (IDE)</primary></indexterm>.
-This is the directory where Eclipse keeps configuration parameters, for example your compiler settings.
+This is the directory where Eclipse keeps configuration parameters, for example your compiler settings,
+in a <filename>.metadata</filename> subdirectory.
 The Workspace is <emphasis>not necessarily</emphasis> the same directory that
 holds the source files. Eclipse will in fact not recognize source files that are simply placed in
 the Workspace directory on your disk.
@@ -194,7 +195,7 @@ into the workspace to be recognized by Eclipse.
 </para>
 
 
-<figure xml:id="fig_workspace_and_sources">  <title>Workspace and Source Code</title>
+<figure xml:id="fig_workspace_and_sources">  <title>Workspace versus Source Code</title>
   <mediaobject>
     <imageobject><imagedata fileref="workspace.png" width="90%" format="PNG"/></imageobject>
   </mediaobject>
@@ -271,7 +272,8 @@ locate all available product files as shown in <xref linkend="fig_comp_search_pr
 </figure>
 
 <para>When you open an Eclipse product file, it will be displayed as per <xref linkend="fig_comp_product"/>.
-In the <code>Overview</code> tab, press <code>Synchronize</code>, <code>Launch an Eclipse Application</code> to run the product from within the IDE.
+In the <code>Overview</code> tab, first press <code>Synchronize</code>,
+then press <code>Launch an Eclipse Application</code> to run the product from within the IDE.
 The product should start up.
 </para>
 
@@ -279,7 +281,7 @@ The product should start up.
 that it requires more command-line arguments.
 We will later describe how to <quote>export</quote> products from the IDE into standalone
 executables, and with such an exported command-line tool it will of course be trivial
-to provice command-line arguments when invoking the tool from the shell.
+to provide command-line arguments when invoking the tool from the shell.
 </para>
 
 <para>During development and initial testing, though, it can be more convenient to execute CSS products
@@ -296,7 +298,7 @@ Add your desired command-line arguments to the end of the program arguments.
 <para>When running a product from within the IDE for the first time,
 the main goal is that the product should <emphasis>start</emphasis>.
 It may then stop because of missing command line arguments,
-but it should be no errors regarding missing plugins or compilation problems.
+but there should be no errors regarding missing plugins or compilation problems.
 </para>
 
 <para>If the product does not start up, and instead you get an error like
@@ -327,7 +329,8 @@ of the CSS product to determine why the product configuration has an error.
 Almost as easy as running the product is debugging<indexterm><primary>Debugging</primary></indexterm> it:
 Instead of running the product again from the menu <code>Run</code>, <code>Run History</code>,
 you select <code>Run</code>, <code>Debug History</code> to start the product in debug mode.
-You can browse the source code, set breakpoints by double-clicking at the start of a source line.
+You can browse the source code, set breakpoints by double-clicking at the start of a source line,
+then step through the code from the breakpoint on.
 </para>
 </sect1>
 
@@ -341,21 +344,53 @@ One way to create such a standalone product is to
 <quote>export</quote><indexterm><primary>Exporting a Product</primary></indexterm>
 the product from the IDE.
 </para>
-<para>To export a product, open the product file as shown in <xref linkend="fig_comp_product"/>
+
+<figure xml:id="fig_comp_export">  <title>Product Export Dialog</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_export.png" width="40%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>To export a product, open the product file that was already shown in <xref linkend="fig_comp_product"/>
 and press the <code>Eclipse Product export wizard</code> link in the Overview tab.
+This will open the Eclipse product export dialog, see <xref linkend="fig_comp_export"/>,
+where you enter the following:
 </para>
 
 <orderedlist>
-<listitem>As a root directory, enter the name of the product (ArchiveEngine, CSS, ...)</listitem>
-<listitem>Enter a directory where the exported product should be placed, for example <filename>/tmp</filename></listitem>
-<listitem>You might want to uncheck the option to <quote>Generate metadata repository</quote></listitem>
+<listitem>
+<para>As a Root Directory, enter the name of the product, for example ArchiveEngine, CSS, ...
+You could include a version number, for example CSS-3.0.
+</para>
+<para>Use only a directory <emphasis>name</emphasis>, no path! This is the name of the directory that will
+contain the generated executable and associated files.
+</para>
+</listitem>
+<listitem>
+<para>Enter a Directory <emphasis>path</emphasis> where the exported product should be placed,
+for example <filename>/usr/fred/CSS/bin</filename>
+</para>
+<para>Enter a full path for this option! In the end, the name from the previous option
+will be appended to this directory path, so your product will end up in a directory
+similar to <filename>/usr/fred/CSS/bin/CSS-3.0</filename>.
+</para>
+</listitem>
+<listitem>You might want to un-check the option to <quote>Generate metadata repository</quote></listitem>
 <listitem>Finish</listitem>
 </orderedlist>
 
-<para>You should now have a directory like <filename>/tmp/CSS</filename> that contains a <code>CSS</code> executable.
+<para>You should now have a directory like <filename>/usr/fred/CSS/bin/CSS-3.0</filename>
+ that contains a <code>css</code> executable.
 You can copy that directory to other computers and run it there.
 One method of deployment would be to offer a ZIP file of the exported product on a web page. 
 </para>
+
+<para>If you left the option to
+<quote>Generate metadata repository</quote> checked,
+Eclipse will generate also an update repository,
+see <xref linkend="chap_update_repo"/>.
+</para>
+
 
 <sect2> <title>Command-line Products for Windows</title>
 <para>
@@ -409,8 +444,7 @@ on which it was exported because of the OS-dependent launcher and SWT libraries,
 <xref linkend="sec_rcp"/>.
 To export code for different platforms, you need the Eclipse <quote>Delta Pack</quote><indexterm><primary>Delta Pack</primary></indexterm>.
 With the Delta Pack installed, Eclipse on OS X can for example build products for Windows, Linux, and OS X.
-Same for Linux. Eclipse on Windows can do this with limitations: The file permissions of the generated product for Linux will not be
-executable because the Windows file system lacks that notion.
+Same for Linux and Windows.
 </para>
 
 <para>To obtain the delta pack:</para>
@@ -425,48 +459,54 @@ executable because the Windows file system lacks that notion.
 <para>To use the delta pack:</para>
 
 <orderedlist>
-<listitem>Extract the delta pack archive into its own directory on disk. The result should be a <filename>eclipse</filename> directory with sub-directories <filename>plugins</filename> and <filename>features</filename></listitem>
-<listitem>Open the Target Platform preferences (Menu <code>Window</code>, <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>).</listitem>
-<listitem>Edit the active target. Add an <quote>Installation</quote>, using the path to the delta pack's <filename>eclipse</filename> directory.</listitem>
+<listitem>Extract the delta pack archive into its own directory on disk.
+The result should be an <filename>eclipse</filename> directory with sub-directories
+<filename>plugins</filename> and <filename>features</filename>
+</listitem>
+<listitem>Open the Target Platform preferences
+(Menu <code>Window</code>, <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>).
+</listitem>
+<listitem>Edit the active target. Add an <quote>Installation</quote>, using the path to the delta pack's
+<filename>eclipse</filename> directory.
+</listitem>
 </orderedlist>
 
-<para>When you now export a product from the IDE, there will be a new option <quote>Export to multiple platforms</quote>.</para>
+<para>When you now export a product from the IDE, there will be a new option
+<quote>Export to multiple platforms</quote>.
+</para>
 </sect1>
 
 
-<sect1>  <title>Headless Build</title>
+<sect1 xml:id="sec_headless_build">  <title>Headless Build</title>
 
 <para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
 is eventually necessary for each site that periodically publishes CSS product updates.
 It automates the build process, guaranteeing that the products are indeed exported for each supported platform.
 It can also be used as part of a nightly or integration build.
 </para>
-<para>
-A headless build, however, is more complicated to set up than the product export from the IDE.
+
+<figure xml:id="fig_comp_headless">  <title>Headless Build</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_headless.png" width="80%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>A headless build, however, is more complicated to set up than the product export from the IDE.
 The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
 Instead, it is command-line driven and expects to find all feature and plugin projects
 in subdirectories of the build directory which have to be named <filename>features</filename>
 respectively <filename>plugins</filename>.
-This usually means that you need a shell script or a build file for <code>ant</code>
+</para>
+<para>This usually requires a shell script or a build file for <code>ant</code>
 to copy all feature and plugin projects that are part of your product into such a build directory layout.
 In addition, you need a file <filename>build.properties</filename> to specify which
 product or feature to build, which target architectures to use, and how to name the generated
 archive files.
 </para>
-<para>
-For details, check the Eclipse online help for Headless Build,
+<para>For details, check the Eclipse online help for Headless Build,
 or refer to the scripts that other CSS sites use to build their products,
 which can be found in the <filename>build</filename> and <filename>products</filename>
 subdirectories of the CSS sources.
-</para>
-<para>The result of a product generated by the headless build
-should be a product that uses Eclipse P2<indexterm><primary>P2</primary></indexterm>
-to maintain its installation state, and an update repository for updating older
-versions of the product to the current state.
-P2 tracks all the plugins and their versions that constitute the product.
-The product can be updated to a newer version from an update site,
-and in case of problems a product configuration can also be reverted
-to a previous state.
 </para>
 </sect1>
 
@@ -475,14 +515,15 @@ to a previous state.
 is that it is no longer possible to simply replace plugins in a product
 with new versions.
 If you replace a plugin JAR file with a different version, even if the
-names exactly match, P2 will recognize the change because of checksums
-and refuse to load the modified plugin.
+names exactly match, P2 will recognize the change because of checksums.
+It will refuse to load the modified plugin, because it was part of the
+original configuration.
 In the spirit of maintaining a well defined product with known content,
-this makes sense. Occasionally, however, it is a big nuisance because
-quick updates to small bugs are no longer possible via basic plugin updates.
-Instead, one would normally create a new product by incrementing all version
-numbers, performing a complete headless build, then publishing the new product
-and update site.
+this makes sense. Occasionally, however, it is a big nuisance:
+Fixes to small bugs are no longer possible via basic plugin updates.
+Instead, you have to create a new product by incrementing all version
+numbers, perform a complete headless build, then publish the new product
+and its repository on the update site.
 </para>
 <para>A feature patch can be used to update only part of a product
 while maintaining full configuration control.
@@ -519,8 +560,8 @@ i.e. <code>3.0.1.20110715</code>.
 i.e. <code>org.csstudio.trends.databrowser2</code>.
 The feature that we are patching might contain many more plugins,
 but in the patch we only include what we want to add or replace.
-Assert that the version numbers plugin that you want to reaplace
-are updated from their installed version.
+Assert that the version numbers of all the plugins that you want
+to replace have been incremented from their installed version.
 </listitem>
 </itemizedlist>
 
@@ -532,7 +573,8 @@ by adding the ZIP file to the available software sites.
 </para>
 <para>As a result, the original <code>org.csstudio.trends.databrowser2</code>
 plugin is replaced with the new one, while P2 remains fully aware of what
-version of which plugin was installed from where.
+version of which plugin was installed from where, so it will for example
+allow you to un-install the patch, or later add additional feature patches.
 </para>
 </sect1>
 
