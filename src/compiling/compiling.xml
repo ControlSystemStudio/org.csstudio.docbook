@@ -192,14 +192,23 @@ the Workspace directory on your disk.
 Your source files need to be <quote>imported</quote><indexterm><primary>Import sources into Workspace (IDE)</primary></indexterm>
 into the workspace to be recognized by Eclipse.
 </para>
-<para>In the following, we assume that you have the sources in a directory like <filename>/usr/fred/css_sources</filename>,
-while your workspace is a separate directory <filename>/usr/fred/workspace</filename>.
+
+
+<figure xml:id="fig_workspace_and_sources">  <title>Workspace and Source Code</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="workspace.png" width="90%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+
+<para>In the following, we assume that you have the sources in a directory like <filename>/usr/fred/CSS/Sources</filename>,
+while your workspace is a separate directory <filename>/usr/fred/CSS/Workspace</filename>.
 To import the sources into the workspace:
 </para>
 
 <itemizedlist>
 <listitem>In the IDE, select the menu <code>File/Import...</code>, <code>General</code>, <code>Existing Projects into Workspace</code>.</listitem>
-<listitem>As a root directory, select <filename>/usr/fred/css_sources</filename>.</listitem>
+<listitem>As a root directory, select <filename>/usr/fred/CSS/Sources</filename>.</listitem>
 <listitem><emphasis>Do not check the option </emphasis> <quote>Copy projects into workspace</quote>!</listitem>
 <listitem>By default all the plugins on the disk will be selected.
 You can leave them selected, or select only specific plugins as described below.</listitem>
