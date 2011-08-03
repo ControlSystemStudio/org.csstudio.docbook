@@ -5,6 +5,21 @@
 <title>Authentication and Authorization</title>
 
 <sect1> <title>Overview</title>
+<para>Access to some components of CSS is restricted.
+Changes to the alarm system configuration for example are
+only permitted to authorized users.
+User interface elements like the context menu entries to configure
+or remove some part of the alarm configuration are only accessible
+after the user has logged in
+<emphasis>and</emphasis> that user is indeed authorized to manipulate
+the alarm configuration.
+</para>
+
+<figure xml:id="fig_auth_example">  <title>Authenticate to change alarm configuration</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="auth_example.png" width="95%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
 
 <para>
 <emphasis role="strong">Authentication</emphasis><indexterm><primary>Authentication</primary></indexterm>
