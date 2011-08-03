@@ -825,21 +825,61 @@ of messages queue up, a shorter <quote>There are .. more messages</quote> statem
 <para>Fundamentally, messages are annunciated as received.
 The alarm server will usually include the alarm severity
 in the message. For example, an alarm with description
-<programlisting>Running low on cookies</programlisting>
-will be annunciated as <quote>MINOR alarm: Running low on cookies</quote>
+<programlisting>Low Water Pressure</programlisting>
+will be annunciated as
+<programlisting>"MINOR alarm: Low Water Pressure"</programlisting>
 when it enters a MINOR alarm state.
 </para>
-<para>If an alarm description starts with an asterix as in
-<programlisting>*Running low on cookies</programlisting>
-the alarm server will only send the basic alarm description without including
-the severity, i.e. <quote>Running low on cookies</quote>.
+<para>If an alarm description starts with an asterisk as in
+<programlisting>*Low Water Pressure</programlisting>
+the alarm server will use the description as given.
+It will <emphasis>not</emphasis> prefix it with the alarm severity.
+A PV with above Description thus results in just announcing
+<programlisting>"Low Water Pressure"</programlisting>
 </para>
+
+<para>In addition, descriptions starting with an asterisk can include the following
+formatting elements:
+</para>
+<itemizedlist>
+<listitem>The text <code>{0}</code> is replaced with the current alarm severity.</listitem>
+<listitem>The text <code>{1}</code> is replaced with the value of the trigger PV that caused the alarm.</listitem>
+</itemizedlist>
+
+<para>For example, a PV with description
+<programlisting>*{0} alarm: Low Water Pressure</programlisting>
+would again result in an annunciation
+<programlisting>"MINOR alarm: Low Water Pressure"</programlisting>
+The effect would be the same as having used the default annunciation
+format without <code>*</code>.
+</para>
+<para>
+By using the <code>*</code> format, however, you can also use descriptions like
+<programlisting>*{0} water alarm, level is {1} gallons</programlisting>
+which will result in an annunciation similar to
+<programlisting>"MINOR water alarm, level is 3.142 gallons"</programlisting>
+</para>
+<para>The format elements can be in any order.
+For example, the value can be used before the alarm severity.
+The description
+<programlisting>*Water below {1} gallons, {0} alarm</programlisting>
+will result in an annunciation similar to
+<programlisting>"Water below 3.142 gallons, MAJOR alarm"</programlisting>
+</para>
+
 
 <para>We mentioned that messages will be suppressed when too many messages arrive.
 Very important messages can be prefixed with an initial exclamation mark:
 <programlisting>!Running low on cookies</programlisting>
 Such messages will always be annunciated and not be dropped when there too many other
 messages.
+</para>
+
+<para>When combining the formatting element <code>*</code>
+and the <code>!</code> to prevent suppression, note the required order.
+You have to use
+<programlisting>*!My description ...</programlisting>
+i.e. first the <code>*</code>, then the <code>!</code>.
 </para>
 </sect2>
 
