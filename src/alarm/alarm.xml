@@ -735,7 +735,7 @@ but this and higher alarm tree components are not useful in practice.
 
 
 
-<sect1>  <title>Annunciator</title>
+<sect1>  <title>Annunciator<indexterm><primary>Annunciator</primary></indexterm></title>
 <para>This tool performs voice annunciation of alarms.
 It usually listens to the JMS <code>..._TALK</code> topic 
 associated with an alarm tree configuration and speaks
@@ -766,6 +766,8 @@ as long as your CSS product includes the plugin
 <listitem>Headless Application: The Annunciator application is started from the command line.
 To create the headless executable, export the <filename>Annunciator.product</filename>
 product from the annnuciator plugin.
+The headless annunciator application is also referred to as
+JMS2SPEECH<indexterm><primary>JMS2SPEECH</primary></indexterm>.
 </listitem>
 </itemizedlist>
 
