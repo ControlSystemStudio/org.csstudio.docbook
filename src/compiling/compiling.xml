@@ -374,6 +374,12 @@ for example <filename>/usr/fred/CSS/bin</filename>
 will be appended to this directory path, so your product will end up in a directory
 similar to <filename>/usr/fred/CSS/bin/CSS-3.0</filename>.
 </para>
+<para>Also assert that the directory that you selected is <emphasis role="strong">empty</emphasis>!
+When you export a product into a directory that already contains a product, maybe an older version
+of the same product, Eclipse will attempt to add the new code to the existing content,
+similar to an online update of an existing product.
+That is probably not what you want, so export into a an empty directory.
+</para>
 </listitem>
 <listitem>You might want to un-check the option to <quote>Generate metadata repository</quote></listitem>
 <listitem>Finish</listitem>
