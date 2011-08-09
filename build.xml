@@ -68,6 +68,7 @@
             <arg value="myeclipse.xsl"/>
         	<srcfile/>
             <fileset dir="src">
+                <include name="org.csstudio.navigator.applaunch/chapter.xml" />
                 <include name="org.csstudio.utility.chat/chapter.xml" />
             </fileset>
             <mapper type="glob" from="*.xml" to="${out}/*.html"/>
