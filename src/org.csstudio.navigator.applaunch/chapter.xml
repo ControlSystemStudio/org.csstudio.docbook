@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_applaunch">
+
+<title>Application Launcher - org.csstudio.navigator.applaunch<indexterm><primary><code>org.csstudio.navigator.applaunch</code></primary></indexterm></title>
+
+<para>This plugin supports Application Launch configuration files
+which can then be started from the Eclipse Navigator.
+</para>
+
+<figure xml:id="fig_applaunch">  <title>Application Launch files</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="applaunch.png" width="80%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Most accelerator sites have some type of application launcher
+that lists the many specialized tools that operators or
+experimenters can start.
+Users of several subsystem groups can create their own section
+of the launch configuration.
+Some tools are listed more than once as shown for the Terminal
+tool in <xref linkend="fig_applaunch"/> because several groups
+would like to list it in <quote>their</quote> section of the launcher.
+</para>
+
+<para>This plugin allows using the Eclipse Navigator view as such a launcher.
+The navigator already displays all workspace files, and can for example
+open the operator display editor or runtime for display files.
+It is thus a basic launcher where users can arrange the files
+in projects and sub-directories and then launch the associated CSS tools.
+Using linked folders, one can create shared as well as user-specific
+arrangements.
+</para>
+
+<para>The use of the Navigator as a launcher complements the CSS menu bar:
+The menu bar has a comparable limited size and fixed arrangement.
+It lists the tools built into CSS that many users need.
+Each CSS tool typically shows only once in the menu bar.
+</para>
+<para>A launcher configuration can be much bigger, listing many external
+tools. Some entries like the launcher for a terminal window can appear
+in multiple sub-directories of the launch configuration because
+each subsystem group of users can create their own section of the launch
+configuration.
+</para>
+
+<sect1> <title>Basic Usage</title>
+<para>End users simply double-click a launch configuration
+file in the Navigator.
+Similar to the way double-clicking a display file opens
+the operator interface tool, opening a launch configuration file
+will start the associated external application.
+</para>
+<para>Eclipse remembers the last action on a file.
+If the user had previously edited a launch configuration,
+i.e. opened it in an editor instead of executing it,
+Eclipse will remember this and again open the editor
+on the next double-click.
+In this case once right-click the launch configuration file
+and select <code>Open With</code>, then <code>Launch Application</code>
+to execute it. From now on the double-click will also default to
+launching the application.
+</para>
+<para>Users can create new subsections of the launcher by creating
+new file folders in the Navigator:
+</para>
+<itemizedlist>
+<listitem>Right-click on the parent folder</listitem>
+<listitem>Select <code>New</code>, <code>Other..</code>,
+section <code>General</code>, type <code>Folder</code></listitem>
+<listitem>Enter name of new folder</listitem>
+</itemizedlist>
+<para>Since launch configuration files are still files,
+they can be moved, copied, renamed like any other file
+in the Navigator.
+</para>
+</sect1>
+
+
+<sect1> <title>Creating an Application Launcher Configuration File</title>
+<para>
+</para>
+
+<itemizedlist>
+<listitem>Right-click on the parent folder</listitem>
+<listitem>Select <code>New</code>, <code>Other..</code>,
+section <code>General</code>, type <code>File</code></listitem>
+<listitem>As a file name, use something that ends in <filename>.app</filename>,
+for example <filename>Terminal.app</filename>
+</listitem>
+<listitem>Open the file in a text editor:
+Right-click the launch configuration file
+and select <code>Open With</code>, <code>Text Editor</code>
+</listitem>
+<listitem>Edit the file to look similar to this, see following section for details:
+
+<programlisting><![CDATA[<application>
+  <command>notepad.exe</command>
+  <icon>icon:edit</icon>
+</application>]]>
+</programlisting>
+
+</listitem>
+
+<listitem>Execute the launch configuration at least once viaa
+right-click on the file, selecting <code>Open With</code>, then <code>Launch Application</code>.
+From now on the double-click will also default to launching the application.
+</listitem>
+</itemizedlist>
+</sect1>
+
+
+<sect1> <title>Application Launcher Configuration File Details</title>
+<para>At this time there is no specialized editor for the launcher
+configuration files, so you need to be familiar with its XML file format.
+</para>
+<para>The application launcher configuration file name must end in
+<filename>.app</filename> or <filename>*.xml</filename>.
+It must be a valid XML file with an <code>application</code>
+root element and a <code>command</code>:
+</para>
+<programlisting><![CDATA[<application>
+  <command>/path/to/the/command</command>
+</application>]]>
+</programlisting>
+
+<para>The command should be the path to a command.
+On MS Windows and Mac OS X, the command may also the path
+to a file that the operating system can open.
+For example, it could be the path to a Microsoft Word document
+and invoking the command would then open that file in Microsoft Word
+on a PC or Mac that has MS Word available.
+</para>
+
+<para>The launcher configuration file may include an optional <code>icon</code>:
+</para>
+
+<programlisting><![CDATA[<application>
+  <command>/path/to/the/command</command>
+  <icon>icon_info</icon>
+</application>]]>
+</programlisting>
+
+<para>The icon info can be the following:
+<itemizedlist>
+<listitem>
+<code>icon:clipboard</code>,
+<code>icon:console</code>,
+<code>icon:edit</code>,
+<code>icon:run</code>, or
+<code>icon:work</code>
+to select build-in icons.
+The default is <code>icon:run</code>.
+</listitem>
+<listitem>A path to an icon file within the workspace.
+In an operational setup one might prepare a shared icon folder like
+<filename>CSS/Share/icons</filename>, and then use an icon path
+like
+<filename>CSS/Share/icons/some_icon.gif</filename>
+as a launcher icon.
+</listitem>
+</itemizedlist>
+</para>
+
+</sect1>
+
+
+
+</chapter>

@@ -166,8 +166,10 @@ CSS plugins.
 <xi:include href="org.csstudio.alarm.beast.msghist/chapter.xml" />
 <xi:include href="org.csstudio.archive.engine/chapter.xml" />
 <xi:include href="org.csstudio.debugging.jmsmonitor/chapter.xml" />
+<xi:include href="org.csstudio.navigator.applaunch/chapter.xml" />
 <xi:include href="org.csstudio.sns.jms2rdb/chapter.xml" />
 <xi:include href="org.csstudio.utility.chat/chapter.xml" />
+
 
 </part>
 
