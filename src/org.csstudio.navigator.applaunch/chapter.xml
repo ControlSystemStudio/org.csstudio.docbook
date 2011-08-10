@@ -11,7 +11,7 @@ which can then be started from the Eclipse Navigator.
 
 <figure xml:id="fig_applaunch">  <title>Application Launch files</title>
   <mediaobject>
-    <imageobject><imagedata fileref="applaunch.png" width="80%" format="PNG"/></imageobject>
+    <imageobject><imagedata fileref="applaunch.png" width="40%" format="PNG"/></imageobject>
   </mediaobject>
 </figure>
 
