@@ -79,45 +79,67 @@ in the Navigator.
 </sect1>
 
 
-<sect1> <title>Creating an Application Launcher Configuration File</title>
-<para>
-</para>
-
+<sect1> <title>Creating a new Application Launcher Configuration File</title>
 <itemizedlist>
 <listitem>Right-click on the parent folder</listitem>
 <listitem>Select <code>New</code>, <code>Other..</code>,
-section <code>General</code>, type <code>File</code></listitem>
-<listitem>As a file name, use something that ends in <filename>.app</filename>,
-for example <filename>Terminal.app</filename>
+section <code>Launcher</code>,
+<code>Application Launch Configuration</code>
 </listitem>
-<listitem>Open the file in a text editor:
-Right-click the launch configuration file
-and select <code>Open With</code>, <code>Text Editor</code>
+<listitem>Enter a file name, for example <code>Terminal</code>.
+The file extension <filename>.app</filename> will be added automatically,
+so the resulting launch configuration file
+would be <filename>Terminal.app</filename>
 </listitem>
-<listitem>Edit the file to look similar to this, see following section for details:
-
-<programlisting><![CDATA[<application>
-  <command>notepad.exe</command>
-  <icon>icon:edit</icon>
-</application>]]>
-</programlisting>
-
+<listitem>On the next page of the Launch Configuration editor,
+enter the command to launch, for example <code>xterm</code>
+or <code>cmd.exe</code>.
+You may also select an icon.
 </listitem>
-
-<listitem>Execute the launch configuration at least once viaa
-right-click on the file, selecting <code>Open With</code>, then <code>Launch Application</code>.
+<listitem>Press <code>Finish</code>.
+</listitem>
+<listitem>Execute the launch configuration via
+right-click on the file,
+selecting <code>Open With</code>, then <code>Application Launcher</code>.
 From now on the double-click will also default to launching the application.
 </listitem>
 </itemizedlist>
 </sect1>
 
 
+<sect1> <title>Editing an Application Launcher Configuration File</title>
+<para>To edit an existing launcher configuration file:
+</para>
+<itemizedlist>
+<listitem>Right-click on the <filename>*.app</filename> file that
+you want to edit</listitem>
+<listitem>Select <code>Open With</code>, then <code>Application Editor</code>.
+</listitem>
+</itemizedlist>
+
+<figure xml:id="fig_applaunch_config">  <title>Configuration Editor</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="config.png" width="50%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The launcher configuration editor,
+see <xref linkend="fig_applaunch_config"/>,
+allows you to modify the command to execute
+and to select a different icon.
+</para>
+
+</sect1>
+
+
+
+
 <sect1> <title>Application Launcher Configuration File Details</title>
-<para>At this time there is no specialized editor for the launcher
-configuration files, so you need to be familiar with its XML file format.
+<para>If you create launcher configuration files by other means,
+you need to be familiar with its XML file format.
 </para>
 <para>The application launcher configuration file name must end in
-<filename>.app</filename> or <filename>*.xml</filename>.
+<filename>.app</filename>.
 It must be a valid XML file with an <code>application</code>
 root element and a <code>command</code>:
 </para>
@@ -163,9 +185,6 @@ as a launcher icon.
 </listitem>
 </itemizedlist>
 </para>
-
 </sect1>
-
-
 
 </chapter>
