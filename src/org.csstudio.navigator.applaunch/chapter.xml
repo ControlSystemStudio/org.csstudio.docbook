@@ -173,7 +173,7 @@ on a PC or Mac that has MS Word available.
 <code>icon:edit</code>,
 <code>icon:run</code>, or
 <code>icon:work</code>
-to select build-in icons.
+to select built-in icons.
 The default is <code>icon:run</code>.
 </listitem>
 <listitem>A path to an icon file within the workspace.
