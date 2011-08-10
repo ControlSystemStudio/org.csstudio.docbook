@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+         version="5.0"
+         xml:id="ch_menu_web">
+<title>Web menu - org.csstudio.ui.menu.web<indexterm><primary>org.csstudio.ui.menu.web</primary></indexterm></title>
+
+<para>The plugin <quote>org.csstudio.ui.menu.web</quote>
+adds a <code>Web</code> entry to the <code>CSS</code>
+menu which allows users to access web sites
+related to the control system.
+</para>
+<para>As a growing number of control system related
+tools become web-based, this allows easy access to them
+from within CSS.
+</para>
+
+<figure xml:id="fig_menu_web">  <title>Web menu</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="webmenu.png" width="80%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>Depending on the operating system and the preference settings under
+<code>General</code>, <code>Web Browser</code>, the web pages will open
+in a web browser within the CSS workbench or in an external web browser.
+</para>
+
+<sect1> <title>Configuration</title>
+<para>The web links are configured by the CSS maintainer for each
+site via preferences of the <quote>org.csstudio.ui.menu.web</quote>
+plugin.
+</para>
+<para>The example web menu from <xref linkend="fig_menu_web"/>
+was created with the following configuration placed
+in the <filename>plugin_customization.ini</filename>
+of the product:
+</para>
+<programlisting>
+# Selects the web links to show and define their order.
+# When left blank, there won't be any web links.
+org.csstudio.ui.menu.web/weblinks=local css google
+ 
+# Define the Label and link for each web link.
+# Only those listed in ...weblinks above are actually used!
+
+# Link to the local CSS web site where users can download CSS,
+# learn about updates etc:
+org.csstudio.ui.menu.web/local=\
+Local CSS Web Site|http://www.my-institute.edu/css/
+
+# The main CSS web page on Source Forge
+org.csstudio.ui.menu.web/css=\
+CSS Wiki|https://sourceforge.net/apps/trac/cs-studio
+
+# Example for other useful links
+org.csstudio.ui.menu.web/google=Google|http://www.google.com
+</programlisting>
+
+</sect1>
+
+</chapter>
