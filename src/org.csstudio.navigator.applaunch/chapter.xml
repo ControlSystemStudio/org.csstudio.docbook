@@ -3,6 +3,13 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xml:id="ch_applaunch">
 
+<!-- NOTE:
+
+     This file is used both for the docbook
+     and to generate the online help for the
+     org.csstudio.navigator.applaunch plugin!
+
+ -->
 <title>Application Launcher - org.csstudio.navigator.applaunch<indexterm><primary><code>org.csstudio.navigator.applaunch</code></primary></indexterm></title>
 
 <para>This plugin supports Application Launch configuration files
@@ -171,7 +178,8 @@ on a PC or Mac that has MS Word available.
 <code>icon:clipboard</code>,
 <code>icon:console</code>,
 <code>icon:edit</code>,
-<code>icon:run</code>, or
+<code>icon:run</code>,
+<code>icon:text</code>, or
 <code>icon:work</code>
 to select built-in icons.
 The default is <code>icon:run</code>.
