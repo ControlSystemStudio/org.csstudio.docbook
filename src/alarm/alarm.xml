@@ -891,11 +891,32 @@ i.e. first the <code>*</code>, then the <code>!</code>.
 for the text-to-speech conversions.
 That plugin can be configured to use either
 the pure Java FreeTTS library that it provides,
-or an external tool.
-When selecting the external tool, a program called <code>say</code>
+an external tool,
+or a UDP server.
+</para>
+<para>Refer to the <filename>preferences.ini</filename>
+of the utility.speech plugin for available options.
+</para>
+<para>When selecting the external tool, a program called <code>say</code>
 is expected to be found on the PATH.
 It must accept the text to annunciate as a command line argument.
+On Mac OS X, such a <code>say</code> command is already part of the operating system.
+On Linux computers, one can often use the following shell script to invoke
+festival:
 </para>
+<programlisting>#!/bin/sh
+#
+# Example 'say' script for Linux
+
+echo "$@" | festival --tts
+</programlisting>
+
+<para>When selecting the UDP server, you also need to configure the hostname
+or boradcast address and port number of the UDP server, again refer to
+the  <filename>preferences.ini</filename> of the utility.speech plugin.
+The UDP server will receive each annunciation as a seprate UDP packet.
+</para>
+
 </sect2>
 </sect1>
 
