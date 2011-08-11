@@ -6,12 +6,58 @@
 
 <para>The update repository is part of the P2<indexterm><primary>P2</primary></indexterm>
 provisioning system.
-Products that use P2 maintain their installation state.
+It allows users to install additional components into CSS.
+For example, the basic CSS product for your site might not
+include the alarm system user interface.
+Interested users can add it to CSS via the
+menu <code>Help</code>, <code>Install New Software...</code>
+</para>
+
+<figure xml:id="fig_update">  <title>Installing from an Update Site</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="update.png" width="80%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The update mechanism further supports automated updates of
+already installed software to a new version, for example by prompting
+users if they want to update whenever a new version becomes available.
+</para>
+<para>Products that use P2 maintain their installation state.
 P2 tracks all the plugins and their versions that constitute the product.
 The product can be updated to a newer version from an update site,
 and in case of problems a product configuration can also be reverted
-to a previous state.
+back to a previous state.
 </para>
+
+<para>We will briefly describe its usage, then how to create the necessary
+update site.
+</para>
+
+
+<sect1> <title>Usage</title>
+<para>Usage of the update mechanism from the final product
+is relatively easy once the update site is in place.
+Most of the time, users to nothing.
+If an update becomes available, a small notification
+<quote>Updates available. ... Click here to install</quote>
+will appear the next time CSS is started.
+Users follow the sequence of dialogs, finally CSS restarts
+with the new updates in place.
+</para>
+<para>A menu entry <code>Help</code>, <code>Check for Updates</code>
+can be used to trigger this process while Eclipse is already running.
+</para>
+<para>
+Via the menu <code>Help</code>, <code>Install New Software...</code>
+users can install additional, optional software from the repository.
+</para>
+<para>Finally, the menu <code>Help</code>, <code>About</code>,
+<code>Installation Details</code> provides access to the history
+of installed updates and allows you to revert to a previous state,
+i.e. to un-install software that has been added.
+</para>
+</sect1>
 
 
 <sect1> <title>Create P2 Update Repository</title>
