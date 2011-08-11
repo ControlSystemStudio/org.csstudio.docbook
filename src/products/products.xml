@@ -36,29 +36,33 @@ Why can it be difficult to select the required Plug-ins?
 </figure>
 
 <sect1> <title>Site-Specific Plugin Selection and Settings</title>
-<para>Plug-in contain the Java code and associated content like online help
+<para>Plug-ins contain the Java code and associated content like online help
 for some CSS functionality.
 One example would be a <code>databrowser</code> Plug-in that implements
 the Data Browser.
-System integrators at different site might prefer some Plug-ins over others,
+System integrators at different sites might prefer some Plug-ins over others,
 for example one operator interface tool over another.
 </para>
 
-<para>A product is a collection of plugins.
+<para>A product is a collection of the plugins chosen for use at a site.
 A product definition file can in fact directly list the desired plugins.
-In practice, however, plugins are usually first combined into Features,
+In practice, however, plugins are usually first combined into <emphasis>Features</emphasis>,
 and the product is then assembled from these features.
 Features allow grouping of plugins by functionality.
 This way it is easier to add or remove a certain functionality
 from the product.
-For example, an <quote>optional</quote> feature can list plugins
-that are not needed by every user of a product.
+</para>
+<para>For example, an
+<emphasis>optional feature</emphasis><indexterm><primary>Optional Product Feature</primary></indexterm>
+can list plugins that are not needed by every user of a product.
 When building the product, such an optional feature may be
 excluded from the product, but it is made available in an online
 update repository. Users who down-load the product can then add
-the optional feature as desired.
+the optional feature as desired via the <code>Help</code>,
+<code>Install New Software ...</code> menu.
 </para>
-<para>Products also contains the default settings, the
+
+<para>Products also contain the default settings, the
 <filename>plugin_customization.ini</filename> file described
 in <xref linkend="ch_preferences"/>.
 To users of CSS it is most convenient when the suitable settings
@@ -68,8 +72,91 @@ so that there is usually no need to adjust any preference settings
 after installing CSS onto their office computer.
 </para>
 
-<para>To provide a site-specific selection of products with suitable
-default settings, most sites will need a custom-built CSS product.</para>
+<para>When a site needs basically the same collection of plugins,
+i.e. one product, but with different settings to support for example
+different networks where the product is used, there are two options:
+</para>
+
+<orderedlist>
+
+<listitem><para>Build different products.
+</para>
+<para>These products are assembled from
+the same features and plugins, but since they include different
+<filename>plugin_customization.ini</filename> files,
+they are in the end different.
+</para>
+<para>This option might be most convenient to end users because
+they have a product that works for them out of the box,
+but is more work for the maintainer of these products.
+</para>
+</listitem>
+
+<listitem><para>Build one product with several <filename>*.ini</filename> files.
+</para>
+<para>Since fundamentally only different versions of the
+<filename>plugin_customization.ini</filename> are needed,
+simply include several in the product plugin:
+</para>
+<itemizedlist>
+<listitem><code>plugin_customization.ini</code> - Shared settings.
+</listitem>
+<listitem><code>main_control_room.ini</code> - Adjustments for the main control room.
+</listitem>
+<listitem><code>test_network.ini</code> - Adjustments for the test network.
+</listitem>
+<listitem>... maybe more.
+</listitem>
+</itemizedlist>
+
+<para>These configuration files can be offered as separate downloads from
+the web site, or they can be included in the product plugin.
+In the latter case, it can be helpful to keep the product plugin
+un-packed:
+</para>
+
+<para>In the feature that adds the product plugin to the
+overall product configuration, assert that the product
+plugin is not packed into a <filename>*.jar</filename>
+file but left as an unpacked directory.
+In the feature editor this is done by checking the
+option to
+<quote>Unpack the plug-in archive after the installation</quote>.
+In the feature file itself, the product plugin should then
+<emphasis role="strong">not</emphasis> include the option
+<programlisting>unpack="false"
+</programlisting>
+</para>
+
+<para>Either way, users now have various <filename>*.ini</filename>
+files available and can run the product with the appropriate one
+from the command line:
+<programlisting>css -pluginCustomization /path/to/e.g./test_network.ini
+</programlisting>
+</para>
+
+<para>You can also prepare batch files or shell scripts that
+start the product with these customization files.
+</para>
+
+<para>This option is more convenient for the maintainer of the product
+because it remains one product,
+but requires end users to run CSS with the correct <filename>*.ini</filename>
+file resp. starter script.
+</para>
+
+</listitem>
+
+</orderedlist>
+
+
+<para>So it may be obvious by now that
+most sites need a custom-built CSS product
+to provide a site-specific selection of plugins
+with suitable default settings.
+There is one more reason to publish your own
+product:
+</para>
 
 <para>CSS instances can self-update from a repository.
 Users will see a notice that updates are available, and CSS will
@@ -130,6 +217,18 @@ allowing end users to install them into their CSS product on demand.
 
 
 <sect1> <title>Creating a Product<indexterm><primary>Product, Creating</primary></indexterm></title>
+<para>We will now walk through the steps of creating a custom product.
+In the end, there will only be very little code.
+After all the whole point of CSS is that you can use
+existing plugins without having to implement everything yourself. 
+</para>
+<para>But unfortunately there are many pitfalls when assembling a product.
+It can be helpful to start small, for example try to assemble a product
+that only includes Probe, and get that to function as desired.
+Adding many more plugins for the Data Browser, operator interface etc.
+will then be comparably easy.
+</para>
+
 <para>Fundamentally, an RCP Product is a plugin that implements the
 <code>org.eclipse.core.runtime.applications</code> extension point,
 and has a <filename>*.product</filename> file.
@@ -237,8 +336,9 @@ When editing the generated <filename>.product</filename> file,
 one of the first things you can set in the <quote>General Information</quote>
 section of the <quote>Overview</quote> tab of the product editor
 is the Name of your product.
-You should use <quote>Css</quote> as the name, for an explanation
-see <xref linkend="ch_openfile"/>.
+You should use <quote>Css</quote> as the name,
+with a capital C exactly as in Css.
+(For an explanation see <xref linkend="ch_openfile"/>).
 </para>
 <para>Select the application ID defined in the previous step.
 Press the <quote>New...</quote> button next to the <quote>Product Definition</quote>
@@ -257,7 +357,7 @@ in your product to provide the user with some functionality, and which plugins h
 to be added because they were dependencies of those functional plugins.
 Also remember that you might need plugins that do not show up as direct dependencies.
 </para>
-<para>In the long run your product might be easier to maintain if it is based on features.
+<para>In the long run your product will be easier to maintain if it is based on features.
 You define one feature to list the application plugins that you want for your users,
 and separate features to list the plugins that result from dependencies,
 maybe further separated into CSS core plugins and those from Eclipse.
@@ -270,7 +370,7 @@ The following describes how to create those features.
 <code>org.csstudio.mysite.applications.feature</code>.
 This feature lists all the application plugins that you want to
 include into your product, for example the plugins for Probe,
-Data Browser, BOY.
+Data Browser, BOY. Maybe just Probe as you get started.
 </para>
 <para>Start by adding your product plugin, then add the application
 plugins. Some application plugins are already pre-aggregated into
@@ -328,14 +428,25 @@ as a dependency to your <filename>*.product</filename>.
 be required to add direct plugin dependencies to the 
 <code>core</code> respectively <code>eclipse</code> features.
 </para>
+<para>This will be painful.
+If you base your product on plugins, Eclipse can add
+all required plugins via a simple click of a button.
+But when you base your product on features,
+Eclipse cannot tell to which of the features the missing
+plugins should be added.
+You will have to do this.
+Still, in the long run your product should be easier to
+maintain if it is based on features, so hang in there.
+</para>
 <para>Start by trying to run the new product from within the IDE:
 Open the <filename>*.product</filename> file, press <quote>Synchronize</quote>
 and then <quote>Launch an Eclipse Application</quote>.
 Your product will <emphasis>not</emphasis> start.
 Instead, you will see many error messages, including
 <quote>The application could not start. Would you like to view the log?</quote>.
-When you select to see the errors in an Error log view, which is typically more convenient,
-or in a plain log file that looks like this:
+You can select to see the errors in the <code>Error log view</code>,
+which is typically more convenient,
+or you can read the plain log file that looks like this:
 
 <programlisting>!MESSAGE Bundle .../org.csstudio.ui.help/ was not resolved.
 !MESSAGE Missing required bundle org.eclipse.help.ui_0.0.0
@@ -348,22 +459,32 @@ feature.
 </para>
 <para>For some missing dependencies you will find that they are available
 in system-specific variants<indexterm><primary>Operating-system specific plugins</primary></indexterm>.
-One example is file system access, which includes
+One example is file system access.
+Your product might require a plugin
+<code>org.eclipse.core.filesystem</code>.
+When you add it to your eclipse feature, you will notice that
+there are similarly named
 plugins <code>org.eclipse.core.filesystem.win32.x86</code>
 and <code>org.eclipse.core.filesystem.macosx</code> because details of file
 systems differ between operating systems.
-You should go ahead and add all variants, because eventually you want to build
+</para>
+<para>You should go ahead and add all variants, because eventually you want to build
 your product for multiple architectures.
 When doing this, however, you should configure the feature to only include
 those plugins on the appropriate target architecture.
 In the feature editor, you can enter the operating systems and architecture for each
 plugin. In the generated <filename>feature.xml</filename> file, it should look like this:
+</para>
 <programlisting><![CDATA[<plugin
    id="org.eclipse.core.filesystem.win32.x86"
    os="win32"
    arch="x86"
    ...]]>
-</programlisting> 
+</programlisting>
+ 
+<para>This way your product will include the Windows-specific file system
+support for x86 architectures, but only when your product is actually
+compiled for that target architecture.
 </para>
 
 <figure xml:id="fig_prod_validate">  <title>Plug-in Dependency Validator</title>
@@ -385,6 +506,26 @@ It will open a display of missing dependencies as shown in
 occasionally pressing <quote>Synchronize</quote> and then <quote>Launch an Eclipse Application</quote>
 in your product to see which dependencies are still required.
 </para>
+
+<para>Eventually, your product should run.
+</para>
+
+<para>
+<emphasis>
+Congratulations!
+You just managed to overcome the most difficult part
+of getting started with a site-specific setup of CSS.
+</emphasis>
+</para>
+
+<para>When you now add more plugins to your product, it is
+usually much easier to identify the required plugins
+because they will be direct dependencies of the added
+plugins.
+After a change in the Eclipse version, modifications to
+your product will mostly be limited to the eclipse feature.
+</para>
+
 </sect2>
 
 </sect1>
