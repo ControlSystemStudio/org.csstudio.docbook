@@ -72,4 +72,23 @@ from the preferences GUI.
 </para>
 </sect1>
 
+
+<sect1> <title>Logging to other systems</title>
+<para>There are several other logging systems for Java:
+Log4j, Apache Commons Logging, SLF4J, ...
+The point for shared CSS code should be to
+not force the use of any particular external logging library
+into a CSS product.
+Shared CSS code should be content
+with the <code>java.util.logging</code> package
+provided by the standard Java library.
+</para>
+<para>When creating a site-specific product,
+you are of course free to include for example SLF4J,
+and use its <quote>bridge</quote> as a root
+logger for java.util.logging, so all CSS log
+messages will then be piped through SLF4J.
+</para>
+</sect1>
+
 </chapter>
