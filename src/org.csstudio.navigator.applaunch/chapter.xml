@@ -113,6 +113,33 @@ From now on the double-click will also default to launching the application.
 </itemizedlist>
 </sect1>
 
+<sect1> <title>Examples for commands to launch</title>
+<para>
+The command to launch can be anything that is also executable
+from a shell or command prompt.
+One example is starting a shell window for entering such commands.
+</para>
+<para>On Windows, this could be <code>cmd.exe</code> which is in the <code>%PATH%</code>.
+</para>
+<para>On Linux, it could be <code>xterm</code> if on the <code>$PATH</code>,
+or better <code>/usr/bin/X11/xterm</code> or a similar complete path.
+</para>
+<para>On Mac OS X, one could use <code>/Applications/Utilities/Terminal.app</code>
+</para>
+<para>If you want to launch a program that requires additional command-line
+arguments, you can create a batch file or shell script to invoke
+the program as desired and then use that batch file or shell script
+as the launcher command.
+</para>
+<para>On Windows or Mac OS X the command can also be the path to
+a file where the operating system knows how to handle that file.
+For example, if double-clicking on a <filename>*.doc</filename>
+file will open MS Word on your computer, you can use the path
+to <filename>*.doc</filename> files as launcher commands.
+When activating such a command, the operating system will open
+MS Word with the document.
+</para>
+</sect1>
 
 <sect1> <title>Editing an Application Launcher Configuration File</title>
 <para>To edit an existing launcher configuration file:
