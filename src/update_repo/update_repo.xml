@@ -156,12 +156,72 @@ new version.
 </para>
 <para>It is a good idea to use version numbers that end in <code>.qualifier</code>
 like
+</para>
 <programlisting>1.2.3.qualifier
 </programlisting>
+<para>
 The headless build will replace that qualifier with the current date and time,
 guaranteeing that the plugin has a unique version number even if you occasionally
 forget to increment the version number.
 </para>
+<para>The headless build default for the qualifier replacement, i.e. date and time,
+can be a problem when you run a scripted build of several products.
+Your products will likely share some core CSS plugins, say <code>org.csstudio.logging</code>.
+With the default qualifier replacements, the headless build will create binaries like
+<code>org.csstudio.logging_3.0.0.v201108181010.jar</code>,
+<code>org.csstudio.logging_3.0.0.v201108181011.jar</code>,
+<code>org.csstudio.logging_3.0.0.v201108181012.jar</code>,
+that is different versions because the same plugin is re-built for each product with a slightly
+different time stamp.
+</para>
+<para>A better solution might be to call your headless build with an option
+to defines a qualifier that only includes the current date, not time:
+</para>
+<programlisting>java -jar .../org.eclipse.equinox.launcher_*.jar \
+  -application org.eclipse.ant.core.antRunner \
+  ...
+  -Dqualifier=`date "+%Y%m%d"` \
+</programlisting>
+<para>In your headless build configuration file,
+<filename>build.properties</filename>,
+you then use that variable as a qualifier:
+</para>
+<programlisting># build.properties
+product=...
+...
+forceContextQualifier=${qualifier}
+...
+</programlisting>
+</sect1>
+
+
+<sect1>  <title>Categories</title>
+<para>When you review the user interface for installing additional features from a P2 repository,
+<xref linkend="fig_update"/>, note the option to <quote>Group items by category</quote>.
+By default it will be selected, meaning that
+<emphasis>only features that are categorized</emphasis> will be displayed in the dialog.
+</para>
+<para>When you try to use your update repository for the first time and wonder
+why you cannot find any of the expected content on your update site,
+try if de-selecting that option will reveal your updates.
+If it does, you are missing category definitions for your features.
+</para>
+<para>To list your features in categories, create a file
+<filename>category.xml</filename><indexterm><primary>Categories, category.xml</primary></indexterm>
+via <code>File</code>, <code>New</code>, <code>Plug-in Development</code>, <code>Category Definition</code>
+and list all your features.
+</para>
+<para>In the headless build configuration for your products and features, reference that
+category file:
+</para>
+<programlisting># build.properties
+topLevelElementType=feature
+topLevelElementId=org.csstudio....
+...
+# Use absolute path or maybe path relative to the builder directory
+p2.category.definition=file:${builder}/../category.xml
+...
+</programlisting>
 </sect1>
 
 
