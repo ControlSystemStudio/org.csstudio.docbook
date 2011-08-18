@@ -121,8 +121,14 @@ file of your product, simply listing the file name is sufficient:
 openFile
 </programlisting>
 </para>
-<para>TODO: Or put <code>--launcher.defaultAction openFile</code>
-into the p2.ini? Or into the "Launching Arguments" of the *.product?
+<para>Note that this is the <filename>*.ini</filename> file of the product,
+not the <filename>configuration/config.ini</filename>.
+If the product is called <code>css</code>, that file is in the same directory
+as the launcher and called <filename>css.ini</filename>.
+Instead of manually editing the file, add the <code>--launcher.defaultAction openfile</code>
+in the <filename>*.product</filename> file under
+<quote>Launching Arguments</quote>,
+<quote>Program Arguments</quote>.
 </para>
 
 <para>For one, this can be more convenient. In addition, this is necessary
