@@ -335,6 +335,78 @@ then step through the code from the breakpoint on.
 </sect1>
 
 
+<sect1>  <title>JUnit Tests, Headless JUnit Tests</title>
+<para>The Eclipse IDE has good support for executing
+JUnit tests<indexterm><primary>JUnit test</primary></indexterm>
+and test-driven development<indexterm><primary>Test-driven Development</primary></indexterm>
+in general.
+You can start many programming tasks by <emphasis>first</emphasis> implementing
+the JUnit test, using the IDE <quote>Quick Fix</quote> feature to create
+skeletons for the required classes and interfaces, which you then fill
+with the actual code until the test passes.
+</para>
+<para>You will find several JUnit tests in the CSS plugin code because
+a lot of it was implemented in a test-driven fashion.
+These classes are often found in a <filename>test/</filename> source folder,
+and the source files will be named <filename>*Test.java</filename> or <filename>*Demo.java</filename>.
+</para>
+<para>To execute a JUnit test, you simply right-click on the class file in the
+Project Navigator and select <code>Run As</code>, <code>JUnit Test</code>.
+Some tests will need configuration files to specify database URLs or other
+site-specific parameters. Refer to comments in the source code for details.
+</para>
+<para>Eclipse supports a special type of JUnit test to allow testing
+within the Eclipse runtime environment. This is necessary for tests that depend
+on the Eclipse plugin registry and preference system.
+Tests that require the plug-in runtime should be in source files
+named <filename>*PluginTest.java</filename> or <filename>*HeadlessTest.java</filename>.
+To execute them, select <code>Run As</code>, <code>JUnit Plug-in Test</code>
+from the file context menu.
+</para>
+<para>When you invoke such a JUnit Plug-in Test<indexterm><primary>JUnit Plug-in Test</primary></indexterm>
+for the first time, the IDE will create a run configuration that loads all
+the plugins found in your workspace.
+If the plugin containing your test refers to Eclipse user interface plugins,
+the plugin test configuration will in addition start an instance of the complete Eclipse IDE
+with all your workspace plugins, then execute the test.
+This can take a long time and be overkill for what you want to test.
+</para>
+<para>A <quote>Headless</quote><indexterm><primary>Headless Plugin-in Test</primary></indexterm>
+plugin test is a test that requires the Eclipse plugin runtime environment
+but <emphasis>not</emphasis> the complete IDE user interface.
+Such test source files are typically named <filename>*HeadlessTest.java</filename>.
+To invoke such a test, you can once execute it via <code>Run As</code>, <code>JUnit Plug-in Test</code>
+to create the basic run configuration, but then you should edit it as follows:
+</para>
+<itemizedlist>
+<listitem>Menu <code>Run</code>, <code>Run Configurations...</code>
+</listitem>
+<listitem>Locate the <code>JUnit Plug-in Test</code> that was created for your headless test.</listitem>
+<listitem>
+<para>On the <code>Main</code> tab, select <code>Run an application</code> with the option
+<code>[No Application] - Headless Mode</code>.
+</para>
+<para>This will significantly reduce the startup time of your test because you avoid a copy
+of the Eclipse IDE.
+</para>
+</listitem>
+<listitem>
+<para>In the <code>Arguments</code> tab, you might need to add a program argument
+<code>-pluginCustomization /path/to/your/settings.ini</code>
+if your test needs certain preference settings.
+</para>
+</listitem>
+<listitem>
+<para>In the <code>Plug-ins</code> tab, by default all plugins in your workspace will be included.
+You can change that to only include selected plug-ins, which can reduce the startup time
+and might also be necessary to test the behavior of your test in case it depends
+on certain other plugins being available or not.
+</para>
+</listitem>
+</itemizedlist>
+</sect1>
+
+
 <sect1 xml:id="sec_prod_export_from_ide">  <title>Product Export from IDE</title>
 
 <para>End users of CSS cannot be expected to open the IDE, install the source code,
