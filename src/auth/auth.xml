@@ -39,14 +39,28 @@ type of database that lists the permissions of all the known users.
 CSS has a security API for authentication and authorization
 (Auth &amp; Auth) defined by the plugins
 <code>org.csstudio.auth</code> and
-<code>org.csstudio.auth.ui</code>.
-The following sections describe several implementing plugins.
+<code>org.csstudio.auth.ui</code>,
+and there are several plugins that provide implementations.
+</para>
+<para>Most CSS products will have to include <code>org.csstudio.auth</code>
+because other plugins in the product use its API.
+Your product should also include <code>org.csstudio.auth.ui</code>.
+As soon as you include one of the implementations described in the following
+sections, the <code>auth.ui</code> plugin will then offer
+login buttons in the toolbar and corresponding menu entries.
+In addition to including the <code>auth.ui</code> plugin, your product needs to
+register a Login Callback Handler, something that provides a user name
+and password by for example displaying a log-in dialog.
+An example for registering such a Login Callback Handler can be found
+in <code>org.csstudio.utility.product.Workbench</code>.
 </para>
 <para>A certain understanding of these mechanisms is required
 even if you want to start out by providing all users with
 full access to all features,
 because missing Auth &amp; Auth support can result in restricted access
 for all users.
+The overall CSS Auth &amp; Auth design is probably more complicated
+than it needs to be, but in here we only try to describe it.
 As a minimum, you might have to configure your CSS product to
 use the <quote>dummy</quote> authentication and authorization.
 </para>
