@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_workspace">
+<title>Workspace</title>
+
+<para>Eclipse products use a <quote>Workspace</quote><indexterm><primary>Workspace</primary></indexterm>.
+This is a directory that stores your configuration files and settings, allowing Eclipse to start up in the same state
+as you left it when it was running the last time.
+You can only run one instance of Eclipse for a selected workspace.
+</para>
+
+<figure xml:id="fig_workspace">  <title>Workspace</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="workspace.png" width="75%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>In the previous chapter, we already used the workspace within the IDE.
+We described the relationship between the actual location of CSS plugin source code
+and the way these plugins appear in the IDE.
+<xref linkend="fig_workspace"/> shows the similar relationship between
+the workspace of a CSS end-user and the actual file system directory.
+Directories and files in the workspace directory are visible in the <code>Navigator</code> view,
+for example display files or Data Browser configuration files.
+Double-clicking on these files will open them.
+The actual workspace location and name of the workspace, i.e.
+the <filename>/path/to/my/Workspace</filename> in the example,
+is usually hidden from the end user.
+Likewise, the <filename>.metadata</filename> directory where Eclipse
+stores user preferences, the current location of windows etc. are
+hidden from the user so that she can concentrate on just the files
+of interest like display files.
+</para>
+
+
+<sect1> <title>Selecting a Workspace</title>
+
+<para>Every Eclipse RCP application allows you to set the workspace when starting the product from the command-line
+via the <code>-data</code> option:
+</para>
+<programlisting>the_css_product -data /path/to/my/Workspace
+</programlisting>
+
+<para>Most products also offer a menu item <code>File</code>, <code>Switch Workspace...</code>
+that displays the current workspace location in the file system and allows you to select
+a different one.
+</para>
+
+<para>Some products like the Eclipse IDE and the SNS version of CSS have a startup dialog
+that prompts users for the workspace.
+</para>
+</sect1>
+
+
+
+<sect1> <title>Projects, Saving Files, Default Project</title>
+
+<para>The top-level elements of a Workspace are called <quote>Projects</quote><indexterm><primary>Projects in Workspace</primary></indexterm>.
+They can be created via the menu <code>File</code>, <code>New...</code>.
+</para>
+<para>Each workspace must have at least one such project, because otherwise you cannot save any files.
+Many versions of CSS therefore create a default project called <quote>CSS</quote> in case it does not
+exist already when CSS is started up.
+</para>
+</sect1>
+
+
+
+<sect1> <title>Linked Folders</title>
+
+<para>Projects and sub-folders of a project in a user's Workspace are private to that user.
+If you want to share configuration files with other CSS users, for example use common operator interface panels
+or Data Browser configurations, you can link to a shared folder<indexterm><primary>Linked Folder</primary></indexterm>
+in the file system.
+</para>
+
+<para>To manually create a linked folder:
+</para>
+<itemizedlist>
+<listitem>Open the <code>Navigator</code> view.</listitem>
+<listitem>Right-click on an existing project or folder.</listitem>
+<listitem>Select <code>New...</code>, <code>Other...</code>, <code>General</code>, <code>Folder</code>, press <code>Next</code>.</listitem>
+<listitem>Enter the desired folder name, but do <emphasis>not</emphasis> press <code>Finish</code>, yet!</listitem>
+<listitem>Press the <code>Advanced...</code> button to select a <quote>Link to alternate location (Linked Folder)</quote>,
+          browsing to the desired location outside of your workspace.</listitem>
+<listitem>Now press <code>Finish</code>.</listitem>
+</itemizedlist>
+
+<para>Your site probably already has a shared file system where people can store
+files of interest to everybody which are then accessible from every computer in the
+organization.
+You can create a folder on that shared file system for sharing CSS files and then
+add a link to that folder to every user's Workspace.
+The SNS version of CSS as a <code>-share /path/to/shared/folder</code> command-line
+option that automatically creates a shared folder <filename>CSS/Share</filename>
+in the default <code>CSS</code> project of the workspace.
+This way, every user can easily access the shared files, but also keep files in the
+private workspace as desired.
+</para>
+
+</sect1>
+
+</chapter>
