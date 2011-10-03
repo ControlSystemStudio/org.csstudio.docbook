@@ -541,8 +541,10 @@ Same for Linux and Windows.
 The result should be an <filename>eclipse</filename> directory with sub-directories
 <filename>plugins</filename> and <filename>features</filename>
 </listitem>
-<listitem>Open the Target Platform preferences
-(Menu <code>Window</code>, <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>).
+<listitem>Open the Target Platform preferences:
+Menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>.
+The Preferences item is usually in the <code>Windows</code> menu, but for Mac OS X it is
+in the <code>Eclipse</code> menu.
 </listitem>
 <listitem>Edit the active target. Add an <quote>Installation</quote>, using the path to the delta pack's
 <filename>eclipse</filename> directory.

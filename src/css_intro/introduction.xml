@@ -257,7 +257,7 @@ and inside that includes Probe, EPICS PV Tree, Data Browser and other CSS tools.
 So what are the advantages of a combined Eclipse/CSS product over individual Java applications?
 For one, the online help and preference settings of Probe, EPICS PV Tree, Data Browser
 and other CSS tools are integrated. As shown in <xref linkend="fig_intro_prefs"/>,
-one preference panel, opened from the menu bar under <code>CSS/Preferences</code>,
+one preference panel, opened from the menu bar under <code>Edit/Preferences</code>,
 provides access to all settings: Alarm system connectivity used by the Alarm Table,
 Data Browser settings can be found under the <code>Trends</code> section,
 and also generic control system settings like the <code>EPICS</code> connection parameters

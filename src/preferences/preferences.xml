@@ -169,7 +169,14 @@ full and correct path to the file.
 
 <sect1 xml:id="sec_preference_gui">  <title>End User Settings: Preference Pages</title>
 <para>Finally, the GUI code can offer Preference Pages via which the end user can change the settings.
-Typically, these end-user settings are saved in the user's workspace, i.e. they persist for the
+The exact location of the menu entry for opening the Preference Pages can change.
+Eclipse usually has a Preference entry in the <code>Window</code> menu, except on Mac OS X
+where it is placed in the <code>Eclipse</code> menu.
+CSS provides a Preference entry in the <code>Edit</code> menu regardless of the operating
+system because that seems to be a common location for the preference settings in other programs.
+(Older versions of CSS actually used the <code>CSS</code> menu)
+</para>
+<para>Typically, these end-user settings are saved in the user's workspace, i.e. they persist for the
 current user but will not affect the settings of other users or even the site-wide defaults.
 Details depend on the preference store that is selected by the code that implements the preference page.
 </para>
