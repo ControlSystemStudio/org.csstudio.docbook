@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_console">
+
+<title>Console</title>
+
+<para>All Eclipse RCP programs, and this includes the CSS end-user GUI
+as well as command-line tools like the archive engine, alarm server etc.
+include the OSGi console<indexterm><primary>Console (OSGi)</primary></indexterm>.
+</para>
+<para>The console allows you to view which plugins have been loaded,
+to introspect extension points and more.
+In principle it can be used to load additional plugins
+or to replace existing plugins at runtime, but at this point no CSS tool
+is using that feature.
+</para>
+
+<sect1> <title>Enabling the Console</title>
+
+<para>To start any RCP program with console access, add the command-line option
+<programlisting>-console</programlisting>
+
+You can allow network access to the console by adding a TCP port number,
+for example
+<programlisting>-console 4884</programlisting>
+
+You will then be able to access the console of the program remotely via
+<programlisting>telnet host_where_program_is_running 4884</programlisting>
+
+Multiple network connections to the same program are possible.
+Note that there is no security, i.e. anybody on the network could
+<quote>telnet</quote> to your application and stop it! 
+</para>
+</sect1>
+
+<sect1> <title>Console Commands</title>
+<para>Useful console commands:
+</para>
+<itemizedlist>
+<listitem><code>help</code> -
+List all available commands.
+</listitem>
+
+<listitem><code>ss</code> -
+List all plugins and their <quote>short</quote> status.
+</listitem>
+
+<listitem><code>ns</code> -
+List all plugins that define extension points.
+</listitem>
+
+<listitem><code>ns name.of.some.plugin</code> -
+List all extension points of that plugin.
+</listitem>
+
+<listitem><code>pt name.of.some.extension.point</code> -
+List all implementations of that extension point.
+</listitem>
+
+<listitem><code>disconnect</code> -
+Disconnect from a telnet session to the console.
+The application will continue to run.
+</listitem>
+
+<listitem><code>close</code> -
+Close, i.e. stop the program.
+Note that this does not just end the console session,
+it stops the application.
+The <code>IApplication.stop()</code> method will be invoked,
+which allows for a graceful shutdown of the application.
+</listitem>
+</itemizedlist>
+
+<para>There are also commands to list all applications, stop an application,
+update or add plugins, then restart the application. Refer to the <code>help</code>
+command for more.
+</para>
+</sect1>
+
+
+<sect1> <title>Adding Commands</title>
+<para>Applications can add custom commands to the console.
+To accomplish this, you need to implement an
+<programlisting>org.eclipse.osgi.framework.console.CommandProvider</programlisting> 
+
+and register it with the <code>CommandProvider</code> service.
+This can be done from the <code>start()</code> method of the plugin activator:
+<programlisting>
+class MyActivator
+...
+  public void start(final BundleContext context)
+      throws Exception
+  {
+     // Register console commands for this engine
+     commands = new MyConsoleCommands();
+     context.registerService(CommandProvider.class.getName(),
+                             commands, null);
+     ...
+</programlisting>
+</para>
+
+<para>When implementing your <code>CommandProvider</code>,
+note that there is no interface in the usual Java sense
+to declare your console commands.
+Instead, all public methods starting with an underscore in their
+name and a <code>CommandInterpreter</code> parameter
+will be available as console commands:
+
+<programlisting>
+public class MyConsoleCommands implements CommandProvider
+{
+    @Override
+    public String getHelp()
+    {
+        final StringBuilder buf = new StringBuilder();
+        buf.append("---My commands---\n");
+        buf.append("\thello - Say hello\n");
+        return buf.toString();
+    }
+
+    /** 'hello' command */
+    public Object _hello(final CommandInterpreter intp)
+    {
+        intp.print("Hello");
+        return null;
+    }
+}
+</programlisting>
+</para>
+</sect1>
+
+</chapter>
