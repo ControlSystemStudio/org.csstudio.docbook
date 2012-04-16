@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"  version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_org_csstudio_logbook">
+<title>Logbook Support - org.csstudio.logbook</title>
+
+<para>Many sites have an electronic logbook<indexterm><primary>Logbook</primary></indexterm>,
+i.e. an online system that keeps entries with texts or images.
+CSS itself does not include an electronic logbook, but it can be linked to an existing
+site-specific system.
+</para>
+
+<para>If a logbook is available at your site, several CSS tools will allow users to send text or screenshots to it.
+The Data Browser and BOY for example allow sending a screenshot to the logbook,
+while the alarm system tools can send a description of currently active alarms to the logbook.
+This can be done directly from for example the context menu of a BOY display,
+without need to start an external tool to create a screenshot,
+saving it to a file, then logging into the logbook to download the saved file etc.
+</para>
+
+<sect1>  <title>org.csstudio.logbook<indexterm><primary>org.csstudio.logbook</primary></indexterm></title>
+
+<para>This plugin defines the API for making logbook entries
+as well as an extension point for the actual implementation.
+</para>
+<para>Code that allows logbook entry generation depends on this plugin
+and can query it for the presence of an implementation.
+If no implementation of the logbook extension point is available,
+the logbook functionality should simply be disabled,
+for example by hiding corresponding menu entries.
+</para>
+</sect1>
+
+<sect1>  <title>org.csstudio.logbook.ui<indexterm><primary>org.csstudio.logbook.ui</primary></indexterm></title>
+
+<para>This plugin provides a view for making simple text-based logbook entries.
+</para>
+</sect1>
+
+<sect1>  <title>org.csstudio.logbook.sns, ...</title>
+
+<para>Site-specific plugins provide the implementation for creating a logbook entry.
+There must be at most one such implementation.
+With no implementation available, the logbook functionality is simply disabled.
+When multiple implementations are available, the logbook support will report an error.
+</para>
+</sect1>
+
+
+</chapter>
