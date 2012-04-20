@@ -64,7 +64,7 @@ including
 <listitem>Your RDB server: Check ports used by your RDB.</listitem>
 <listitem>Your JMS server: Usually port 61616.</listitem>
 <listitem>Archive Engines: Allow access to the status web server
-that you configure for each respective  each archive engine instance.
+that you configure for each archive engine instance.
 </listitem>
 </itemizedlist>
 
