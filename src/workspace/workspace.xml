@@ -71,7 +71,7 @@ exist already when CSS is started up.
 
 <para>Projects and sub-folders of a project in a user's Workspace are private to that user.
 If you want to share configuration files with other CSS users, for example use common operator interface panels
-or Data Browser configurations, you can link to a shared folder<indexterm><primary>Linked Folder</primary></indexterm>
+or Data Browser configurations, you can link to shared folders<indexterm><primary>Linked Folder</primary></indexterm><indexterm><primary>Shared Folders</primary></indexterm>
 in the file system.
 </para>
 
@@ -87,16 +87,48 @@ in the file system.
 <listitem>Now press <code>Finish</code>.</listitem>
 </itemizedlist>
 
-<para>Your site probably already has a shared file system where people can store
-files of interest to everybody which are then accessible from every computer in the
-organization.
-You can create a folder on that shared file system for sharing CSS files and then
-add a link to that folder to every user's Workspace.
-The SNS version of CSS as a <code>-share /path/to/shared/folder</code> command-line
-option that automatically creates a shared folder <filename>CSS/Share</filename>
-in the default <code>CSS</code> project of the workspace.
-This way, every user can easily access the shared files, but also keep files in the
-private workspace as desired.
+<para>Linked folders can also be generated via command-line options.
+This allows sites with a shared file system to automatically include
+suitable links to these shares in every CSS workspace by invoking CSS
+from a script with the following option:
+</para>
+
+<programlisting>-share_link /var/x/y=/CSS/Share,/var/x/z=/Project/Folder/Link
+</programlisting>
+
+<para>The <code>-share_link</code> option takes one or more comma-separated values.
+Each value is of the form <code>path=resource</code>.
+The <quote>path</quote> represents a path to a folder in the file system,
+and <quote>resource</quote> is the resource to create within the workspace.
+If they include spaces, the file system path and resource must each be enclosed
+in double-quotes.
+</para>
+
+<para>Examples:
+</para>
+
+<para><code>-share_link /path/to/share</code>: If only the file system path is provided,
+the resource defaults to <quote>/CSS/Share</quote>, i.e. a linked folder
+<quote>Share</quote> within the project <quote>CSS</quote>
+will be created that links to <filename>/path/to/share</filename> in the file system.
+</para>
+
+<para><code>-share_link /path/to/share,"/path/to/an other"=/MyProject/Other/Share</code>:
+As before, and in addition a project <quote>MyProject</quote> will be
+created with folder <quote>Other</quote>, and finally a linked folder
+<quote>Share</quote> is created within that folder which points to
+<filename>/path/to/an other</filename> in the file system.
+The file system path must be enclosed in double-quotes because
+it contains a space.
+</para>
+
+<para>Note that linked folders in the workspace behave similar to
+symbolic links<indexterm><primary>Symbolic Links</primary></indexterm>
+in the Unix file system.
+If the file system path is not valid,
+the linked resource is still created but will appear empty.
+When opening its properties, the location will be marked
+as <quote>Does not exist</quote>.
 </para>
 
 </sect1>
