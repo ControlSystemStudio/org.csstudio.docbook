@@ -220,6 +220,11 @@ In reality, it is often better to store fewer samples.
 
 <para>The archive engine supports the following sample modes
 by which it collects samples from a channel.
+Refer to <xref linkend="sec_archive_config_tool"/> for an example
+of how these sample modes are specified in the XML format that can be used
+to configure an archive engine.
+
+
 </para>
 
 <sect2>  <title>Monitored</title>
@@ -371,7 +376,8 @@ be the most convenient procedure.
 </para>
 </sect2>
 
-<sect2>  <title>Archive Config Tool<indexterm><primary>Archive Config Tool</primary></indexterm></title>
+
+<sect2 xml:id="sec_archive_config_tool">  <title>Archive Config Tool<indexterm><primary>Archive Config Tool</primary></indexterm></title>
 <para>The <code>ArchiveConfigTool</code> can export existing archive engine configurations
 from the RDB into an XML file format, or import such XML files into the RDB.
 The XML file format is compatible with the one used by the Channel Archiver,
@@ -380,8 +386,61 @@ allowing the import of existing archive engine configurations.
 
 <para>The <filename>xml</filename> directory in the plugin
 <code>org.csstudio.archive.config.rdb</code> contains a commented
-example configuration file.
+example configuration file:
 </para>
+
+<programlisting><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Example for XML configuration file syntax -->
+<engineconfig>
+  <!-- Engine can have one or more groups
+       Each group has a name and one or more channels
+    -->
+  <group>
+    <name>NorthSectorVacuum</name>
+      <!-- Each channel has a name and
+           a sample period (or expected change period).
+           The period is either in seconds or in HH:MM:SS format.
+           It is either using the 'monitor' or 'scan' sample mode.
+       -->
+      <channel>
+         <name>NSV:P1</name>
+         <period>1.0</period><monitor/>
+      </channel>
+
+      <!-- Example for a monitor with engine-enforced
+           value change threshold of 2.5
+        -->
+      <channel>
+         <name>NSV:P2</name>
+         <period>1.0</period>
+         <monitor>2.5</monitor>
+      </channel>
+
+      <!-- Channel that is scanned every 10 minutes-->
+      <channel>
+         <name>NSV:Enable</name>
+         <period>00:10:00</period><scan/>
+         <enable/>
+      </channel>
+
+      <!-- Channel that enables sampling of this group -->
+      <channel>
+         <name>NSV:Enable</name>
+         <period>1.0</period><monitor/>
+         <enable/>
+      </channel>
+  </group>
+
+  <!-- Other Group -->
+  <group>
+    <name>SouthSectorVacuum</name>
+      <channel>
+         <name>SSV:P1</name>
+         <period>1.0</period><monitor/>
+      </channel>
+  </group>
+</engineconfig>]]>
+</programlisting>
 
 <para>The ArchiveConfigTool offers command-line help similar to this:
 <programlisting>-help                    : show help
