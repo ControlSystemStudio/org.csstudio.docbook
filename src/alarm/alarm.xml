@@ -361,7 +361,7 @@ create a file <filename>settings.ini</filename> as mentioned below.
 </sect1>
 
 
-<sect1>  <title>Creating New Alarm Configuration</title>
+<sect1>  <title>Creating New Alarm Configuration, Bulk Modifications</title>
 <para>Each alarm setup starts with a new, empty configuration in the RDB.
 The CSS alarm user interface will then allow to edit that configuration,
 but the initial, empty configuaration needs to be created in the RDB.
@@ -395,7 +395,15 @@ usually saved to a file called <filename>demo.xml</filename>:
 </config>
 ]]></programlisting>
 
-<para>Import such a configuration file into the RDB like this,
+<para>The sources for the plugin <code>org.csstudio.alarm.beast.configtool</code>
+contain a schema file for the alarm configuration XML file format,
+<filename>AlarmConfigurationSchema.xsd</filename>.
+This can be used as a reference or to check an alarm configuration XML file
+with XML tool before importing it via the alarm config tool.
+</para>
+
+<para>To import such an XML configuration file into the RDB,
+issue the following command,
 assuming that you have a file <filename>settings.ini</filename>
 that holds your site-specific RDB connection parameters:
 </para>
@@ -420,13 +428,38 @@ AlarmConfigTool -export -root demo -file demo.xml
 alarm client user interface, bigger changes to the alarm configuration are
 sometimes easier by exporting the existing configuration to an XML file,
 editing it, then re-importing it. 
+The AlarmConfigTool is meant to handle such bulk-imports of the complete
+alarm configuration.
 </para>
-<para>The sources for the plugin <code>org.csstudio.alarm.beast.configtool</code>
-contain a schema file for the alarm configuration XML file format,
-<filename>AlarmConfigurationSchema.xsd</filename>.
-This can be used as a reference or to check an alarm configuration XML file
-with XML tool before importing it via the alarm config tool.
+
+<para>To perform partial changes of the alarm configuration, the AlarmConfigTool
+has the <code>-delete</code> option to remove a subtree of the configuration.
+You need to specify the complete path to the element that ought to be removed:
 </para>
+<programlisting><![CDATA[AlarmConfigTool -root demo -delete /demo/area1/system2
+]]></programlisting>
+
+<para>If is possible to modify an existing configuration via the <code>-modify</code> command.
+It will load an XML file and add newly listed items from the XML file to the alarm configuration,
+or update the guidance messages, related displays etc. of existing items in the configuration.
+It can not move items from existing locations to new locations in the tree, and you cannot add the
+same trigger PV name to different sections of the tree.
+For such wider ranging changes you will have to export, edit and then re-import the complete
+configuration.
+</para>
+
+<para>
+<emphasis role="strong">Note that the AlarmConfigTool only updates the database!</emphasis>
+If you are already using the alarm configuration, you should stop the AlarmServer and
+CSS alarm displays before performing such database updates, then start them back up
+when the database modifications are completed.
+If you update the alarm configuration from the CSS alarm GUI,
+all parts of the alarm system are notified about these changes so that they can
+update accordingly.
+Direct changes to the alarm database via SQL access or the AlarmConfigTool, however,
+go unnoticed by the AlarmServer and GUI clients, so you need to restart them.
+</para>
+
 </sect1>
 
 
