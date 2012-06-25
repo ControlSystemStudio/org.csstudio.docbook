@@ -27,7 +27,7 @@ Double-clicking on these files will open them.
 The actual workspace location and name of the workspace, i.e.
 the <filename>/path/to/my/Workspace</filename> in the example,
 is usually hidden from the end user.
-Likewise, the <filename>.metadata</filename> directory where Eclipse
+Likewise, the <filename>.metadata</filename><indexterm><primary>.metadata</primary></indexterm> directory where Eclipse
 stores user preferences, the current location of windows etc. are
 hidden from the user so that she can concentrate on just the files
 of interest like display files.
@@ -50,6 +50,23 @@ a different one.
 <para>Some products like the Eclipse IDE and the SNS version of CSS have a startup dialog
 that prompts users for the workspace.
 </para>
+</sect1>
+
+
+<sect1 xml:id="logfile"> <title>Log File<indexterm><primary>Log file</primary></indexterm></title>
+
+<para>One important file within the workspace is <filename>.metadata/.log</filename>.
+Note the leading dot on both the metadata directory and the log file which makes this
+a hidden file on Linux and Mac OS.
+</para>
+<para>This file contains Eclipse log messages. In case of problems it is often useful
+to look for error indications in the log file.
+When you start the product with the folloing command-line option, you will also see log messages
+on the console:
+</para>
+<programlisting>the_css_product -consoleLog
+</programlisting>
+
 </sect1>
 
 

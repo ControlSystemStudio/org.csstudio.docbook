@@ -528,6 +528,55 @@ your product will mostly be limited to the eclipse feature.
 
 </sect2>
 
+
+<sect2>  <title>Memory Settings<indexterm><primary>Memory Settings, Out-of-memory</primary></indexterm></title>
+<para>Java code always runs within a limited memory environment.
+The JVM emposes an upper limit on the amount of memory that it requests from the operating system.
+This means that a Java program is very unlikely to exhaust all the computer's memory
+and have a negative impact on other applications running on the same machine.
+On the other hand, if your product contains enough plugins or is used in a way that requires
+a lot of memory, your log file (see <xref linkend="logfile"/>) can indicate out-of-memory errors
+because the JVM hit its self-imposed limit.
+Portions of CSS will stop functioning as expected: Display stops updating,
+new windows fail to open.
+The CSS product for your site should therefore be configured to allow for sufficient memory
+for its expected use, while at the same time not consuming all the computer's memory.
+</para>
+
+<para>
+For Eclipse RCP products, these limits can be configured in the product file:
+</para>
+
+<orderedlist>
+<listitem>Open the <filename>*.product</filename> file </listitem>
+<listitem>In the product configuration editor, select the <quote>Launching</quote> tab.</listitem>
+<listitem>Enter JVM memory settings in the <quote>VM Arguments</quote> field.</listitem>
+</orderedlist>
+
+<para>The following will allow the JVM to fetch up to 1GB of dynamic memory and 128MB of code space:
+</para>
+<programlisting>-Xmx1024m
+-XX:MaxPermSize=128M
+</programlisting>
+
+<para>The settings it the <filename>*.product</filename> file take effect the next time
+you build the product binary.
+If you run the product within the IDE during development and testing, you need to update
+the memory settings in the run configuration of the product. 
+To adjust the settings of an existing product binary, you can add or edit the same commands
+in the  <filename>*.ini</filename> of the product. The ini file has the same name as the application
+launcher, but with <quote>.ini</quote> as an extension.
+For Mac OS X, is is located in the <filename>*.app/Contents/MacOS</filename> folder of the product binary.
+</para>
+
+<para>Unfortunately, it is hard to predict the best memory setting.
+You will have to try your product for a while in common use cases to determine
+how much memory you should allow.
+</para>
+
+</sect2>
+
+
 </sect1>
 
 </chapter>
