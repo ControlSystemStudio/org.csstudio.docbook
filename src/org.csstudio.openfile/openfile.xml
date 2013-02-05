@@ -18,7 +18,7 @@ transition can be much smoother.
 
 <sect1> <title>Eclipse Launcher</title>
 <para>The Eclipse Launcher supports a command-line option
-<programlisting>--launcher.openfile  some_file_name.ext
+<programlisting>--launcher.openFile  some_file_name.ext
 </programlisting>
 
 When this option is found, the launcher will send the
@@ -125,7 +125,7 @@ openFile
 not the <filename>configuration/config.ini</filename>.
 If the product is called <code>css</code>, that file is in the same directory
 as the launcher and called <filename>css.ini</filename>.
-Instead of manually editing the file, add the <code>--launcher.defaultAction openfile</code>
+Instead of manually editing the file, add the <code>--launcher.defaultAction openFile</code>
 in the <filename>*.product</filename> file under
 <quote>Launching Arguments</quote>,
 <quote>Program Arguments</quote>.
