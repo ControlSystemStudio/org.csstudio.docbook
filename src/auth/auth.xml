@@ -19,6 +19,11 @@ the alarm configuration.
   <mediaobject>
     <imageobject><imagedata fileref="auth_example.png" width="95%" format="PNG"/></imageobject>
   </mediaobject>
+  <caption>
+    The <quote>Configure Item</quote> command, initially inaccessible,
+    becomes available after authenticating as a user who is authorized
+    to configure the alarm system.
+  </caption>
 </figure>
 
 <para>
@@ -28,6 +33,8 @@ typically by prompting for a <emphasis>user name</emphasis>
 and <emphasis>password</emphasis>,
 and trusting that the user is who he claims to be if the
 password checks out OK.
+Authentication associates the user with either a real name like <quote>Fred</quote>
+or a user ID like <quote>fr9</quote>.
 </para>
 <para>
 <emphasis role="strong">Authorization</emphasis><indexterm><primary>Authorization</primary></indexterm>
@@ -35,398 +42,580 @@ is the process of determining if an <emphasis>authenticated</emphasis> user
 is allowed to perform a certain operation, typically by consulting some
 type of database that lists the permissions of all the known users.
 </para>
-<para>
-CSS has a security API for authentication and authorization
-(Auth &amp; Auth) defined by the plugins
-<code>org.csstudio.auth</code> and
-<code>org.csstudio.auth.ui</code>,
-and there are several plugins that provide implementations.
-</para>
-<para>Most CSS products will have to include <code>org.csstudio.auth</code>
-because other plugins in the product use its API.
-Your product should also include <code>org.csstudio.auth.ui</code>.
-As soon as you include one of the implementations described in the following
-sections, the <code>auth.ui</code> plugin will then offer
-login buttons in the toolbar and corresponding menu entries.
-In addition to including the <code>auth.ui</code> plugin, your product needs to
-register a Login Callback Handler, something that provides a user name
-and password by for example displaying a log-in dialog.
-An example for registering such a Login Callback Handler can be found
-in <code>org.csstudio.utility.product.Workbench</code>.
-</para>
 <para>A certain understanding of these mechanisms is required
 even if you want to start out by providing all users with
 full access to all features,
 because missing Auth &amp; Auth support can result in restricted access
 for all users.
-The overall CSS Auth &amp; Auth design is probably more complicated
-than it needs to be, but in here we only try to describe it.
-As a minimum, you might have to configure your CSS product to
-use the <quote>dummy</quote> authentication and authorization.
 </para>
-
-<figure xml:id="fig_auth">  <title>CSS Extension Points for Auth &amp; Auth</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="auth.png" width="55%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
+<para>
+The following sections will explain the available options for authentication,
+authorization, secure preferences.
+At the end of the chapter you will find an example configuration file
+for a CSS product that selects a desired way of authenticating, authorizing
+and how to handle secure preferences.
+</para>
 </sect1>
 
 
-<sect1> <title>Authentication: org.csstudio.platform.loginModule</title>
-<para>This CSS extension point allows plugins to provide
-authentication.
-CSS expects <emphasis>exactly one</emphasis> implementation.
-If multiple implementations are found, the result is the same
-as having none: Nobody can authenticate.
-Authentication may be invoked when starting CSS as part of
-a <quote>log in</quote> dialog.
-It is later also available via the menu item
-<code>File</code>, <code>Switch User</code>.
+<sect1> <title>Authentication</title>
+<para>
+CSS uses <code>JAAS</code>, a standard Java technology, for authentication.
+Fundamentally, JAAS requires a JAAS configuration file.
+You may already have a JAAS configuration file for your site
+that is used by other Java-based tools, and CSS could use that same
+file.
+Alternatively, you can also provide the equivalent of a JAAS configuration
+file via a single Eclipse preference, which may be more convenient
+for bundling and deploying CSS.
+The following examples will use the original JAAS configuration file syntax,
+and how to point CSS to such a configuration file or how to convert
+it into an Eclipse preference will be explained at the end of this chapter.
 </para>
 
-<sect2> <title>org.csstudio.platform.jaasAuthentication</title>
-<para>This plugin implements authentication based on JAAS,
-the Java Authentication and Authorization Service.
-JAAS in turn is highly configurable to use for example LDAP.
-The plugin contains a JAAS configuration file
-<filename>conf/auth.conf</filename>.
-The file contains the following examples to get you started,
-but you might have to consult the JAAS documentation for details:
-</para>
-<itemizedlist>
-<listitem>Dummy:
-Accepts every user name and password except for the user name
-<quote>fail</quote>.
-Useful for testing or when you don't really want to support
-authentication.
-</listitem>
-<listitem>Kerberos</listitem>
-<listitem>LDAP for a few LDAP servers</listitem>
-</itemizedlist>
 
-<para>Since the <filename>auth.conf</filename> file can list
-many possible configurations, the jaasAuthentication plugin
-uses a preference setting to determine which configuration
-to use. You should set this preference in the
-<filename>plugin_customization.ini</filename> file of your
-CSS product:
+<sect2> <title>Initial User Identity</title>
+<para>
+JAAS supports several Login Modules, including two which trust
+that the operating system has already determined the current user.
+
+The <code>NTLoginModule</code> accepts the currently logged-in Windows user,
+while the <code>UnixLoginModule</code> takes the currently logged-in Linux
+or Mac OS X user.
+In other words, these two modules do not require an actual log in
+process. They will <emphasis role="strong">not</emphasis> prompt for a user name and password, but simply
+fetch information about whoever started CSS.
 </para>
-<programlisting>
-# Select 'Dummy' JAAS Authentication
-org.csstudio.platform.jaasAuthentication/jaas_config_source=File
-org.csstudio.platform.jaasAuthentication/jaas_config_file_entry=Dummy
+<para>
+On startup, CSS will try to use these modules to determine the
+initial user name as long as your JAAS configuration file
+contains the following two entries:
+</para>
+
+<programlisting>/* Use the currently logged-in user on Linux and Mac OS X */
+unix
+{
+  com.sun.security.auth.module.UnixLoginModule required
+  debug="true";
+};
+
+/* Use the currently logged-in user on Windows */
+windows
+{
+  com.sun.security.auth.module.NTLoginModule required
+  debug="true";
+};
 </programlisting>
 
-<para>To add your authentication method, you could extend
-the <filename>auth.conf</filename> file and then select your entry via the
-<code>jaasconfig</code> preference.
+<para>
+The default JAAS configuration file that is built into CSS
+already contains these two entries, and in many cases that is all
+you need: As CSS is started, it knows who is currently logged in.
 </para>
-<para>Alternatively, you can use the preference setting
-<code>jaas_config_source=PreferencePage</code> 
-and then provide what you would have added to
-the file in a <code>jaas_prefs_config</code> preference variable.
-For examples see <filename>preferences.ini</filename>
-in the jaasAuthentication plugin.
-</para>
-</sect2>
-
-
-<sect2> <title>org.csstudio.platform.jaasAuthentication.ui</title>
-<para>This plugin allows setting of jaasconfig preferences
-from the Eclipse preference GUI.
+<para>
+There are cases, where the initial user is not helpful for
+authentication purposes. For example, CSS used in the control room
+may run with a shared user account like <quote>operator</quote>.
+To configure the alarm system, however, you want users to log
+into CSS with their individual name like <quote>Fred</quote>.
+To accomplish this, use one of the following options.
 </para>
 </sect2>
 
 
-<sect2> <title>JAAS LDAP Authentication via JndiLoginModule</title>
-<para>To use LDAP authentication with the standard JAAS
-<code>JndiLoginModule</code>, your LDAP server must provide
-user and password information in <code>posixAccount</code>
-entries as they are also used for Linux accounts.
+<sect2> <title>Plain Text Password File</title>
+<para>
+The JAAS <code>FileLoginModule</code> allows you to specify user names and
+their passwords in a plain text file. To use this option, add
+a configuration similar to the following to your JAAS configuration file:
 </para>
-<programlisting># LDAP user/password example suitable for JAAS
-# com.sun.security.auth.module.JndiLoginModule
-dn: uid=fred,ou=People,dc=test,dc=ics
-objectClass: inetOrgPerson
-objectClass: organizationalPerson
-objectClass: person
-objectClass: posixAccount
+
+<programlisting>/* Use plain-text password file. */
+file
+{
+  com.sun.jmx.remote.security.FileLoginModule required
+  debug="true"
+  passwordFile="/path/to/the/passwords.conf";
+};
+</programlisting>
+
+<para>
+The password file simply lists user names and their passwords:
+</para>
+<programlisting># Example passwords.conf
+Fred=IamFred
+Jane=MySecretPassword
+</programlisting>
+
+<para>
+While the plain text password file offers an easy way to get
+started with authentication, it is most useful for testing.
+The passwords are <emphasis role="strong">not encrypted</emphasis>.
+Any user can view them, so this option is not practical for an operational setup.
+</para>
+</sect2>
+
+
+<sect2> <title>JAAS LDAP Authentication</title>
+<para>
+JAAS can connect to an LDAP server. This might be the same LDAP
+server that is also used for your Unix logins, or an LDAP server
+that mirrors a site-wide Active Directory. Fundamentally, no changes
+are required to such an existing LDAP server, you simply instruct
+JAAS to use it in one of two ways.
+</para>
+
+<para>
+First, you can use the standard JAAS <code>JndiLoginModule</code>.
+This requires an LDAP server that provides the <code>inetOrgPerson</code> schema,
+which is commonly used for handling authentication on Linux.
+</para>
+
+<programlisting>/* LDAP authentication.
+ * Example of using LDAP on 'localhost'
+ * and some root DN.
+ *
+ * Refer to javadoc of JndiLoginModule
+ * for full details.
+ * The user URL must point to entries
+ * in the LDAP "inetOrgPerson" schema
+ * with "uid" and "userPassword" attributes.
+ * The provided user name must match a "uid",
+ * and the password must match
+ * the "{crypt}..." version of "userPassword".
+ */ 
+Local_LDAP
+{
+  com.sun.security.auth.module.JndiLoginModule required
+  debug=true
+  user.provider.url="ldap://localhost:389/ou=People,dc=test,dc=ics"
+  group.provider.url="ldap://localhost:389/ou=People,dc=test,dc=ics";
+};
+</programlisting>
+
+<para>
+The other LDAP based mechanism is more generic.
+JAAS will not attempt to read
+the password or anything else from LDAP, so there are no
+requirements on the encoding or accessibility of the password.
+JAAS will simply attempt to <quote>bind</quote>,
+i.e. connect to LDAP with a given user name and password.
+</para>
+
+<programlisting>/* Authentication via LDAP 'bind'.
+ *
+ * Fundamentally, this uses
+ * org.csstudio.security.authentication.LDAPBindLoginModule
+ * but that class would not be accessible by JAAS.
+ * The Eclipse extension point 
+ * org.eclipse.equinox.security.loginModule
+ * registers it as "org.csstudio.security.ldapBind",
+ * and JAAS will then use it via the Eclipse ExtensionLoginModule.
+ */
+SNS_UCAMS
+{
+  /* Get LDAPBindLoginModule via Eclipse */
+  org.eclipse.equinox.security.auth.module.ExtensionLoginModule
+          required
+  extensionId=org.csstudio.security.ldapBind
+    
+  /* Parameters for LDAPBindLoginModule */
+  debug=true
+  user.provider.url="ldaps://skynet2.ornl.gov/ou=Users,dc=ornl,dc=gov"
+  user.dn.format="uid={0},ou=Users,dc=ornl,dc=gov";
+};
+</programlisting>
+</sect2>
+
+
+<sect2> <title>Adding Custom Authentication Methods</title>
+<para>
+JAAS is extensible. You can provide Java code for a JAAS <code>LoginModule</code>
+to handle authentication as you desire.
+For use in Eclipse/CSS, that login module needs to be placed in a plug-in
+and registered via the Eclipse extension point
+<programlisting>org.eclipse.equinox.security.loginModule</programlisting>
+
+Inside the JAAS configuration, you then use the Eclipse LoginModule
+<code>org.eclipse.equinox.security.auth.module.ExtensionLoginModule</code>
+to access your login module.
+This additional layer of indirection is required because Eclipse
+controls the Java class path. JAAS cannot directly reach your contributed
+JAAS LoginModule unless you register it via the extension point,
+and then access it via the Eclipse <code>ExtensionLoginModule</code>.
+</para>
+<para>
+For details, refer to the JAAS LoginModule documentation and also
+the code in <code>org.csstudio.security</code>
+that relates to the <code>LDAPBindLoginModule</code>
+described in the previous section.
+</para>
+</sect2>
+</sect1>
+
+
+<sect1> <title>Authorization</title>
+<para>
+Once the user is authenticated, i.e. CSS has a valid user name or ID,
+it uses Authorization to determine if a user may perform a certain action.
+Each application determines which actions require what authorization.
+For example, the alarm system uses the following:
+</para>
+<itemizedlist>
+<listitem><code>alarm_acknowledge</code>:
+ Authorization that is required to acknowledge alarms.
+ For example, everybody in the control room is typically allowed to 
+ acknowledge alarms.
+</listitem>
+<listitem><code>alarm_config</code>:
+ Authorization that is required to configure the alarm alarm system.
+ This permission may be limited to a smaller group of people.
+</listitem>
+</itemizedlist>
+
+
+<sect2> <title>File-Based Authorization</title>
+<para>
+With file based authorization, a text file is used to list all authorizations
+and the users who are granted each authorization:
+</para>
+
+<programlisting># Configure authorizations and users who have them
+# based on user name patterns
+
+# Format:
+# authorization = pattern for users, pattern for users, ...
+#
+# Authorizations are defined by applications.
+# For example, the alarm system GUI might require
+# the "alarm_acknowledge" authorization
+# for acknowledging an alarm.
+#
+# In addition, the authorization "FULL" covers everything.
+#
+# User patterns are regular expressions.
+# Multiple patterns are separated by ",".
+# Each pattern itself must not contain a ",".
+
+# Anybody can acknowledge alarms
+alarm_acknowledge=.*
+
+# Specific users may configure alarms
+alarm_config = Fred , jane
+
+# Anybody called xyz-admin has full access
+FULL = .*-admin,    ky9, 5hz
+
+# The following would allow anybody to do anything
+# FULL = .*
+</programlisting>
+
+<para>
+File-based authorization is relatively easy to configure and thus a
+good starting point. Anybody can read the autorization file.
+For an operational setup this file should consequently be read-only
+so that ordinary users cannot edit the file and thus grant themselves
+permissions that they are not meant to have.
+</para>
+</sect2>
+
+
+<sect2> <title>LDAP-Group-Based Authorization</title>
+<para>
+In this authorization mode LDAP is queried for the group membership
+of the authenticated user.
+Any group membership is then interpreted as authorization.
+</para>
+<para>
+Usually, the same LDAP server that was also used for authentication
+can thus support authorization, making this approach very
+practical for a production setup.
+</para>
+<para>
+The LDAP directory must support the <code>posixGroup</code> schema,
+which is the standard for Unix-type account information stored in LDAP.
+</para>
+<para>
+Example LDAP entry:
+</para>
+<programlisting>dn: cn=archive_config,ou=Groups,dc=example,dc=com
 objectClass: top
-uid: fred
-userPassword: {CRYPT}xxxxxxxxxx
-cn: Fred Testuser
-sn: Fred
-homeDirectory: /home/fred
-uidNumber: 42
-gidNumber: 42
+objectClass: posixGroup
+cn: archive_config
+description: Allow archive configuration
+gidNumber: 1234
+memberUid: Fred
+memberUid: jane
 </programlisting>
 
-<para>Fundamentally, the user name and password entered
-by the user must match the <code>uid:</code> and
-<code>userPassword:</code> in LDAP.
-Note that the userPassword
-<emphasis role="strong">must be in <code>{CRYPT}</code> format</emphasis> 
-because the JAAS JndiLoginModule only handles
-the <code>{CRYPT}</code> format and cannot read passwords
-stored in a different format.
+<para>
+The above entry defines a group <code>archive_config</code> with members
+<quote>Fred</quote> and <quote>jane</quote>.
+This will be treated 
+as granting the <code>archive_config</code> authorization to users
+<quote>Fred</quote> and <quote>jane</quote>.
 </para>
-<para>The JndiLoginModule also requires
-<code>uidNumber:</code> and <code>guiNumber:</code>
-entries as part of the posixAccount object class,
-even though CSS will not use that information.
-For full details refer to the javadoc of the
-JAAS JndiLoginModule.
+<para>
+Note that members must specifically be listed via <code>memberUid</code>.
+In the above example, there may be a user with primary group ID <code>1234</code>
+that Linux would also consider to be a member of the <code>archive_config</code>
+Linux group, but for authorization purposes such a user must also be
+listed via <code>memberUid</code>. The numeric group ID is not used
+for authorization.
 </para>
 </sect2>
 
 
-<sect2> <title>JAAS LDAP Authentication via LDAPBindLoginModule</title>
-<para>The standard JAAS <code>JndiLoginModule</code> requires
-read access to the password information in LDAP.
-If your LDAP server administrator does not allow this
-for security concerns, you can select the custom JAAS
-login module
-<programlisting>org.csstudio.platform.internal.jaasauthentication.LDAPBindLoginModule
+<sect2> <title>Script-Based Authorization</title>
+<para>
+For script-based authorization, an external script is invoked
+with the name of the authenticated user.
+That script is then expected to return a list of authorizations
+for that user.
+</para>
+<para>
+Example script:
+</para>
+<programlisting>#!/bin/sh
+#
+# Script for ScriptAuthorizationProvider
+#
+# Invoked with user name, it lists all authentications.
+#
+# This implementation uses the group names of the user
+# as authorization identifiers.
+# Usable on Linux or Mac OS X
+
+if [ $# -ne 1 ]
+then
+  echo "USAGE: id_auth user_name" 1&gt;&amp;2
+  exit -1
+else
+  id -G -n "$@"
+fi
 </programlisting>
-</para>
-<para>This module authenticates to LDAP by using a simple bind operation.
-The entries on the LDAP server look as in the
-<code>JndiLoginModule</code> JndiLoginModule case,
-except that the only thing which really matters is the
-<code>dn:</code> and <code>userPassword:</code> information.
-The LDAPBindModule will try to bind to a DN,
-and the LDAP server checks the password.
-The login module will not attempt to read anything from LDAP,
-so the remaining entries are irrelevant.
-</para>
-<para>Depending on your LDAP server, beware that it may only
-handle the bind for passwords in a certain format.
-Specifically, it may not allow a bind for entries with
-<code>{crypt}</code> formatted passwords,
-which clashes with the previous case.
+
+<para>
+This specific example script is conceptually similar
+to the LDAP-group-based authorization, but instead of contacting an
+LDAP server, the script uses the <code>id</code> command to determine
+the user groups.
+By customizing the script for your needs, you can call any extenal
+program to obtain a lit of authorizations.
 </para>
 </sect2>
 
 
-<sect2> <title>JAAS Kerberos Authentication</title>
-<para>The <filename>conf/auth.conf</filename> file in the
-jaasAuthentication plugin contains an example for using the
-JAAS Krb5LoginModule, which in turn uses Kerberos.
-Additional environment variables may be needed,
-refer to the JAAS documentation.
+<sect2> <title>Adding Custom Authorization Methods</title>
+<para>
+The Script-Based Authorization as just described allows
+adding new authentication methods that are external to CSS/Eclipse/Java.
+To include a new Java-based authorization method into CSS,
+add an OSGi/Eclipse Service that provides an <code>AuthorizationProvider</code>.
+Refer to the JavaDoc for <code>org.csstudio.security.authorization.AuthorizationProvider</code>
+for details.
 </para>
 </sect2>
 </sect1>
 
 
-<sect1> <title>Authorization: org.csstudio.platform.authorizationProvider</title>
-<para>This extension point allows plugins to provide authorization.
-The data model is based on Users who have Rights,
-and Actions that require Rights.
-Rights are described via Roles and Groups:
+<sect1> <title>Secure Preferences</title>
+<para>
+CSS uses the Eclipse preferences to obtain URLs for accessing archived data
+etc.
+Some of these preference settings, for example passwords,
+are stored in an encrypted file separate from the normal
+Eclipse preferences.
 </para>
+<para>
+You can configure where these encrypted settings are stored:
+</para>
+
 <itemizedlist>
-<listitem><code>User</code>:
- Name of an authenticated user, for example <quote>Fred</quote>.
+<listitem><code>Default</code>:
+Use the default location, which is typically
+the user's home directory.
+<para>Advantage: It's the default.</para>
+<para>Disadvantage: You won't always know where the preferences are.</para>
 </listitem>
-<listitem><code>Action ID</code>:
- Identifier for a certain action, for example <quote>alarm_ack</quote>
- for the acknowledgement of alarms. Also called Authorization ID.
+<listitem><code>Instance</code>:
+Use the Eclipse 'instance', i.e. the workspace.
+<para>Advantage: You know where it is, and each workspace
+will have its own settings.</para>
+<para>Disadvantage: Each workspace has different settings.</para>
 </listitem>
-<listitem><code>Role</code>:
- A site-specific role that a user might have, for example
-  <quote>ADMIN</quote>, <quote>OPERATOR</quote> or <quote>GUEST</quote>.
-</listitem>
-<listitem><code>Group</code>:
- A site-specific group like <quote>VACUUM</quote> or <quote>CRYO</quote>.
-</listitem>
-<listitem><code>Right</code>:
- The combination of role and group.
- User <quote>Fred</quote> might be an <quote>ADMIN</quote>
- in the <quote>CRYO</quote> group
- but only a <quote>GUEST</quote> in the <quote>VACUUM</quote> group. 
+<listitem><code>Install</code>:
+Use the Eclipse 'install' location, i.e. where the product is installed.
+<para>Advantage: You know where it is, and every workspace for that
+product will have the same settings. Good for a "global" setup.</para>
+<para>Disadvantage: Ordinary users cannot (should not) have write permissions.</para>
 </listitem>
 </itemizedlist>
 
-<figure xml:id="fig_auth_rights">
-  <title>CSS Authorization Data Model.
-    Applications actually use the <code>SecurityFacade</code> API
-    which internally calls the <code>RightsManagementService</code>.
-  </title>
+
+<sect2> <title>Setting Secure Preferences</title>
+<para>
+Secure preferences can be provided via the hierachical preference system as usual,
+for example in a plugin_customization.ini:
+</para>
+<programlisting>org.csstudio.whatever/password=ThePassword</programlisting>
+<para>
+When doing this, the password is obviously not encrypted.
+Direct editing of the secure preference file is not possible,
+because you would have to enter the encrypted value.
+</para>
+<para>
+In the CSS user interface, secure preferences can be entered
+via the ordinary preference GUI (Menu <code>Edit/Preferences</code>).
+For headless CSS tools like the alarm server which do not offer
+a preference GUI, the command-line can be used:
+</para>
+<programlisting>AlarmServer -set_password org.csstudio.whatever/password=ThePassword</programlisting>
+</sect2>
+</sect1>
+
+
+<sect1> <title>Required Plug-Ins, User Interface</title>
+<para>
+The plugin <filename>org.csstudio.security</filename>
+defines the API for authentiation, authorization and secure preferences.
+</para>
+<para>
+The plugin <filename>org.csstudio.security.ui</filename>
+adds user interface elements.
+To the end user, this results in tool-bar buttons for logging in and out
+as shown in <xref linkend="fig_auth_example"/>.
+In addition, there is a <code>Secutiy View</code> that can
+be opened from the menu <code>Window/Show View/Other...</code>,
+then selecting <code>CSS/Security Info</code>.
+This view displays information about the currently authenticated user
+and her authorizations. Some alarm-related example actions can be
+invoked for testing their accessibility.
+</para>
+
+<figure xml:id="fig_auth_info">  <title>Security Info View</title>
   <mediaobject>
-    <imageobject><imagedata fileref="auth_rights.png" width="100%" format="PNG"/></imageobject>
+    <imageobject><imagedata fileref="sec_info.png" width="50%" format="PNG"/></imageobject>
   </mediaobject>
 </figure>
+</sect1>
 
 
-<sect2> <title>org.csstudio.sns.dummyAuthorization</title>
-<para>This plugin always authorizes everybody to do anything.
-Note that it is still required to be <emphasis>authenticated</emphasis>,
-because authorization is only checked for authenticated users.
-Non-authenticated users have no rights.
+<sect1> <title>Configuring Authentication, Authorization and Secure Preferences</title>
+<para>
+The following example <filename>org.csstudio.security/preferences.ini</filename>
+explains the available security-related settings.
 </para>
-</sect2>
-
-<sect2> <title>org.csstudio.sns.ldapAuthorization</title>
-<para>This plugin stores the Authorization info in LDAP.
-The rights assigned to each user and the rights required to execute
-a certain action are in two separate sections under a common base DN.
-The following examples use a base DN of
-<code>ou=CSSAuthorization,dc=test,dc=ics</code>.
+<para>
+For using them in a <filename>plugin_customization.ini</filename> file,
+note that each setting needs to be prefixed with <code>org.csstudio.security/</code>.
+For example, instead of
+<programlisting>jaas_config_file=/path/to/my/jaas.cfg</programlisting>
+you need to use
+<programlisting>org.csstudio.security/jaas_config_file=/path/to/my/jaas.cfg</programlisting>
+</para>
+<para>
+In addition, some long lines have been reformatted with "\" to indicate that
+the following line should be joined.
 </para>
 
-<para>Before entering CSS authorization information,
-you need to add the following schema definitions to your LDAP server:
-</para>
-<programlisting># css.schema
-# Authorization related scheme elements
-# Based on information from http://css.desy.de
+<programlisting># Security Settings
 
-objectclass ( 1.3.6.1.4.1.341.999.2 NAME 'cssRole'
-  DESC 'Role for CSS authorization: cn is role, ou is group'
-  SUP top STRUCTURAL
-  MUST cn
-  MAY ( memberUid $ description )  )
+##
+## Authentication
+##
 
-attributetype ( 1.3.6.1.4.1.341.999.1.3 NAME 'auid'
-  DESC 'name of authorize ID'
-  EQUALITY caseIgnoreMatch
-  SUBSTR caseIgnoreSubstringsMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} )
+# Option 1:
+# Use a JAAS config file as in normal use of JAAS
 
-attributetype ( 1.3.6.1.4.1.341.999.1.2 NAME 'cssGroupRole'
-  DESC 'group and role, it must be in a format of (group,role)'
-  EQUALITY caseIgnoreMatch
-  SUBSTR caseIgnoreSubstringsMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} )
+# Path to JAAS configuration file
+# When located inside a plugin, use
+#  "platform:/plugin/name.of.plugin/path/within/plugin.conf"
+jaas_config_file=platform:/plugin/org.csstudio.security/jaas.conf
 
-attributetype ( 1.3.6.1.4.1.341.999.1.1 NAME 'cssActionPath'
-  DESC 'the full path for an action or control in css'
-  EQUALITY caseIgnoreMatch
-  SUBSTR caseIgnoreSubstringsMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256}  )
+# Name of a JAAS login configuration to use.
+# This must match the name of one of the entries
+# in the jaas_config_file.
+jaas_config_name=file
 
-objectclass ( 1.3.6.1.4.1.341.999.1 NAME 'cssAuthorizeID'
-  DESC 'an authorized ID'
-  SUP top STRUCTURAL
-  MUST auid
-  MAY ( cssGroupRole $ cssActionPath $ description ) )
+# Option 2:
+# Do not use a JAAS config file.
+# Instead, provide what would the desired entry in the config file
+# as an Eclipse preference.
+#
+# If the preference "jaas_config" is defined, it will have
+# precedence. "jaas_config_file" and "jaas_config_name" will
+# be ignored!
+
+# Format (all on one line!):
+#   ModuleClass Flag option1=value1 option2=value2 ...; \
+#   ModuleClass Flag ModuleOptions; ...
+# ModuleClass, Flag and value options are in the same format
+# as in auth.conf, but all on one line.
+# Value strings must be quoted.
+#
+# Example (must be on one line!):
+#jaas_config=com.sun.jmx.remote.security.FileLoginModule required \
+#            debug="true" passwordFile="/path/to/my_passwords.conf";
+jaas_config=
+
+##
+## Authorization
+##
+
+# Select authorization provider
+#
+# Standard implementations:
+# FileBased, see
+#  org.csstudio.security.authorization.FileBasedAuthorizationProvider
+# LDAPGroup, see
+#  org.csstudio.security.authorization.LDAPGroupAuthorizationProvider
+# Script, see
+#  org.csstudio.security.authorization.ScriptAuthorizationProvider
+#
+# Additional providers can be added via extension point,
+# see org.csstudio.security.authorization.AuthorizationProvider
+authorization_provider=FileBased
+
+# Path to FileBased authorization configuration file
+authorization_file_name= \
+  platform:/plugin/org.csstudio.security/authorization.conf
+
+# Path to command used by Script authorization
+authorization_script_name=/usr/local/bin/id_auth
+
+
+##
+## Secure Preferences
+##
+
+# Where secure preferences are located.
+#
+# "Default":
+# Use the default location, which is typically
+# the user's home directory.
+#  @see SecurePreferencesFactory#getDefault()
+#  
+# Advantage: It's the default
+# Disadvantage: You won't always know where the preferences are.
+#
+# "Instance":
+# Use the Eclipse 'instance', i.e. the workspace.
+# 
+# Advantage: You know where it is, and each workspace
+# will have its own settings.
+# Disadvantage: Each workspace has different settings.
+#
+# "Install":
+# Use the Eclipse 'install' location,
+# i.e. where the product is installed.
+# 
+# Advantage: You know where it is, and every workspace for that
+# product will have the same settings. Good for a "global" setup.
+# Disadvantage: Ordinary users cannot
+#               (should not) have write permissions.
+secure_preference_location=Default
 </programlisting>
-
-<para>With OpenLDAP you would add the following to slapd.conf:</para>
-<programlisting>include  /etc/openldap/schema/css.schema
-</programlisting>
-
-<para>With OpenLDAP it might also be useful to control access to the authorization
-info with an entry similar to this in <filename>slapd.conf</filename>:
-</para>
-<programlisting># Define which users can write to CSS Authorization
-Access to dn.subtree="ou=CSSAuthorization,dc=test,dc=ics"
-  by dn.exact="uid=alarm_config_user1,ou=Users,dc=test,dc=ics" write
-  by dn.exact="uid=alarm_config_user2,ou=Users,dc=test,dc=ics" write
-  by * read
-</programlisting>
-
-<sect3> <title>Rights assigned to a user</title>
-<para>The <code>CSSGroupRole</code> sub-tree lists all available rights
-and assigns users to them in entries based on the <code>cssRole</code> schema.
-</para>
-<para>Example:
-</para>
-<programlisting>dn: cn=developer,ou=alarm,ou=CSSGroupRole,ou=CSSAuthorization,
-   dc=test,dc=ics
-objectClass: cssRole
-cn: developer
-memberUid: Fred
-memberUid: Jane
-
-dn: cn=operator,ou=alarm,ou=CSSGroupRole,ou=CSSAuthorization,
-   dc=test,dc=ics
-objectClass: cssRole
-cn: operator
-memberUid: operator
-</programlisting>
-
-<para>This example defines the following user rights:
-<itemizedlist>
-<listitem>Right <quote>developer</quote>/<quote>alarm</quote>:
-Users authenticated as <quote>Fred</quote> or <quote>Jane</quote>
-have the <quote>developer</quote> role in the <quote>alarm</quote> group.
-</listitem>
-<listitem>Right <quote>operator</quote>/<quote>alarm</quote>:
-Users authenticated as <quote>operator</quote> have the <quote>operator</quote>
-role in the <quote>alarm</quote> group.
-</listitem>
-</itemizedlist>
-</para>
-</sect3>
-
-
-
-<sect3> <title>Rights required by an Action</title>
-<para>The CSSAuthorizeID sub-tree lists the Rights required by
-restricted actions with entries based on the cssAuthorizeID schema.
-</para>
-<para>Example:</para>
-<programlisting>dn: auid=alarm_ack,ou=AlarmSystem,ou=CSSAuthorizeID,
-   ou=CSSAuthorization,dc=test,dc=ics
-objectClass: cssAuthorizeID
-auid: alarm_ack
-cssGroupRole: (alarm, developer)
-cssGroupRole: (alarm, operator)
-
-dn: auid=alarm_config,ou=AlarmSystem,ou=CSSAuthorizeID,
-   ou=CSSAuthorization,dc=test,dc=ics
-objectClass: cssAuthorizeID
-auid: alarm_config
-cssGroupRole: (alarm, administrator)
-cssGroupRole: (alarm, developer)
-</programlisting>
-
-<para>This example defines the following Action IDs:
-<itemizedlist>
-<listitem>alarm_ack:
-The CSS alarm system uses this action ID for alarm acknowledgement.
-Users who want to acknowledge alarms need either alarm/developer
-or alarm/operator rights.
-</listitem>
-<listitem>alarm_config:
-The CSS alarm system uses this ID for alarm configuration actions.
-Users who want to change the alarm system configuration need the
-alarm/developer right.
-</listitem>
-</itemizedlist>
-</para>
-
-<para>Note how the example entries were listed under
-ou=AlarmSystem, one level below the CSSAuthorizeID sub-tree.
-This is purely for administrator convenience to allow grouping
-of related authorization requirements,
-for example to put all alarm system related Action IDs into a sub-tree.
-The authorization code will search all sub-trees of CSSAuthorizeID
-for entries in the cssAuthorizeID objectClass.
-</para>
-
-<para>By combining the authorization configuration listed above,
-you get the following:
-<itemizedlist>
-<listitem>A user authenticated as <quote>operator</quote>,
-which is likely a shared account, can acknowledge alarms.
-</listitem>
-<listitem>Individuals authenticated as <quote>Fred</quote> or <quote>Jane</quote>
-can acknowledge and configure alarms.
-</listitem>
-</itemizedlist>
-</para>
-</sect3>
-
-</sect2>
-
-<sect2> <title>org.csstudio.platform.ldapAuthorization</title>
-<para>Also based on LDAP, but with a different LDAP schema.</para>
-</sect2>
-
 </sect1>
 
 </chapter>
