@@ -4,6 +4,12 @@
          xml:id="ch_utility.pv">
 <title>PV Access - org.csstudio.utility.pv<indexterm><primary>org.csstudio.utility.pv</primary></indexterm></title>
 
+<para>
+<emphasis role="strong">
+This API has been deprecated, use the PVManager instead.
+</emphasis>
+</para>
+
 <para>This plugin provides one of the CSS APIs for accessing live control
 system data, i.e. read process variable samples from front-end computers.
 Its emphasis is on fairly straight-forward access to individual PVs,
