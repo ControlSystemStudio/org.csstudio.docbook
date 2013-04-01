@@ -107,25 +107,21 @@ and look for their source down-load.
 </para>
 
 <para>The complete CSS sources are in a shared
-Source Forge<indexterm><primary>Source Forge</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
-repository using the Mercurial version control system.
-The project web site is
+GitHub<indexterm><primary>GitHub</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
+repository using the GIT version control system.
+Source Forge<indexterm><primary>Source Forge</primary></indexterm>
+holds the project web site is
 <link xlink:href="http://cs-studio.sourceforge.net/">http://cs-studio.sourceforge.net/</link>
 You can view the sources here:
-<link xlink:href="http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/">http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/</link>
+<link xlink:href="https://github.com/ControlSystemStudio/cs-studio">https://github.com/ControlSystemStudio/cs-studio</link>
 </para>
 
 <para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
 <orderedlist>
-<listitem>Obtain Source Forge account.</listitem>
+<listitem>Obtain GitHub account.</listitem>
 <listitem>Contact one of the CSS developers to gain write access to the repository.</listitem>
-<listitem>Become familiar with the Mercurial<indexterm><primary>Mercurial</primary></indexterm>
-version control system. You can download it from
-<link xlink:href="http://mercurial.selenic.com/">http://mercurial.selenic.com/</link>,
-which also offers nice introductions.
-</listitem>
-<listitem>Install the HG Eclipse plugin which provides Eclipse <quote>Team</quote> support for Mercurial, see
-<link xlink:href="http://www.javaforge.com/project/HGE">http://www.javaforge.com/project/HGE</link>.
+<listitem>Become familiar with the GIT<indexterm><primary>GIT</primary></indexterm>
+version control system.
 </listitem>
 </orderedlist>
 
@@ -134,10 +130,10 @@ at <link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki">http://sou
 </para>
 
 <para>In the following, we assume you are either already familiar with working on a 
-Source Forge-hosted project, or you obtained a snapshot of the source code by other means,
+GitHub-hosted project, or you obtained a snapshot of the source code by other means,
 for example via down-load from a site that uses CSS.
 If you down-load the complete
-source code from the Source Forge repository, you will receive a directory tree similar to this:</para>
+source code from the repository, you will receive a directory tree similar to this:</para>
 <programlisting>core/features/org.csstudio.core.feature
 core/features/org.csstudio. ... .feature
 core/plugins/org.csstudio.data
@@ -218,7 +214,7 @@ You can leave them selected, or select only specific plugins as described below.
 
 <para>If you import from a source snapshot used by a CSS site, that snapshot might be limited
 to the plugins that the site-specific products use, and you can simply import all plugins.
-On the other hand, if you import from a full Source Forge repository checkout,
+On the other hand, if you import from a full source repository checkout,
 you might want to un-select plugins that you know you will not need because otherwise
 you will end up with a workspace that is confusingly huge, even though you at best need
 only half of the plugins in there.
