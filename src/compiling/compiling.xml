@@ -84,8 +84,8 @@ the full RCP source code and online help.
 Both the JDK and the RCP IDE might have to be of a specific version, ask other CSS developers
 for the currently supported versions. 
 At the time of this writing it has to be
-Java Version 1.6 also known as Java 6,
-and Eclipse 3.6 also known as Helios.
+Java Version 1.7 also known as Java 7,
+and Eclipse 3.7.2.
 </para>
 </sect1>
 
@@ -314,7 +314,7 @@ or via the button <code>Add Required Plug-Ins</code>.
 <para>If you cannot find the missing plugins, there are usually two scenarios:
 The missing plugins are part of Eclipse, and you are using a version of Eclipse that
 is not compatible with the sources. For example, some plugin code may depend on 
-<code>org.eclipse.core.runtime</code> version 3.6, but you are using Eclipse 3.5 which
+<code>org.eclipse.core.runtime</code> version 3.7, but you are using Eclipse 3.5 which
 is too old.
 The other scenario would be that you obtained an inconsistent snapshot of the sources
 where some part is simply missing. In that case you probably need to contact the maintainer
@@ -526,8 +526,8 @@ Same for Linux and Windows.
 <orderedlist>
 <listitem>Goto the Downloads section on <link xlink:href="http://www.eclipse.org/">http://www.eclipse.org/</link>.</listitem>
 <listitem>Select <quote>Projects</quote>, <quote>Eclipse Project</quote>.</listitem>
-<listitem>Select the version of Eclipse that you are using, for example 3.6.2.</listitem>
-<listitem>Locate the Delta Pack, a file like <filename>eclipse-3.6.2-delta-pack.zip</filename>.</listitem>
+<listitem>Select the version of Eclipse that you are using, for example 3.7.2.</listitem>
+<listitem>Locate the Delta Pack, a file like <filename>eclipse-3.7.2-delta-pack.zip</filename>.</listitem>
 </orderedlist>
 
 <para>To use the delta pack:</para>
