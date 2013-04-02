@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="chap_o.c.sec">
+
+<title>Security - org.csstudio.security<indexterm><primary>org.csstudio.security</primary></indexterm></title>
+
+<para>The plugins
+<code>org.csstudio.security</code>
+and
+<code>org.csstudio.security.ui</code>
+provide the API and implementation for security as
+described in <xref linkend="chap_auth"/>.
+</para>
+
+
+<para>
+Refer to the java doc for the packages 
+<code>org.csstudio.security</code>
+and
+<code>org.csstudio.security.ui</code>
+for entry point of code that needs access
+to the currently authenticated user, her autorizations,
+and preferences.
+</para>
+
+</chapter>

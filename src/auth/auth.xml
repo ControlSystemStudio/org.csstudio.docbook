@@ -484,8 +484,26 @@ defines the API for authentiation, authorization and secure preferences.
 The plugin <filename>org.csstudio.security.ui</filename>
 adds user interface elements.
 To the end user, this results in tool-bar buttons for logging in and out
-as shown in <xref linkend="fig_auth_example"/>.
-In addition, there is a <code>Secutiy View</code> that can
+as shown in <xref linkend="fig_auth_example"/> as well as corresponding
+entries in the <code>File</code> menu.
+</para>
+<para>
+By default, the user is automatically logged in when starting CSS based
+on information from the operating system.
+The <code>unix</code> respectively <code>windows</code> JAAS configurations
+described before determine this initial user identity.
+To prevent such automated log-in, use a JAAS configuration that does
+<emphasis role="strong">not</emphasis> include entries named 
+<code>unix</code> respectively <code>windows</code>.
+</para>
+<para>
+The Log-in toolbar button or menu entry allows users to log in as a different user
+by using for example LDAP or a File-based approach.
+Once logged in as a user different from the original, OS-authenticated user,
+the Log-out toolbar button allows reverting to the OS-authenticated user.
+</para>
+<para>
+There is a <code>Security View</code> that can
 be opened from the menu <code>Window/Show View/Other...</code>,
 then selecting <code>CSS/Security Info</code>.
 This view displays information about the currently authenticated user
