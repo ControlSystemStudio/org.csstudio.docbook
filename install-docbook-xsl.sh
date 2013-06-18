@@ -5,3 +5,9 @@ if [ ! -d "docbook-xsl-1.76.1" ]; then
   rm docbook-xsl.tar.bz2
 fi
 
+if [ ! -d "fop-1.1" ]; then
+  wget "http://www.fightrice.com/mirrors/apache/xmlgraphics/fop/binaries/fop-1.1-bin.tar.gz"
+  tar zxvf fop-1.1-bin.tar.gz
+  rm fop-1.1-bin.tar.gz
+fi
+
