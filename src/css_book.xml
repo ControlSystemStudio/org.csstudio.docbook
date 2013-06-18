@@ -37,16 +37,15 @@ Check the <code>@author</code> tags in the source code to get an idea.
 </listitem>
 </itemizedlist>
 </para>
-<para>The sources for this book are on SourceForge under
-<link xlink:href="http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/docbook/">http://cs-studio.hg.sourceforge.net/hgweb/cs-studio/docbook/</link>.
+<para>The sources for this book are on GitHub under
+<link xlink:href="https://github.com/ControlSystemStudio/cs-studio-docbook">https://github.com/ControlSystemStudio/cs-studio-docbook</link>.
 
 You can download the sources via
-<code>hg clone ssh://user_name@hg.code.sf.net/p/cs-studio/docbook cs-studio-docbook</code>
+<code>git clone https://github.com/ControlSystemStudio/cs-studio-docbook.git</code>
 </para>
 
 
-
-<para>Thanks to Gabriele Carcassi, the latest HTML version is available at
+<para>Thanks to Gabriele Carcassi and Eric Berryman, the latest HTML version is available at
 <link xlink:href="http://cs-studio.sourceforge.net/docbook/">http://cs-studio.sourceforge.net/docbook/</link>,
 and the current PDF is at
 <link xlink:href="http://cs-studio.sourceforge.net/docbook/css_book.pdf">http://cs-studio.sourceforge.net/docbook/css_book.pdf</link>.
