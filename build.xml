@@ -18,7 +18,7 @@
     <property environment="env"/>
 
     <!-- Build directory -->
-    <property name="out" value="out" />
+    <property name="out" location="./out" />
 
     <!-- XML-FO Processor -->
     <property name="fop" value="fop" />
