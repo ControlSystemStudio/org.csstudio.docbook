@@ -123,6 +123,7 @@ is used all over the world by many developers.
 <xi:include href="compiling/compiling.xml" />
 <xi:include href="workspace/workspace.xml" />
 <xi:include href="preferences/preferences.xml" />
+<xi:include href="env_vars.xml" />
 <xi:include href="console.xml" />
 
 <xi:include href="network/chapter.xml" />

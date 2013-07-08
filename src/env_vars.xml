@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="ch_env_vars">
+
+<title>Environment Variables</title>
+
+<para>CSS, like Eclipse RCP and Java programs in general, does not use
+environment variables<indexterm><primary>Environment Variables</primary></indexterm>.
+The Eclipse/CSS launcher may use the <code>PATH</code> environment variable
+to locate a suitable Java runtime, but once CSS is running, all its
+settings are based on the Eclipse preference system,
+see <xref linkend="ch_preferences"/>.
+</para>
+
+<para>Some CSS tools, however, may start external commands which in turn
+rely on environment variables.
+Examples include buttons on an operator interface panel (see <xref linkend="chap_boy"/>)
+that are configured to react to a mouse click by starting an external command.
+</para>
+
+<para>Ideally, such external commands can be executed regardless of the current
+environment settings under which CSS is running.
+To accomplish this, it is suggested to wrap the actual external command in a
+script that establishes the required environment:
+</para>
+
+<programlisting>
+#!/bin/sh
+#
+# Example 'start_xy' wrapper script.
+# CSS 'BOY' actions could for example use this
+# to start an external 'xy' tool.
+
+# Since we cannot know for sure under which environment
+# CSS has been started, set all environment variables
+# as they are required by the 'xy' tool
+export PATH=/usr/local/bin:/usr/bin
+export LD_LIBRARY_PATH=/usr/local/xy/lib
+export XY_CONFIG_DIR/usr/local/xy/cfg
+
+# Start 'xy' with optional additional parameters
+/usr/local/xy/bin/xy -mode=2 -flag=false "$@"
+</programlisting>
+
+<para>By using such a wrapper script, BOY actions for example can use <code>start_xy something</code>
+as the external command. Details of required environment variables or command-line flags are
+hidden inside the wrapper script.
+</para>
+
+
+<sect1> <title>Max OS X</title>
+<emphasis>Based on information by Jan Ilavsky, APS</emphasis>
+
+<para>A wrapper script for external applications is especially advantegeous on Mac OS X.
+While a user may provide certain settings in a <code>~/.profile</code> file for use
+in a terminal session, such settings are generally not available inside a Mac OS X application
+like <code>css.app</code>.
+</para>
+
+<para>To create environment variables which are then visible within CSS and its externally
+launched programs, you can start CSS from a script as the following:
+</para>
+
+<programlisting>
+#!/bin/sh
+#
+# Start CSS, including user-specific environment settings
+source $HOME/.profile
+/Applications/CSS_EPICS_3.1.6/CSS.app/Contents/MacOS/css
+</programlisting>
+
+
+<para>This CSS launcher script could then be wrapped by the
+freely available <code>Platypus.app</code> tool, which can create Mac OS X apps from scripts.
+In Platypus, configure the app to terminate when done. You may add the CSS icon into the icon view in Platypus. Save as application where convenient and use that to start CSS.app. This provides terminal environment variables to CSS, which are passed to shell programs started by CSS, such as medm. 
+</para>
+
+</sect1>
+
+</chapter>
