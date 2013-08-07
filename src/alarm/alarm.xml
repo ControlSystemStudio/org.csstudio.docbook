@@ -439,6 +439,11 @@ You need to specify the complete path to the element that ought to be removed:
 <programlisting><![CDATA[AlarmConfigTool -root demo -delete /demo/area1/system2
 ]]></programlisting>
 
+<para>To remove a complete alarm tree, name the configuration and remove its root element:
+</para>
+<programlisting><![CDATA[AlarmConfigTool -root demo -delete /demo
+]]></programlisting>
+
 <para>If is possible to modify an existing configuration via the <code>-modify</code> command.
 It will load an XML file and add newly listed items from the XML file to the alarm configuration,
 or update the guidance messages, related displays etc. of existing items in the configuration.
