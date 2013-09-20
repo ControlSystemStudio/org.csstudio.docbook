@@ -6,7 +6,7 @@ if [ ! -d "docbook-xsl-1.76.1" ]; then
 fi
 
 if [ ! -d "fop-1.1" ]; then
-  wget "http://www.fightrice.com/mirrors/apache/xmlgraphics/fop/binaries/fop-1.1-bin.tar.gz"
+  wget "http://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-1.1-bin.tar.gz"
   tar zxvf fop-1.1-bin.tar.gz
   rm fop-1.1-bin.tar.gz
 fi
