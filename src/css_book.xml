@@ -8,7 +8,7 @@
 <subtitle>For installers and maintainers of CSS</subtitle>
 <author><firstname>Kay</firstname><surname>Kasemir</surname></author>
 <author><firstname>Gabriele</firstname><surname>Carcassi</surname></author>
-<copyright><year>2011, 2012</year><holder>Oak Ridge National Laboratory</holder></copyright>
+<copyright><year>2011, 2013</year><holder>Oak Ridge National Laboratory</holder></copyright>
 </info>
 
 <preface>  <title>No Warranty</title>
@@ -177,7 +177,7 @@ CSS plugins.
 <xi:include href="org.csstudio.archive.engine/chapter.xml" />
 <xi:include href="org.csstudio.debugging.jmsmonitor/chapter.xml" />
 <xi:include href="org.csstudio.navigator.applaunch/chapter.xml" />
-<xi:include href="org.csstudio.sns.jms2rdb/chapter.xml" />
+<xi:include href="org.csstudio.logging.jms2rdb/chapter.xml" />
 <xi:include href="org.csstudio.ui.menu.web/chapter.xml" />
 <xi:include href="org.csstudio.utility.chat/chapter.xml" />
 

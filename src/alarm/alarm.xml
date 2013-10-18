@@ -1020,7 +1020,7 @@ something happened that they might have missed.
 
 <sect1>  <title>JMS Alarm Log</title>
 <para>The JMS2RDB tool described in
-<xref linkend="ch_org.cstudio.sns.jms2rdb"/>
+<xref linkend="ch_org.cstudio.logging.jms2rdb"/>
 can be used to log all alarm traffic
 to the RDB.
 This way, detail of alarm state changes and operator

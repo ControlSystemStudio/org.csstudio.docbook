@@ -131,7 +131,7 @@ directly to the MESSAGE table. Some tools like the message viewer from
 <code>org.csstudio.alarm.beast.msghist</code> automatically determine
 which message properties are in the main MESSAGE table, and which are in the
 MESSAGE_CONTENT table. Other tools like the ones used to write messages from
-JMS to the RDB are site-specific, see <xref linkend="ch_org.cstudio.sns.jms2rdb"/>
+JMS to the RDB are site-specific, see <xref linkend="ch_org.cstudio.logging.jms2rdb"/>
 </para>
 </sect1>
 

@@ -7,7 +7,7 @@
 <para>The plugin <code>org.cstudio.alarm.beast.msghist</code>
 is a generic browser for the message history.
 It displays JMS messages that were written to the relational database by for example
-the tool described in <xref linkend="ch_org.cstudio.sns.jms2rdb"/>.
+the tool described in <xref linkend="ch_org.cstudio.logging.jms2rdb"/>.
 </para>
 
 <figure xml:id="fig_msghist">  <title>Message History Browser</title>
