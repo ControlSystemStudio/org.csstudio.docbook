@@ -277,7 +277,7 @@ Periodic sampling is clearly imperfect, but sometimes a workable compromise.
 </para>
 </sect2>
 
-<sect2> <title>Writing Samples to Storage</title>
+<sect2 xml:id="sec_archive_writing"> <title>Writing Samples to Storage</title>
 <para>Samples obtained by the various samples modes are
 <emphasis role="strong">not</emphasis> immediately written to storage,
 for example the RDB, because writing each individual sample right away
@@ -588,6 +588,60 @@ stop the engine.
   </listitem>
   </varlistentry>
 </variablelist>
+</para>
+</sect2>
+
+</sect1>
+
+<sect1> <title>Archive Engine Messages</title>
+
+<sect2>  <title>Channel skips back-in-time</title>
+<para>The archive engine tries to write all samples with their original time stamp
+as received from the Channel Access server.
+Each unique sample only needs to be written once. The underlying storage may
+in fact prohibit attempts to write a sample multiple times, or only allow append operations
+for samples with new time stamps, refusing insertion of samples with previous time stamps.
+This may result in occasional messages for channels that seldom change, combined with archive engine restarts or network issues.
+</para>
+
+<para>For example, assume a a channel has not changed since 2013/10/29 08:00.
+At 09:00, the archive engine is stopped, writing an <quote>Archive Off</quote> value for the channel.
+At 10:00, the archive engine is restarted. After each start, it will write the current value of each sample.
+If that is not possible with the actual time stamp of the received sample, because that sample was already
+written at 08:00 in this example, plus there is already another sample at 09:00 for this channel,
+the engine will write the sample with the current host clock time, i.e. 10:00.
+You will then see occasional messages for this channel if its actual value does not change:
+</para>
+<programlisting>WARNING ... - SomeChannelName skips back-in-time:
+last: 2013/10/29 10:00  3
+new : 2013/10/29 08:00  3
+</programlisting>
+<para>This warning can usually be ignored, since no data is lost at all.
+</para>
+
+
+</sect2>
+
+<sect2>  <title>Channel buffer overruns</title>
+<para>The following type of message indicates that the per-channel buffer,
+used by the engine to keep samples in memory between periodic writes to storage,
+has been overrun:
+</para>
+<programlisting>WARNING ... - SomeChannelName: 3 overruns
+</programlisting>
+
+<para>As elaborated in <xref linkend="sec_archive_writing"/>,
+the size of this buffer depends on the expected update period of a monitored
+channel, with an added reserve to allow for occasional delays in RDB write
+performance.
+</para>
+<para>If the warning results from a wrong estimate of expected channel updates,
+correct the update period estimate.
+If the warning results from excessive delays when writing to the RDB,
+try to fix RDB speed issues.
+Finally, the warning can be ignored if you configured the channel on purpose with
+an expected update period of say one second, because you intentionally want to suppress
+occasional bursts of updates, and prefer to preserve storage space.
 </para>
 </sect2>
 
