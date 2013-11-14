@@ -40,7 +40,7 @@
     <target name="html" depends="prepare">
         <apply executable="${xsltproc}">
             <arg value="--xinclude"/>
-        	<arg value="-o ${out}/"/>
+        	<arg value="-o '${out}/'"/>
         	<targetfile/>
             <arg value="myhtml.xsl"/>
         	<srcfile/>
