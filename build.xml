@@ -40,10 +40,14 @@
     <target name="html" depends="prepare">
         <apply executable="${xsltproc}">
             <arg value="--xinclude"/>
-            <arg value="--output"/>
-            <arg value="${out}/"/>
+                <arg value="--output"/>
+                <targetfile/>
             <arg value="myhtml.xsl"/>
-            <arg value="src/css_book.xml"/>
+                <srcfile/>
+            <fileset dir="src">
+                <include name="css_book.xml"/>
+            </fileset>
+            <mapper type="glob" from="*.xml" to="${out}/*.html"/>
         </apply>
     	<copy todir="${out}" flatten="true">
             <fileset dir="src">
