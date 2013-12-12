@@ -48,9 +48,9 @@ org.csstudio.ui.menu.web/weblinks=local css google
 org.csstudio.ui.menu.web/local=\
 Local CSS Web Site|http://www.my-institute.edu/css/
 
-# The main CSS web page on Source Forge
+# The main CSS web page on GitHub
 org.csstudio.ui.menu.web/css=\
-CSS Wiki|https://sourceforge.net/apps/trac/cs-studio
+CSS Wiki|https://github.com/ControlSystemStudio/cs-studio/wiki
 
 # Example for other useful links
 org.csstudio.ui.menu.web/google=Google|http://www.google.com
