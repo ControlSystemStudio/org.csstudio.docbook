@@ -262,7 +262,7 @@ Each application determines which actions require what authorization.
 For example, the alarm system uses the following:
 </para>
 <itemizedlist>
-<listitem><code>alarm_acknowledge</code>:
+<listitem><code>alarm_ack</code>:
  Authorization that is required to acknowledge alarms.
  For example, everybody in the control room is typically allowed to 
  acknowledge alarms.
@@ -288,7 +288,7 @@ and the users who are granted each authorization:
 #
 # Authorizations are defined by applications.
 # For example, the alarm system GUI might require
-# the "alarm_acknowledge" authorization
+# the "alarm_ack" authorization
 # for acknowledging an alarm.
 #
 # In addition, the authorization "FULL" covers everything.
@@ -298,7 +298,7 @@ and the users who are granted each authorization:
 # Each pattern itself must not contain a ",".
 
 # Anybody can acknowledge alarms
-alarm_acknowledge=.*
+alarm_ack=.*
 
 # Specific users may configure alarms
 alarm_config = Fred , jane
