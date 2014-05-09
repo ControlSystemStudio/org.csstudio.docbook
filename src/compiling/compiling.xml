@@ -14,10 +14,38 @@ will automatically be down-loaded from that same web site.
 <para>To reach that stage, somebody at each institute that uses CSS
 obviously needs to prepare such a local down-load site,
 compile CSS with suitable settings and place the binaries on the web site.
-Compilation from sources is also required for those parts of CSS that the end-user
-does not see: Archive Engine, Alarm Server and tools to configure
-the archive and alarm system.
+Note that in addition to the CSS application that end users will see,
+a complete installation will also require you to compile the Archive Engine, Alarm Server,
+tools to configure the archive and alarm system, maybe more.
 </para>
+
+<para>There are different ways of compiling CSS sources into executable binaries:
+<itemizedlist>
+<listitem>Eclipse IDE<indexterm><primary>Compile in Eclipse IDE</primary></indexterm>:
+You import the required CSS source code into the Eclipse
+Integrated Development Environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>,
+where you can interactively run, debug and export binary products.
+</listitem>
+<listitem>Tycho/Maven Build<indexterm><primary>Compile with Tycho/Maven</primary></indexterm>:
+This allows you to create products from the command-line.
+The build can be automated, and it typically used to automatically
+create product binaries, for example each night, when the source code has changed.
+</listitem>
+<listitem>Headless PDE Build<indexterm><primary>Compile with Headless PDE</primary></indexterm>:
+Similar to the Tyco/Maven Build, but using older tools.
+</listitem>
+</itemizedlist>
+
+The bulk of this chapter will introduce you to using the Eclipse IDE,
+because this provides you with the most options.
+You can study the source code, execute it, debug it, extend it, and finally
+create binary products.
+The Tycho/Maven Build is now the preferred option if all you need to do
+is create binary products, but it is not convenient for CSS development.
+</para>
+
+
+<sect1>  <title>Eclipse IDE Build</title>
 
 <para>Fundamentally, the compilation of sources into stand-alone RCP products
 that you can then deploy onto other computers is easy:
@@ -30,8 +58,7 @@ that you can then deploy onto other computers is easy:
 and <quote>Export</quote> as a stand-alone binary.</listitem>
 </orderedlist>
 
-<para>Instead of going to the last step, i.e. exporting a product from within the Eclipse
-Integrated Development Environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>
+<para>Instead of going to the last step, i.e. exporting a product from within the Eclipse IDE
 into a deployable product, you have more options.
 </para>
 <para>While you are still developing and testing the version of CSS that you
@@ -61,6 +88,7 @@ In addition, you get a repository from which existing CSS products that are alre
 installed at your site can down-load updates.
 </para>
 
+</sect1>
 
 <sect1>  <title>Prerequisites</title>
 
@@ -85,7 +113,7 @@ Both the JDK and the RCP IDE might have to be of a specific version, ask other C
 for the currently supported versions. 
 At the time of this writing it has to be
 Java Version 1.7 also known as Java 7,
-and Eclipse 3.7.2.
+and Eclipse 4.
 </para>
 </sect1>
 
@@ -107,7 +135,7 @@ but is ultimately what you will need to work on CSS.
 to collaborator sites on 
 <link xlink:href="http://controlsystemstudio.github.io">http://controlsystemstudio.github.io</link>
 and look for their source down-load. For example, the download of a specific SNS version could be:
-<programlisting>wget http://ics-web.sns.ornl.gov/css/updates/apps/sns_css_src_3.2.11a.zip</programlisting>
+<programlisting>wget http://ics-web.sns.ornl.gov/css/updates/apps/sns_css_src_4.0.0.zip</programlisting>
 </para>
 
 <para>The complete CSS sources are in a shared
@@ -214,7 +242,9 @@ You can leave them selected, or select only specific plugins as described below.
 
 <para>If you import from a source snapshot used by a CSS site, that snapshot might be limited
 to the plugins that the site-specific products use, and you can simply import all plugins.
-On the other hand, if you import from a full source repository checkout,
+On the other hand, if you start with a full source repository checkout,
+you might not want to import all plugins, because some may actually conflict with each other.
+Even if there are no conflicts,
 you might want to un-select plugins that you know you will not need because otherwise
 you will end up with a workspace that is confusingly huge, even though you at best need
 only half of the plugins in there.
@@ -230,6 +260,9 @@ but leave it on the disk and thus also in the software repository.
 
 <para>If you start with an initial selection of plugins that you assume you might need,
 look for errors about missing plugin dependencies, then import the missing plugins.
+For example, one approach would be to import all <code>core</code> plugins.
+Then import the product plugins that you like to use,
+and add <code>applications</code> plugins as needed to resolve missing plugins.
 Though this will initially require some trial and error, it might in the end be the most
 convenient way.
 </para>
@@ -552,13 +585,83 @@ in the <code>Eclipse</code> menu.
 </para>
 </sect1>
 
+<sect1 xml:id="sec_tycho_build">  <title>Tycho/Maven Build</title>
+
+<para>The Tycho Build<indexterm><primary>Tycho/Maven Build</primary></indexterm>
+is eventually necessary for each site that periodically publishes CSS product updates.
+It automates the build process, guaranteeing that the products are indeed exported for each supported platform.
+It can also be used as part of a nightly or integration build.
+</para>
+
+<para>This build method uses <code>Maven</code><indexterm><primary>Maven</primary></indexterm>,
+a generic build tool for Java.
+<code>Tycho</code><indexterm><primary>Tycho</primary></indexterm>
+is a set of Maven extensions that support the compilation of Eclipse plugins, features and products.
+</para>
+
+<para>To start a Tycho/Maven Build, you need Java, Maven and git.
+The beauty of Maven is that it will download all other dependencies,
+including Tycho and Eclipse itself, and work like a charm as long as it works.
+The horror of Maven is that it will always download the internet,
+even for a simple <code>mvn clean</code> command, and you will tear your hair
+out in case of errors.
+</para>
+<para>At the time of this writing, CSS just started to use a Tycho/Maven Build.
+A complete build looked like this:
+</para>
+
+<programlisting>cd /somewhere
+# Fetch 'third party' sources
+git clone https://github.com/ControlSystemStudio/cs-studio-thirdparty.git
+# Fetch bulk of CSS sources
+git clone https://github.com/ControlSystemStudio/cs-studio.git
+# Fetch 'common product'
+git clone https://github.com/ControlSystemStudio/org.csstudio.product.git
+
+# Build into a local repository
+export LOCALREPO=`pwd`/repo
+
+# Build 3rd party sources
+cd cs-studio-thirdparty
+mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
+cd ..
+
+# Build 'cs-studio/core'
+cd cs-studio/core
+mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
+cd ../../
+
+# Build 'cs-studio/applications'
+cd cs-studio/applications
+mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
+cd ../..
+
+# You now have all essential plugins and features.
+# Build the products that you want, for example
+# the 'common product'
+cd org.csstudio.product
+mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
+cd ..
+# Find the generated binaries under
+# org.csstudio.product/repository/target/products
+
+# OR build the SNS products (GUI, scan system, alarm server, ..)
+cd cs-studio/products/SNS
+mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
+cd ../../..
+# Find the generated binaries under
+# cs-studio/products/SNS/repository/target/products
+</programlisting>
+
+</sect1>
+
 
 <sect1 xml:id="sec_headless_build">  <title>Headless Build</title>
 
 <para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
-is eventually necessary for each site that periodically publishes CSS product updates.
-It automates the build process, guaranteeing that the products are indeed exported for each supported platform.
-It can also be used as part of a nightly or integration build.
+is similar to the Tycho/Maven Build,
+but using older tools.
+At this time, you should try to use the Tycho/Maven Build.
 </para>
 
 <figure xml:id="fig_comp_headless">  <title>Headless Build</title>
@@ -567,8 +670,7 @@ It can also be used as part of a nightly or integration build.
   </mediaobject>
 </figure>
 
-<para>A headless build, however, is more complicated to set up than the product export from the IDE.
-The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
+<para>The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
 Instead, it is command-line driven and expects to find all feature and plugin projects
 in subdirectories of the build directory which have to be named <filename>features</filename>
 respectively <filename>plugins</filename>.

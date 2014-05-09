@@ -5,10 +5,10 @@
       
 <info>
 <title>Control System Studio Guide</title>
-<subtitle>For installers and maintainers of CSS</subtitle>
+<subtitle>For installers and maintainers of CS-Studio</subtitle>
 <author><firstname>Kay</firstname><surname>Kasemir</surname></author>
 <author><firstname>Gabriele</firstname><surname>Carcassi</surname></author>
-<copyright><year>2011, 2013</year><holder>Oak Ridge National Laboratory</holder></copyright>
+<copyright><year>2011, 2014</year><holder>Oak Ridge National Laboratory</holder></copyright>
 </info>
 
 <preface>  <title>No Warranty</title>
@@ -27,9 +27,9 @@ or a failure of the programs described in here to operate with any other program
 
 <acknowledgements>
 <para>
-Control System Studio (CSS) is the result of contributions from many people:
+Control System Studio (CS-Studio, CSS) is the result of contributions from many people:
 <itemizedlist>
-<listitem>First of all, CSS builds heavily on Eclipse.</listitem>
+<listitem>First of all, CS-Studio builds heavily on Eclipse.</listitem>
 <listitem>Matthias Clausen at the Deutsches Electronen Synchrotron started the CSS idea.</listitem>
 <listitem>Many people from the Canadian Light Source, Brookhaven National Laboratory, Argonne National Laboratory, ITER and other
 sites have contributed either through extensions, code fixes, suggestions or bug reports.
