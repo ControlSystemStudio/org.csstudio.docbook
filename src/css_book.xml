@@ -9,6 +9,13 @@
 <author><firstname>Kay</firstname><surname>Kasemir</surname></author>
 <author><firstname>Gabriele</firstname><surname>Carcassi</surname></author>
 <copyright><year>2011, 2014</year><holder>Oak Ridge National Laboratory</holder></copyright>
+
+<!--
+   Tried to get the 'current date' into the output.
+   <date> element is ignored.
+   <releaseinfo> is used for PDF, and processing instruction inserts time
+ -->
+<releaseinfo>Release <?dbtimestamp format="Y-m(B)-d"?></releaseinfo>
 </info>
 
 <preface>  <title>No Warranty</title>
