@@ -67,8 +67,14 @@ To build CSS from sources with Maven, you need
     See <link xlink:href="http://git-scm.com">http://git-scm.com</link>.
 </listitem>
 <listitem><code>java</code>:
-    A Java Development Kit (JDK) is necessary to compile the sources.
-    Google for <quote>Google JDK</quote>.
+    A Java Development Kit (JDK)<indexterm><primary>Java Development Kit, JDK</primary></indexterm>
+    is necessary to compile the sources.
+	It should be the JDK, not just a Java Runtime Environment (JRE).
+	It should be the Sun/Oracle JDK.
+	OpenJDK, the GNU Compiler for the Java (GCJ)
+	and other environments are currently not fully compatible
+	with the Sun/Oracle JDK.
+    Google for <quote>Oracle JDK</quote>.
 </listitem>
 <listitem><code>mvn</code>:
     Maven.
@@ -79,7 +85,7 @@ To build CSS from sources with Maven, you need
 </sect1>
 
 
-<sect1> <title>Obtaining CSS Sources</title>
+<sect1 xml:id="sec_get_sources"> <title>Obtaining CSS Sources</title>
 
 <para>The complete CSS sources are in a shared
 GitHub<indexterm><primary>GitHub</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
@@ -215,142 +221,88 @@ can install optional features, for example
 
 <sect1>  <title>Using the Eclipse IDE</title>
 
-<para>TO BE UPDATED FOR M2E, POM-BASED.
-
-
-Fundamentally, the compilation of sources into stand-alone RCP products
-that you can then deploy onto other computers is easy:
+<para>Fundamentally, using the Eclipse IDE for CSS development is easy:
 </para>
 <orderedlist>
 <listitem>Get Java and Eclipse</listitem>
 <listitem>Get the CSS source code</listitem>
 <listitem>Start Eclipse, import the sources</listitem>
-<listitem>Open the <filename>*.product</filename> file for CSS, ArchiveEngine, ...
-and <quote>Export</quote> as a stand-alone binary.</listitem>
+<listitem>Open the <filename>*.product</filename> file for CSS, ArchiveEngine, ... and launch it.</listitem>
 </orderedlist>
 
-<para>Instead of going to the last step, i.e. exporting a product from within the Eclipse IDE
-into a deployable product, you have more options.
+<para>In addition, the IDE allows you to run the products in debug mode,
+setting breakpoints, examining the source code.
 </para>
-<para>While you are still developing and testing the version of CSS that you
-assemble for use at your site, you can run the product within the IDE.
-You can execute it without first exporting it into a stand-alone binary.
-Running a product within the IDE is the preferred method during development
-because it allows full source code debugging and minimizes
-the turn-around time from editing the code to executing the product.
-This is also what you should do when first trying to run CSS from source code.
-</para>
-<para>Once the product is acceptable for use at your site, you export
+<para>Once the product is acceptable for use at your site, you can export
 it from the IDE and install the result on the desired computers.
-This is what you typically do for tools like the Archive Engine, Alarm Handler
-or other non-end-user tools: Export and install.
 </para>
-<para>While the product export from the IDE is initially very convenient, it remains
-a manual process. The <quote>Headless Build</quote> of a CSS product is a script-driven
-process that can automate the product compilation.
-It can also be used for automated integration builds.
-As mentioned in <xref linkend="sec_rcp"/>, Eclipse products are operating system specific.
-Eventually, most sites will implement a headless built for their primary end-user products,
-because automated product generation is more repeatable, especially when creating several
-products for various operating systems.
-As a result of a headless build you typically get not only the binary products,
-like CSS for your site for Windows and Linux in 32 and 64 bit versions.
-In addition, you get a repository from which existing CSS products that are already
-installed at your site can down-load updates.
+
+<para>At the time of this writing, CSS just started to use a Maven Build.
+The Eclipse 4.4 (Luna) IDE includes Maven support, but you need to add Tycho tooling.
+The tooling sometimes results in errors that are hard to reproduce or understand.
+While the IDE includes very good GIT support, it is currently suggested to perform
+the initial <code>git clone</code> on the command line,
+and maybe even perform the Maven Build on the command line as described above
+to assert that all is in order with your JDK, Maven, and the current set of CSS sources,
+before starting to use the IDE to inspect and possibly change the source code.
 </para>
 
 </sect1>
 
 <sect1>  <title>Prerequisites</title>
 
-<para>You will need
+<para>You need
 <itemizedlist>
-<listitem>Java Development Kit (JDK)<indexterm><primary>Java Development Kit, JDK</primary></indexterm>.
-It should be the JDK, not just a java Runtime Environment (JRE).
-It should be the Sun/Oracle or Apple JDK.
-OpenJDK, the GNU Compiler for the Java (GCJ)
-and other environments are currently not fully compatible
-with the Sun/Oracle JDK.
+<listitem>Java Development Kit (JDK) as described in <xref linkend="sec_tycho_build"/>.
 </listitem>
-<listitem>Eclipse IDE for RCP/Plugin Developers.
-This has recently been called <quote>Eclipse for RCP and RAP Developers</quote>.
-Other versions like <quote>Eclipse IDE for Java EE Developers</quote>
-can be very useful if you also plan to do Web/Tomcat type of work,
-but the RCP version of the Eclipse IDE is the one that includes
-the full RCP source code and online help.
+<listitem><quote>Eclipse IDE for RCP and RAP Developers</quote>.
+    See <link xlink:href="https://www.eclipse.org/downloads">https://www.eclipse.org/downloads</link>.
+</listitem>
+<listitem>Source code from GIT repository as already described in <xref linkend="sec_get_sources"/>.
 </listitem>
 </itemizedlist>
-Both the JDK and the RCP IDE might have to be of a specific version, ask other CSS developers
-for the currently supported versions. 
-At the time of this writing it has to be
-Java Version 1.7 also known as Java 7,
-and Eclipse 4.
 </para>
+
+<para>Both the JDK and the RCP IDE need to be a specific version, ask other CSS developers
+for the currently supported versions. 
+</para>
+
+<para>Start Eclipse, and assert that it uses the JDK:
+<itemizedlist>
+<listitem>Open the <code>Preferences</code> menu item, typically located in the <code>Window</code> menu.</listitem>
+<listitem>Locate entry <code>Java</code>, <code>Installed JREs</code>.</listitem>
+<listitem>Assert that your JDK is listed and selected, otherwise use <code>Add</code> to add it, then select it as the default.</listitem>
+</itemizedlist>
+</para>
+
+<para>Add Tycho support.
+<itemizedlist>
+<listitem>Open the <code>Preferences</code> menu item.</listitem>
+<listitem>Locate entry <code>Maven</code>, <code>Discovery</code>.</listitem>
+<listitem>Press <code>Open Catalog</code>, enter <code>tycho</code>, select the <code>Tycho Configurator</code>.</listitem>
+<listitem>Press <code>Finish</code> and restart Eclipse when prompted.</listitem>
+</itemizedlist>
+</para>
+
+<para>Configure Maven.
+Eclipse includes a simplified version of Maven.
+For consistent results, configure it to use the same <code>mvn</code>
+that you call on the command line.
+<itemizedlist>
+<listitem>Open the <code>Preferences</code> menu item.</listitem>
+<listitem>Locate entry <code>Maven</code>, <code>Installations</code>.</listitem>
+<listitem>Press <code>Add</code> to add your command-line version of <code>mvn</code>.</listitem>
+</itemizedlist>
+</para>
+
 </sect1>
 
 
-<sect1>  <title>Obtaining the Source Code</title>
-
-<para>For your first steps in CSS, it might be easiest to obtain a
-<emphasis>snapshot of the sources</emphasis> from one of the CSS sites.
-Such a snapshot will include what you need to build the products
-used at that site. You will see a reduced but consistent set of sources.
-</para>
-<para>
-When you access the CSS source repository, you can see the latest version
-of all sources from all CSS sites, which can be overwhelming for first steps,
-but is ultimately what you will need to work on CSS.
-</para>
-
-<para>To obtain a source snapshot, follow the links
-to collaborator sites on 
-<link xlink:href="http://controlsystemstudio.github.io">http://controlsystemstudio.github.io</link>
-and look for their source down-load. For example, the download of a specific SNS version could be:
-<programlisting>wget http://ics-web.sns.ornl.gov/css/updates/apps/sns_css_src_4.0.0.zip</programlisting>
-</para>
 
 
-<para>In the following, we assume you are either already familiar with working on a 
-GitHub-hosted project, or you obtained a snapshot of the source code by other means,
-for example via down-load from a site that uses CSS.
-If you down-load the complete
-source code from the repository, you will receive a directory tree similar to this:</para>
-<programlisting>core/features/org.csstudio.core.feature
-core/features/org.csstudio. ... .feature
-core/plugins/org.csstudio.data
-core/plugins/org.csstudio.logging
-core/plugins/org.csstudio...
-applications/features/org.csstudio.opibuilder.feature
-applications/features/org.csstudio. ... .feature
-applications/plugins/org.csstudio.opibuilder
-applications/plugins/org.csstudio.sds
-applications/plugins/org.csstudio.trends.databrowser2
-products/NSLS2/plugins/...
-products/NSLS2/...
-products/SNS/plugins/...
-products/SNS/product/org.csstudio.basic.epics.product
-built/...
-</programlisting>
 
-<para>The source code is roughly organized into</para>
-<itemizedlist>
-<listitem><code>core</code> plugins and features that are shared by many if not all sites that use CSS</listitem>
-<listitem><code>applications</code> plugins and features that are several sites use</listitem>
-<listitem><code>product</code> code that is specific to a site like NSLS2 or SNS</listitem>
-</itemizedlist>
-
-<para>If on the other hand you unpack a source code snapshot from a specific site, the
-result might be a flat directory including only those sources used to build that
-site's products:
-</para>
-<programlisting>org.csstudio.data
-org.csstudio.logging
-org.csstudio...
-org.csstudio.opibuilder.feature
-org.csstudio.opibuilder
-org.csstudio.trends.databrowser2
-org.csstudio.basic.epics.product
-</programlisting>
+<sect1>  <title>TO BE UPDATED</title>
+<para>THE FOLLOWING NEEDS TO BE UPDATED FOR MAVEN</para>
 </sect1>
 
 
