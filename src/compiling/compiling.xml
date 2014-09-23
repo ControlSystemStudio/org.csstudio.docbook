@@ -7,8 +7,9 @@
 <para>End users of CSS, i.e. people who run CSS on their office computer,
 should not have to compile CSS.
 They can down-load a version of CSS that is already configured for use
-in offices at their site from a local web site, and updates to CSS
-will automatically be down-loaded from that same web site.
+in offices at their site from a local web site.
+Updates to CSS can automatically be down-loaded from that same web site
+via the Eclipse update mechanism.
 </para>
 
 <para>To reach that stage, somebody at each institute that uses CSS
@@ -21,33 +22,203 @@ tools to configure the archive and alarm system, maybe more.
 
 <para>There are different ways of compiling CSS sources into executable binaries:
 <itemizedlist>
+<listitem>Tycho/Maven Build<indexterm><primary>Compile with Tycho/Maven</primary></indexterm>:
+This allows you to create products from the command-line.
+It can be automated.
+For example, Hudson/Jenkins can create product binaries each night,
+or whenever  the source code has changed in the software repository .
+</listitem>
 <listitem>Eclipse IDE<indexterm><primary>Compile in Eclipse IDE</primary></indexterm>:
 You import the required CSS source code into the Eclipse
 Integrated Development Environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>,
 where you can interactively run, debug and export binary products.
 </listitem>
-<listitem>Tycho/Maven Build<indexterm><primary>Compile with Tycho/Maven</primary></indexterm>:
-This allows you to create products from the command-line.
-The build can be automated, and it typically used to automatically
-create product binaries, for example each night, when the source code has changed.
-</listitem>
 <listitem>Headless PDE Build<indexterm><primary>Compile with Headless PDE</primary></indexterm>:
-Similar to the Tyco/Maven Build, but using older tools.
+Similar to the Tyco/Maven Build, but using older tools, and no longer actively supported.
 </listitem>
 </itemizedlist>
 
-The bulk of this chapter will introduce you to using the Eclipse IDE,
-because this provides you with the most options.
-You can study the source code, execute it, debug it, extend it, and finally
-create binary products.
-The Tycho/Maven Build is now the preferred option if all you need to do
-is create binary products, but it is not convenient for CSS development.
+We start by describing the Tycho/Maven Build based on a complete set of CSS source code.
+Later, we describe how the Eclipse IDE can be used to study the source code, execute it within the IDE,
+debug it, extend it, and finally create binary products.
 </para>
 
 
-<sect1>  <title>Eclipse IDE Build</title>
+<sect1 xml:id="sec_tycho_build">  <title>Tycho/Maven Build</title>
 
-<para>Fundamentally, the compilation of sources into stand-alone RCP products
+<para><code>Maven</code><indexterm><primary>Maven</primary></indexterm>
+is a generic build tool for Java.
+It uses <code>pom.xml</code><indexterm><primary>POM Files, pom.xml</primary></indexterm> files
+to define how a piece of software needs to be compiled, and to list its dependencies.
+Eclipse plugin sources already include 
+<code>META-INF/MANIFEST.MF</code><indexterm><primary>Manifest files, META-INF/MANIFEST.MF</primary></indexterm>
+files for almost the same purpose.
+<code>Tycho</code><indexterm><primary>Tycho</primary></indexterm>, a support module for Maven,
+allows Maven to re-use the existing Manifest files to compile Eclipse source code.
+</para>
+
+<para>From now on, we will refer to the Tycho/Maven Build as simply the Maven Build.
+To build CSS from sources with Maven, you need
+</para>
+
+<itemizedlist>
+<listitem><code>git</code>:
+    Git it used to obtain a copy of the CSS sources from the software repository.
+    See <link xlink:href="http://git-scm.com">http://git-scm.com</link>.
+</listitem>
+<listitem><code>java</code>:
+    A Java Development Kit (JDK) is necessary to compile the sources.
+    Google for <quote>Google JDK</quote>.
+</listitem>
+<listitem><code>mvn</code>:
+    Maven.
+    See <link xlink:href="http://maven.apache.org">http://maven.apache.org</link>.
+</listitem>
+</itemizedlist>
+
+</sect1>
+
+
+<sect1> <title>Obtaining CSS Sources</title>
+
+<para>The complete CSS sources are in a shared
+GitHub<indexterm><primary>GitHub</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
+repository using the GIT version control system.
+The project web site is
+<link xlink:href="https://github.com/ControlSystemStudio">https://github.com/ControlSystemStudio</link>.
+</para>
+
+<para>
+Example for fetching a complete copy of the source code:
+</para>
+
+<programlisting>
+# 1) Maven bundles
+# Code from existing Maven repositories,
+# used "as is", wrapped into Eclipse bundles
+git clone https://github.com/ControlSystemStudio/maven-osgi-bundles.git
+
+# 2) Third party
+# Sources provided by others
+# which needed minimal additions/modifications
+git clone https://github.com/ControlSystemStudio/cs-studio-thirdparty.git
+
+# 3) Bulk of CSS sources
+git clone https://github.com/ControlSystemStudio/cs-studio.git
+
+# Depending on your site, you would only fetch one of the following
+# examples, or use one that you created for your own purposes
+
+# 4.1) 'common' product
+# Eventually, the goal is for most sites to use this
+git clone https://github.com/ControlSystemStudio/org.csstudio.product.git
+
+# 4.2) SNS products
+git clone https://github.com/ControlSystemStudio/cs-studio-SNS.git
+
+# 4.3) NSLS2 product
+git clone https://github.com/cs-studio-nsls2/org.csstudio.nsls2.product.git
+
+# 4.4) Your product?
+git clone you_would_need_to_know_where_to_get_them
+</programlisting>
+
+<para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
+<orderedlist>
+<listitem>Obtain GitHub account.</listitem>
+<listitem>Become familiar with GIT,
+          learn how to clone the repository, how to submit pull requests.
+</listitem>
+<listitem>Contact one of the CSS developers to gain direct write access to the repository.</listitem>
+</orderedlist>
+
+</sect1>
+
+
+<sect1> <title>Invoking Maven</title>
+
+<para>When obtaining the Maven Build tools and CSS sources,
+you may have noted that we fetched neither Tycho nor Eclipse.
+The beauty of Maven is that it will download all dependencies,
+including Tycho and Eclipse, and work like a charm as long as it feels like doing so.
+The horror of Maven is that it always appears to download the internet.
+When the commands listed in the following instructions
+are run for the first time, Maven will initially download Tycho.
+It will place Tycho in a local Maven repository, so subsequent calls will
+not require a complete download, but Maven will continue to check
+remote sites for updates, even when invoking a simple <code>mvn clean</code> command.
+</para>
+<para>Maven is usually executed as <code>mvn install</code>.
+This will compile the source code and place the results in the local
+Maven repository. For compiling CSS, especially when developing and the source code
+changes quite often, this is <emphasis>not</emphasis> recommended.
+Instead, the following recipe uses <code>mvn verify</code> and settings
+that place the generated CSS binaries in a separate Maven repository
+which can easily be deleted and re-created.
+</para>
+
+<programlisting>
+# Build into a local repository
+LOCALREPO=/tmp/css_build_repo
+
+# Use the local repository,
+# use warnings (instead of errors),
+# skip execution of unit tests
+PROPERTIES="-Dcsstudio.local.repo=$LOCALREPO
+            -DbaselineMode=warn -Djgit.dirtyWorkingTree=warning
+            -Dmaven.test.skip=true"
+
+# To start fresh, clean the local repository
+rm -rf $LOCALREPO
+
+# Fetch external artifacts, wrap as Eclipse plugins
+(cd maven-osgi-bundles; mvn $PROPERTIES clean verify)
+
+# Compile third-party code that needed slight modifications
+# - possibly requiring result of maven-osgi-bundles
+#   that's now in $LOCALREPO
+(cd cs-studio-thirdparty; mvn $PROPERTIES clean verify)
+
+# Compile CSS 'core' code
+# - using maven-osgi-bundles, cs-studio-thirdparty from $LOCALREPO
+(cd cs-studio/core; mvn $PROPERTIES clean verify)
+
+# Compile CSS 'applications' code
+(cd cs-studio/applications; mvn $PROPERTIES clean verify)
+
+# Compile desired products
+(cd org.csstudio.product; mvn $PROPERTIES clean verify)
+# or:
+(cd cs-studio-SNS; mvn $PROPERTIES clean verify)
+# or:
+(cd org.csstudio.nsls2.product; mvn $PROPERTIES clean verify)
+</programlisting>
+
+<para>After the last step, the created products can be found in
+<programlisting># Depending on which products you built:
+org.csstudio.product/repository/target/products
+cs-studio-SNS/repository/target/products
+org.csstudio.nsls2.product/repository/target/products
+</programlisting>
+
+There may also be a P2 udpate repository from which the generated product
+can install optional features, for example
+<programlisting>cs-studio-SNS/repository/target/repository
+</programlisting>
+
+</para>
+
+</sect1>
+
+
+
+
+<sect1>  <title>Using the Eclipse IDE</title>
+
+<para>TO BE UPDATED FOR M2E, POM-BASED.
+
+
+Fundamentally, the compilation of sources into stand-alone RCP products
 that you can then deploy onto other computers is easy:
 </para>
 <orderedlist>
@@ -138,24 +309,6 @@ and look for their source down-load. For example, the download of a specific SNS
 <programlisting>wget http://ics-web.sns.ornl.gov/css/updates/apps/sns_css_src_4.0.0.zip</programlisting>
 </para>
 
-<para>The complete CSS sources are in a shared
-GitHub<indexterm><primary>GitHub</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
-repository using the GIT version control system.
-The project web site is
-<link xlink:href="https://github.com/ControlSystemStudio/cs-studio">https://github.com/ControlSystemStudio/cs-studio</link>
-where you can view the sources.
-Example for fetching a copy of the repository:
-<programlisting>git clone https://github.com/ControlSystemStudio/cs-studio.git</programlisting>
-</para>
-
-<para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
-<orderedlist>
-<listitem>Obtain GitHub account.</listitem>
-<listitem>Become familiar with GIT,
-          learn how to clone the repository, how to submit pull requests.
-</listitem>
-<listitem>Contact one of the CSS developers to gain direct write access to the repository.</listitem>
-</orderedlist>
 
 <para>In the following, we assume you are either already familiar with working on a 
 GitHub-hosted project, or you obtained a snapshot of the source code by other means,
@@ -585,108 +738,7 @@ in the <code>Eclipse</code> menu.
 </para>
 </sect1>
 
-<sect1 xml:id="sec_tycho_build">  <title>Tycho/Maven Build</title>
 
-<para>The Tycho Build<indexterm><primary>Tycho/Maven Build</primary></indexterm>
-is eventually necessary for each site that periodically publishes CSS product updates.
-It automates the build process, guaranteeing that the products are indeed exported for each supported platform.
-It can also be used as part of a nightly or integration build.
-</para>
-
-<para>This build method uses <code>Maven</code><indexterm><primary>Maven</primary></indexterm>,
-a generic build tool for Java.
-<code>Tycho</code><indexterm><primary>Tycho</primary></indexterm>
-is a set of Maven extensions that support the compilation of Eclipse plugins, features and products.
-</para>
-
-<para>To start a Tycho/Maven Build, you need Java, Maven and git.
-The beauty of Maven is that it will download all other dependencies,
-including Tycho and Eclipse itself, and work like a charm as long as it works.
-The horror of Maven is that it will always download the internet,
-even for a simple <code>mvn clean</code> command, and you will tear your hair
-out in case of errors.
-</para>
-<para>At the time of this writing, CSS just started to use a Tycho/Maven Build.
-A complete build looked like this:
-</para>
-
-<programlisting>cd /somewhere
-# Fetch 'third party' sources
-git clone https://github.com/ControlSystemStudio/cs-studio-thirdparty.git
-# Fetch bulk of CSS sources
-git clone https://github.com/ControlSystemStudio/cs-studio.git
-# Fetch 'common product'
-git clone https://github.com/ControlSystemStudio/org.csstudio.product.git
-
-# Build into a local repository
-export LOCALREPO=`pwd`/repo
-
-# Build 3rd party sources
-cd cs-studio-thirdparty
-mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
-cd ..
-
-# Build 'cs-studio/core'
-cd cs-studio/core
-mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
-cd ../../
-
-# Build 'cs-studio/applications'
-cd cs-studio/applications
-mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
-cd ../..
-
-# You now have all essential plugins and features.
-# Build the products that you want, for example
-# the 'common product'
-cd org.csstudio.product
-mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
-cd ..
-# Find the generated binaries under
-# org.csstudio.product/repository/target/products
-
-# OR build the SNS products (GUI, scan system, alarm server, ..)
-cd cs-studio/products/SNS
-mvn -Dcsstudio.local.repo=$LOCALREPO clean verify
-cd ../../..
-# Find the generated binaries under
-# cs-studio/products/SNS/repository/target/products
-</programlisting>
-
-</sect1>
-
-
-<sect1 xml:id="sec_headless_build">  <title>Headless Build</title>
-
-<para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
-is similar to the Tycho/Maven Build,
-but using older tools.
-At this time, you should try to use the Tycho/Maven Build.
-</para>
-
-<figure xml:id="fig_comp_headless">  <title>Headless Build</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="comp_headless.png" width="80%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
-
-<para>The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
-Instead, it is command-line driven and expects to find all feature and plugin projects
-in subdirectories of the build directory which have to be named <filename>features</filename>
-respectively <filename>plugins</filename>.
-</para>
-<para>This usually requires a shell script or a build file for <code>ant</code>
-to copy all feature and plugin projects that are part of your product into such a build directory layout.
-In addition, you need a file <filename>build.properties</filename> to specify which
-product or feature to build, which target architectures to use, and how to name the generated
-archive files.
-</para>
-<para>For details, check the Eclipse online help for Headless Build,
-or refer to the scripts that other CSS sites use to build their products,
-which can be found in the <filename>build</filename> and <filename>products</filename>
-subdirectories of the CSS sources.
-</para>
-</sect1>
 
 <sect1>  <title>Feature Patch<indexterm><primary>Feature Patch</primary></indexterm></title>
 <para>A side effect of the headless build and a P2-managed product
@@ -755,5 +807,38 @@ version of which plugin was installed from where, so it will for example
 allow you to un-install the patch, or later add additional feature patches.
 </para>
 </sect1>
+
+<sect1 xml:id="sec_headless_build">  <title>Headless Build</title>
+
+<para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
+is similar to the Tycho/Maven Build,
+but using older tools.
+At this time, you should try to use the Tycho/Maven Build.
+</para>
+
+<figure xml:id="fig_comp_headless">  <title>Headless Build</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_headless.png" width="80%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
+Instead, it is command-line driven and expects to find all feature and plugin projects
+in subdirectories of the build directory which have to be named <filename>features</filename>
+respectively <filename>plugins</filename>.
+</para>
+<para>This usually requires a shell script or a build file for <code>ant</code>
+to copy all feature and plugin projects that are part of your product into such a build directory layout.
+In addition, you need a file <filename>build.properties</filename> to specify which
+product or feature to build, which target architectures to use, and how to name the generated
+archive files.
+</para>
+<para>For details, check the Eclipse online help for Headless Build,
+or refer to the scripts that other CSS sites use to build their products,
+which can be found in the <filename>build</filename> and <filename>products</filename>
+subdirectories of the CSS sources.
+</para>
+</sect1>
+
 
 </chapter>
