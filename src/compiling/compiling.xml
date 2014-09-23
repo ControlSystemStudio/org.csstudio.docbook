@@ -141,7 +141,7 @@ git clone you_would_need_to_know_where_to_get_them
 </sect1>
 
 
-<sect1> <title>Invoking Maven</title>
+<sect1> <title>Configuring and Invoking Maven</title>
 
 <para>When obtaining the Maven Build tools and CSS sources,
 you may have noted that we fetched neither Tycho nor Eclipse.
@@ -156,48 +156,73 @@ remote sites for updates, even when invoking a simple <code>mvn clean</code> com
 </para>
 <para>Maven is usually executed as <code>mvn install</code>.
 This will compile the source code and place the results in the local
-Maven repository. For compiling CSS, especially when developing and the source code
-changes quite often, this is <emphasis>not</emphasis> recommended.
+Maven repository. For compiling CSS, especially when the source code changes quite often
+while you are developing, this is <emphasis>not</emphasis> recommended.
 Instead, the following recipe uses <code>mvn verify</code> and settings
 that place the generated CSS binaries in a separate Maven repository
 which can easily be deleted and re-created.
 </para>
+<para>The Maven settings can be placed either in a global file
+<code>$M2_HOME/conf/settings.xml</code>,
+or in a user-specific file <code>$HOME/.m2/settings.xml</code>.
+You could also specify the properties listed in this file on the command line
+when invoking Maven as <code>mvn -Dcsstudio.local.repo=/... -DbaselineMode=warn</code>,
+but to assert that the same settings will also be effective when you later
+use Maven from within the Eclipse IDE, they are best placed in a <code>settings.xml</code> file
+with the following content:
+</para>
+<programlisting>
+&lt;!-- Maven settings.xml -->
+&lt;settings>
+  &lt;profiles>
+    &lt;profile>
+      &lt;id>my-css-settings&lt;/id>
+      &lt;properties>
+        &lt;!-- Path to your maven build repo -->
+        &lt;csstudio.local.repo>/tmp/my_css_build_repo&lt;/csstudio.local.repo>
+        
+        &lt;!-- Issue warnings instead of aborting on error -->
+        &lt;baselineMode>warn&lt;/baselineMode>
+        &lt;jgit.dirtyWorkingTree>warning&lt;/jgit.dirtyWorkingTree>
+        
+        &lt;!-- Skip unit tests -->
+        &lt;maven.test.skip>true&lt;/maven.test.skip>
+      &lt;/properties>
+    &lt;/profile>
+  &lt;/profiles>
+
+  &lt;!-- Enable the above settings -->
+  &lt;activeProfiles>
+    &lt;activeProfile>my-css-settings&lt;/activeProfile>
+  &lt;/activeProfiles>
+&lt;/settings>
+</programlisting>
+
+<para>Finally, to build CSS from sources, run Maven like this:
+</para>
 
 <programlisting>
-# Build into a local repository
-LOCALREPO=/tmp/css_build_repo
-
-# Use the local repository,
-# use warnings (instead of errors),
-# skip execution of unit tests
-PROPERTIES="-Dcsstudio.local.repo=$LOCALREPO
-            -DbaselineMode=warn -Djgit.dirtyWorkingTree=warning
-            -Dmaven.test.skip=true"
-
 # To start fresh, clean the local repository
-rm -rf $LOCALREPO
+rm -rf /tmp/my_css_build_repo
 
 # Fetch external artifacts, wrap as Eclipse plugins
-(cd maven-osgi-bundles; mvn $PROPERTIES clean verify)
+(cd maven-osgi-bundles; mvn clean verify)
 
 # Compile third-party code that needed slight modifications
-# - possibly requiring result of maven-osgi-bundles
-#   that's now in $LOCALREPO
-(cd cs-studio-thirdparty; mvn $PROPERTIES clean verify)
+(cd cs-studio-thirdparty; mvn clean verify)
 
 # Compile CSS 'core' code
-# - using maven-osgi-bundles, cs-studio-thirdparty from $LOCALREPO
-(cd cs-studio/core; mvn $PROPERTIES clean verify)
+(cd cs-studio/core; mvn clean verify)
 
 # Compile CSS 'applications' code
-(cd cs-studio/applications; mvn $PROPERTIES clean verify)
+(cd cs-studio/applications; mvn clean verify)
 
 # Compile desired products
-(cd org.csstudio.product; mvn $PROPERTIES clean verify)
+(cd org.csstudio.product; mvn clean verify)
 # or:
-(cd cs-studio-SNS; mvn $PROPERTIES clean verify)
+(cd cs-studio-SNS; mvn clean verify)
 # or:
-(cd org.csstudio.nsls2.product; mvn $PROPERTIES clean verify)
+(cd org.csstudio.nsls2.product; mvn clean verify)
 </programlisting>
 
 <para>After the last step, the created products can be found in
@@ -293,6 +318,14 @@ that you call on the command line.
 <listitem>Locate entry <code>Maven</code>, <code>Installations</code>.</listitem>
 <listitem>Press <code>Add</code> to add your command-line version of <code>mvn</code>.</listitem>
 </itemizedlist>
+
+Ignore warnings from unit tests:
+<itemizedlist>
+<listitem>Open the <code>Preferences</code> menu item.</listitem>
+<listitem>Locate entry <code>Maven</code>, <code>Error/Warnings</code>.</listitem>
+<listitem>Select <code>Ignore</code> for <code>Plugin execution not covered by lifecycle configuration</code>.</listitem>
+</itemizedlist>
+
 </para>
 
 </sect1>
