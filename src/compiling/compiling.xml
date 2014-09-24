@@ -4,11 +4,11 @@
          xml:id="chap_compiling">
 <title>Compiling, Running, Debugging CSS</title>
 
-<para>End users of CSS, i.e. people who run CSS on their office computer,
-should not have to compile CSS.
-They can down-load a version of CSS that is already configured for use
-in offices at their site from a local web site.
-Updates to CSS can automatically be down-loaded from that same web site
+<para>End users of CSS should not have to compile CSS.
+In the control room, they should already find it installed.
+For office use, a version of CSS that is already configured
+for the local site can be available on a local web site.
+CSS can self-update from that same web site
 via the Eclipse update mechanism.
 </para>
 
@@ -40,7 +40,7 @@ Similar to the Tyco/Maven Build, but using older tools, and no longer actively s
 
 We start by describing the Tycho/Maven Build based on a complete set of CSS source code.
 Later, we describe how the Eclipse IDE can be used to study the source code, execute it within the IDE,
-debug it, extend it, and finally create binary products.
+debug it, extend it.
 </para>
 
 
@@ -65,6 +65,7 @@ To build CSS from sources with Maven, you need
 <listitem><code>git</code>:
     Git it used to obtain a copy of the CSS sources from the software repository.
     See <link xlink:href="http://git-scm.com">http://git-scm.com</link>.
+    As a developer, you would also use git to submit code updates.
 </listitem>
 <listitem><code>java</code>:
     A Java Development Kit (JDK)<indexterm><primary>Java Development Kit, JDK</primary></indexterm>
@@ -98,8 +99,7 @@ The project web site is
 Example for fetching a complete copy of the source code:
 </para>
 
-<programlisting>
-# 1) Maven bundles
+<programlisting># 1) Maven bundles
 # Code from existing Maven repositories,
 # used "as is", wrapped into Eclipse bundles
 git clone https://github.com/ControlSystemStudio/maven-osgi-bundles.git
@@ -126,7 +126,7 @@ git clone https://github.com/ControlSystemStudio/cs-studio-SNS.git
 git clone https://github.com/cs-studio-nsls2/org.csstudio.nsls2.product.git
 
 # 4.4) Your product?
-git clone you_would_need_to_know_where_to_get_them
+git clone you_would_need_to_know_what_to_get
 </programlisting>
 
 <para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
@@ -162,24 +162,23 @@ Instead, the following recipe uses <code>mvn verify</code> and settings
 that place the generated CSS binaries in a separate Maven repository
 which can easily be deleted and re-created.
 </para>
-<para>The Maven settings can be placed either in a global file
+<para>Maven settings can be placed either in a global file
 <code>$M2_HOME/conf/settings.xml</code>,
 or in a user-specific file <code>$HOME/.m2/settings.xml</code>.
-You could also specify the properties listed in this file on the command line
-when invoking Maven as <code>mvn -Dcsstudio.local.repo=/... -DbaselineMode=warn</code>,
+You could also specify the properties listed in this file on the command line,
+invoking Maven as <code>mvn -Dcsstudio.local.repo=/... -DbaselineMode=warn</code>,
 but to assert that the same settings will also be effective when you later
 use Maven from within the Eclipse IDE, they are best placed in a <code>settings.xml</code> file
 with the following content:
 </para>
-<programlisting>
-&lt;!-- Maven settings.xml -->
+<programlisting>&lt;!-- Maven settings.xml -->
 &lt;settings>
   &lt;profiles>
     &lt;profile>
       &lt;id>my-css-settings&lt;/id>
       &lt;properties>
         &lt;!-- Path to your maven build repo -->
-        &lt;csstudio.local.repo>/tmp/my_css_build_repo&lt;/csstudio.local.repo>
+        &lt;csstudio.local.repo>/tmp/my_build_repo&lt;/csstudio.local.repo>
         
         &lt;!-- Issue warnings instead of aborting on error -->
         &lt;baselineMode>warn&lt;/baselineMode>
@@ -187,6 +186,8 @@ with the following content:
         
         &lt;!-- Skip unit tests -->
         &lt;maven.test.skip>true&lt;/maven.test.skip>
+        &lt;skipTests>true&lt;/skipTests>
+        
       &lt;/properties>
     &lt;/profile>
   &lt;/profiles>
@@ -198,12 +199,25 @@ with the following content:
 &lt;/settings>
 </programlisting>
 
+<para>To verify that your Maven setup uses the properties as you define
+them in your settings file, you can use these commands
+in any of the CSS source tree locations that contain a Maven <code>pom.xml</code>:
+</para>
+<programlisting># Should list "my-css-settings"
+mvn help:active-profiles
+
+# In the long output, locate the &lt;properties> and
+# verify they include what you entered in settings.xml 
+mvn help:effective-pom
+</programlisting>
+
 <para>Finally, to build CSS from sources, run Maven like this:
 </para>
 
-<programlisting>
-# To start fresh, clean the local repository
-rm -rf /tmp/my_css_build_repo
+<programlisting># To start fresh, clean your local repository
+# Use the path that you set for your
+# &lt;csstudio.local.repo> in the settings.xml
+rm -rf /tmp/my_build_repo
 
 # Fetch external artifacts, wrap as Eclipse plugins
 (cd maven-osgi-bundles; mvn clean verify)
@@ -226,8 +240,8 @@ rm -rf /tmp/my_css_build_repo
 </programlisting>
 
 <para>After the last step, the created products can be found in
-<programlisting># Depending on which products you built:
-org.csstudio.product/repository/target/products
+the following locations, depending on which products you built:
+<programlisting>org.csstudio.product/repository/target/products
 cs-studio-SNS/repository/target/products
 org.csstudio.nsls2.product/repository/target/products
 </programlisting>
@@ -244,7 +258,7 @@ can install optional features, for example
 
 
 
-<sect1>  <title>Using the Eclipse IDE</title>
+<sect1 xml:id="sec_runnning_in_ide">  <title>Using the Eclipse IDE</title>
 
 <para>Fundamentally, using the Eclipse IDE for CSS development is easy:
 </para>
@@ -292,9 +306,12 @@ before starting to use the IDE to inspect and possibly change the source code.
 for the currently supported versions. 
 </para>
 
-<para>Start Eclipse, and assert that it uses the JDK:
+<para>Start the Eclipse IDE, and assert that it uses the JDK:
 <itemizedlist>
-<listitem>Open the <code>Preferences</code> menu item, typically located in the <code>Window</code> menu.</listitem>
+<listitem>Open the <code>Preferences</code> menu item.
+It is usually in the <code>Windows</code> menu,
+except for Mac OS X which offers it in the <code>Eclipse</code> menu.
+</listitem>
 <listitem>Locate entry <code>Java</code>, <code>Installed JREs</code>.</listitem>
 <listitem>Assert that your JDK is listed and selected, otherwise use <code>Add</code> to add it, then select it as the default.</listitem>
 </itemizedlist>
@@ -331,102 +348,133 @@ Ignore warnings from unit tests:
 </sect1>
 
 
+<sect1>  <title>Target Platform<indexterm><primary>Target Platform</primary></indexterm></title>
 
-
-
-<sect1>  <title>TO BE UPDATED</title>
-<para>THE FOLLOWING NEEDS TO BE UPDATED FOR MAVEN</para>
-</sect1>
-
-
-<sect1 xml:id="sec_runnning_in_ide">  <title>IDE Example</title>
-
-<para>Running any Eclipse RCP product from the Eclipse IDE is fundamentally simple:
-Open the product definition file, click <quote>Launch ...</quote>, done.
-The most difficult part is the initial Workspace setup.
+<para>CSS uses Eclipse and some publicly available external resources like <code>javax.mail</code>.
+Even if you imported <quote>all</quote> CSS source code into the Eclipse IDE,
+you still need those external resources.
+The Maven Build obtains external resources from online repositories listed in the <code>pom.xml</code> files.
+While the Eclipse IDE reads the <code>pom.xml</code> files to some extend,
+it will not fetch external resources.
 </para>
 
-<para>When you start the Eclipse IDE for the first time, you will be prompted for a <code>Workspace</code><indexterm><primary>Workspace (IDE)</primary></indexterm>.
-This is the directory where Eclipse keeps configuration parameters, for example your compiler settings,
-in a <filename>.metadata</filename> subdirectory.
-The Workspace is <emphasis>not necessarily</emphasis> the same directory that
-holds the source files. Eclipse will in fact not recognize source files that are simply placed in
-the Workspace directory on your disk.
-Your source files need to be <quote>imported</quote><indexterm><primary>Import sources into Workspace (IDE)</primary></indexterm>
-into the workspace to be recognized by Eclipse.
-</para>
-
-
-<figure xml:id="fig_workspace_and_sources">  <title>Workspace versus Source Code</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="workspace.png" width="90%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
-
-
-<para>In the following, we assume that you have the sources in a directory like <filename>/usr/fred/CSS/Sources</filename>,
-while your workspace is a separate directory <filename>/usr/fred/CSS/Workspace</filename>.
-To import the sources into the workspace:
+<para>An Eclipse <code>Target Platform</code> lists a set of plugins that the IDE
+should use when compiling source code.
+By default, the target platform of the IDE includes only the IDE itself.
+For CSS development, you need a target platform that includes the following:
 </para>
 
 <itemizedlist>
-<listitem>In the IDE, select the menu <code>File/Import...</code>, <code>General</code>, <code>Existing Projects into Workspace</code>.</listitem>
-<listitem>As a root directory, select <filename>/usr/fred/CSS/Sources</filename>.</listitem>
-<listitem><emphasis>Do not check the option </emphasis> <quote>Copy projects into workspace</quote>!</listitem>
-<listitem>By default all the plugins on the disk will be selected.
-You can leave them selected, or select only specific plugins as described below.</listitem>
+<listitem>Correct version of the IDE.
+          At times, CSS source code might be locked to a specific version of Eclipse.
+          Your IDE may be the <quote>latest</quote>, newer than the version required for CSS sources,
+          because your target platform provides the Eclipse plugins required
+          to compile CSS.
+</listitem>
+<listitem>External dependencies. While the Maven build fetches these based on 
+          information in the <code>pom.xml</code> files, the IDE requires them
+          to be included in the target platform.
+</listitem>
+<listitem>Binaries for the CSS source code.
+          This is optional, but if your target platform contains all the CSS binaries,
+          you no longer need to import the complete CSS source code into the IDE.
+          Instead, you can import only the sources which you want to study or extend.
+          The IDE will favor source code that you have imported over the corresponding
+          binaries in the target platform, so you can continue to import more source
+          code as required. 
+</listitem>
+</itemizedlist>
+
+<para>Depending on your needs, use one of the following target platforms.
+</para>
+
+
+<sect2> <title>Current IDE and Result of Maven Build</title>
+<para>If your IDE matches the version that is currently required to compile CSS,
+and you completed the Maven Build from the command line as described earlier in this chapter,
+you can use that as your target platform.
+</para>
+
+<itemizedlist>
+<listitem>Open the menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>.</listitem>
+<listitem>Select <code>New</code>, then the option to base the new target on the <code>Current Target: Copy settings from the current target platform</code>.</listitem>
+<listitem>Enter a name, for example <quote>IDE and Local</quote>.</listitem>
+<listitem><code>Add</code> a <code>Directory</code>,
+browsing to the path that you set for your <code>&lt;csstudio.local.repo></code> in the <code>settings.xml</code>.
+</listitem>
+<listitem>Press <code>Finish</code>, and assert that your new target platform is selected as the active one.</listitem>
+</itemizedlist>
+
+<para>As a result, your target platform should contain two entries: <code>${eclipse_home}</code> and for example <code>/tmp/my_build_repo</code>.
+</para>
+
+<para>This option has the advantage that your IDE target platform contains
+only locally available plugins. Any external dependencies have been fetched
+by the inital Maven Build from the command line.
+This results in a robust target platform that you can use without requiring
+network access.
+</para>
+</sect2>
+
+
+<sect2> <title>Prepared Networked Target Platform</title>
+<para>After you imported sources, for example <code>cs-csstudio/applications</code>
+as described in the following section <xref linkend="sec_import_into_IDE"/>,
+you will find that many of them contain a target platform file like <code>cs-csstudio/applications/repository/cs-studio.target</code>.
+This target file contains links to online repositories, for example
+<code>http://download.eclipse.org/releases/luna</code> to obtain the correct version of Eclipse,
+<code>http://download.controlsystemstudio.org/updates/4.0</code> for compiled CSS sources and so on.
+</para>
+
+<itemizedlist>
+<listitem>Open that target file.</listitem>
+<listitem>In the upper right corner of the first tab of the target definition editor, select <code>Set as Target Platform</code>.</listitem>
+</itemizedlist>
+
+<para>While this option appears straight forward,
+the IDE support for target with network links is fragile at the time of this writing.
+When you open the target file, it is likely to show errors <quote>Unable to locate installable unit ..</quote>.
+Press the <code>Update</code> button, or press <code>Edit...</code> and then select all the listed
+categories to force the IDE to re-try a fetch of the remote repositories.
+You may have to do this several times.
+</para>
+<para>
+Furthermore, there is a chicken-and-egg problem because you need to import CSS sources to get the target file.
+These sources will show initial compilation errors because of missing dependencies, provided in the target file.
+After you select the target file, the IDE tends to re-compile, but you may have to force another compilation
+to resolve all errors.
+</para>
+</sect2>
+</sect1>
+
+
+<sect1 xml:id="sec_import_into_IDE">  <title>Import Sources Into IDE</title>
+
+<itemizedlist>
+<listitem>In the IDE, select the menu <code>File/Import...</code>, <code>Maven</code>, <code>Existing Maven Project</code>.</listitem>
+<listitem>As a root directory, you generally select the top-level directory as it was cloned from GIT,
+          for example the <filename>maven-osgi-bundles</filename>, <filename>cs-studio-thirdparty</filename>
+          or <filename>org.csstudio.product</filename> directory, which all contain a top-level <code>pom.xml</code>.
+          For the <filename>cs-studio</filename> source tree, select either the 
+          <filename>cs-studio/core</filename> or
+          <filename>cs-studio/applications</filename> subdirectory,
+          because <filename>cs-studio</filename> itself has no top-level <code>pom.xml</code>.
+</listitem>
+<listitem>Check the option <code>Add Projects to Working Set</code> and enter a suitable name.</listitem>
 <listitem>Press <code>Finish</code>.</listitem>
 </itemizedlist>
 
-<para>If you import from a source snapshot used by a CSS site, that snapshot might be limited
-to the plugins that the site-specific products use, and you can simply import all plugins.
-On the other hand, if you start with a full source repository checkout,
-you might not want to import all plugins, because some may actually conflict with each other.
-Even if there are no conflicts,
-you might want to un-select plugins that you know you will not need because otherwise
-you will end up with a workspace that is confusingly huge, even though you at best need
-only half of the plugins in there.
+<para>In the Eclipse <code>Package Explorer</code><indexterm><primary>Project Explorer</primary></indexterm>,
+select the view drop-down menu <code>Top Level Elements</code> and pick <code>Working Sets</code>.
 </para>
+</sect1>
 
-<para>The problem might be that you have initially no idea which plugins you actually need.
-You can leave them all selected, then later remove those from the workspace
-that you find not to be needed for your products. When deleting plugin projects from the workspace,
-do <emphasis>not</emphasis> check the option to <quote>Delete project contents on disk</quote>
-which would delete the actual files. Instead, only delete the project from the workspace,
-but leave it on the disk and thus also in the software repository.
-</para>
+<sect1>  <title>Using Products in IDE</title>
 
-<para>If you start with an initial selection of plugins that you assume you might need,
-look for errors about missing plugin dependencies, then import the missing plugins.
-For example, one approach would be to import all <code>core</code> plugins.
-Then import the product plugins that you like to use,
-and add <code>applications</code> plugins as needed to resolve missing plugins.
-Though this will initially require some trial and error, it might in the end be the most
-convenient way.
-</para>
-
-<figure xml:id="fig_comp_explorer">  <title>Eclipse Project Explorer</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="comp_explorer.png" width="40%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
-
-<para>The Eclipse <code>Project Explorer</code><indexterm><primary>Project Explorer</primary></indexterm>
-should look similar to <xref linkend="fig_comp_explorer"/>.
-It shows a flat list of plugins, even if the source directory tree has the plugins arranged
-into sub-directories like <code>core</code> or <code>applications</code>.
-It may take some time for Eclipse to compile all the sources.
-There should be no errors, i.e. in the package explorer there should be no red marks on any plugin in the Project Explorer.
-</para>
-
-<figure xml:id="fig_comp_search_prod">  <title>Locating all Product Files</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="comp_search_prod.png" width="100%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
-
-<para>Next you open one of the <code>*.product</code> files, for example
-<programlisting>org.cs.studio.basic.epics.product/CSS.product</programlisting>
+<para>Open one of the <code>*.product</code> files, for example
+<programlisting>org.csstudio.product/repository/cs-studio.product</programlisting>
+or
+<programlisting>cs-studio-SNS/repository/basic-epics.product</programlisting>
 
 You can use the Eclipse <code>Search</code>, <code>File</code> menu to
 locate all available product files as shown in <xref linkend="fig_comp_search_prod"/>
@@ -444,14 +492,34 @@ then press <code>Launch an Eclipse Application</code> to run the product from wi
 The product should start up.
 </para>
 
-<para>In the case of the Archive Engine it might soon exit with an error message indicating
-that it requires more command-line arguments.
-We will later describe how to <quote>export</quote> products from the IDE into standalone
-executables, and with such an exported command-line tool it will of course be trivial
-to provide command-line arguments when invoking the tool from the shell.
+<para>When running a product from within the IDE for the first time,
+the main goal is that the product should <emphasis>start</emphasis>.
+It may then stop because of missing command line arguments,
+but there should be no errors regarding missing plugins or compilation problems.
 </para>
 
-<para>During development and initial testing, though, it can be more convenient to execute CSS products
+<para>The product may not start up, instead reporting errors like
+<quote>Product ....could not be found</quote> or <quote>Missing required bundle ...</quote>,
+even though the Maven Build resulted in a product that starts without errors.
+This results from the Maven Build automatically including required plugins, while
+the IDE expects each plugin that you want to include in the product to be listed
+in the product file or its features.
+</para>
+<para>Ideally, all products would include their dependencies such that the same
+product file can be used by the Maven build as well as the IDE without changes.
+Meanwhile, you can invoke the menu <code>Run</code>, <code>Run Configurations..</code>.
+Locate the configuration for the product, open its <quote>Plug-ins</quote> tab.
+Press <code>Validate Plug-Ins</code> to identify unresolved plugins, i.e. missing dependencies.
+Either manually add the plugins that were reported as missing,
+or try the <code>Add Required Plug-ins</code> button to add them automatically.
+While the <code>Add Required Plug-ins</code> button is easier to use than the manual approach,
+it tends to overzealously add test fragments to the procuct which are not actually required. 
+</para>
+
+<para>In the case of the command-line products like the Alarm Server it might soon exit with an error message indicating
+that it requires command-line arguments.
+It is of course trivial to provide command-line arguments when invoking such tools as intended from the shell.
+During development and initial testing, though, it can be more convenient to execute CSS products
 from within the IDE.
 To add command-line arguments<indexterm><primary>Command-line arguments in IDE</primary></indexterm>
 to products executed in the IDE,
@@ -462,37 +530,7 @@ The <quote>Program Arguments</quote> section may already contain entries like
 Add your desired command-line arguments to the end of the program arguments.
 </para>
 
-<para>When running a product from within the IDE for the first time,
-the main goal is that the product should <emphasis>start</emphasis>.
-It may then stop because of missing command line arguments,
-but there should be no errors regarding missing plugins or compilation problems.
-</para>
-
-<para>If the product does not start up, and instead you get an error like
-<quote>Product ....could not be found</quote> or <quote>Missing required bundle ...</quote>,
-it can be helpful to open the menu <code>Run</code>, <code>Run Configurations..</code>.
-Locate the configuration that was automatically created when you tried to launch the product.
-On the <code>Plug-ins</code> tab, press <code>Validate Plug-Ins</code>.
-It should give a list of unresolved plugins, i.e. missing dependencies.
-</para>
-
-<para>If you downloaded a consistent set of sources, you should have the missing plugins,
-but maybe you did not import them into the workspace.
-Import them, them add them to the run configuration by either manually selecting them
-or via the button <code>Add Required Plug-Ins</code>.
-</para>
-
-<para>If you cannot find the missing plugins, there are usually two scenarios:
-The missing plugins are part of Eclipse, and you are using a version of Eclipse that
-is not compatible with the sources. For example, some plugin code may depend on 
-<code>org.eclipse.core.runtime</code> version 3.7, but you are using Eclipse 3.5 which
-is too old.
-The other scenario would be that you obtained an inconsistent snapshot of the sources
-where some part is simply missing. In that case you probably need to contact the maintainer
-of the CSS product to determine why the product configuration has an error.
-</para>
-
-<para>If you get the product to run: Congratulations!
+<para>Once you get the product to run: Congratulations!
 Almost as easy as running the product is debugging<indexterm><primary>Debugging</primary></indexterm> it:
 Instead of running the product again from the menu <code>Run</code>, <code>Run History</code>,
 you select <code>Run</code>, <code>Debug History</code> to start the product in debug mode.
@@ -579,8 +617,11 @@ on certain other plugins being available or not.
 <para>End users of CSS cannot be expected to open the IDE, install the source code,
 and then run CSS from within the IDE. They need a product that executes
 from their <quote>start</quote> menu or a desktop link.
-One way to create such a standalone product is to
-<quote>export</quote><indexterm><primary>Exporting a Product</primary></indexterm>
+The preferred way to create standalone products is via the Maven Build described
+earlier in this chapter, because that results in a complete set of products
+for all target architectures.
+Occasionally, however, it can be faster to create a single standalone product for testing
+by <quote>exporting</quote><indexterm><primary>Exporting a Product</primary></indexterm>
 the product from the IDE.
 </para>
 
@@ -599,7 +640,7 @@ where you enter the following:
 <orderedlist>
 <listitem>
 <para>As a Root Directory, enter the name of the product, for example ArchiveEngine, CSS, ...
-You could include a version number, for example CSS-3.0.
+You could include a version number, for example MyCSS-4.0.
 </para>
 <para>Use only a directory <emphasis>name</emphasis>, no path! This is the name of the directory that will
 contain the generated executable and associated files.
@@ -611,7 +652,7 @@ for example <filename>/usr/fred/CSS/bin</filename>
 </para>
 <para>Enter a full path for this option! In the end, the name from the previous option
 will be appended to this directory path, so your product will end up in a directory
-similar to <filename>/usr/fred/CSS/bin/CSS-3.0</filename>.
+similar to <filename>/usr/fred/CSS/bin/MyCSS-4.0</filename>.
 </para>
 <para>Also assert that the directory that you selected is <emphasis role="strong">empty</emphasis>!
 When you export a product into a directory that already contains a product, maybe an older version
@@ -624,7 +665,7 @@ That is probably not what you want, so export into a an empty directory.
 <listitem>Finish</listitem>
 </orderedlist>
 
-<para>You should now have a directory like <filename>/usr/fred/CSS/bin/CSS-3.0</filename>
+<para>You should now have a directory like <filename>/usr/fred/CSS/bin/MyCSS-4.0</filename>
  that contains a <code>css</code> executable.
 You can copy that directory to other computers and run it there.
 One method of deployment would be to offer a ZIP file of the exported product on a web page. 
@@ -697,8 +738,8 @@ Same for Linux and Windows.
 <orderedlist>
 <listitem>Goto the Downloads section on <link xlink:href="http://www.eclipse.org/">http://www.eclipse.org/</link>.</listitem>
 <listitem>Select <quote>Projects</quote>, <quote>Eclipse Project</quote>.</listitem>
-<listitem>Select the version of Eclipse that you are using, for example 3.7.2.</listitem>
-<listitem>Locate the Delta Pack, a file like <filename>eclipse-3.7.2-delta-pack.zip</filename>.</listitem>
+<listitem>Select the version of Eclipse that you are using, for example 4.4.</listitem>
+<listitem>Locate the Delta Pack, a file like <filename>eclipse-4.4-delta-pack.zip</filename>.</listitem>
 </orderedlist>
 
 <para>To use the delta pack:</para>
@@ -710,8 +751,6 @@ The result should be an <filename>eclipse</filename> directory with sub-director
 </listitem>
 <listitem>Open the Target Platform preferences:
 Menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>.
-The Preferences item is usually in the <code>Windows</code> menu, but for Mac OS X it is
-in the <code>Eclipse</code> menu.
 </listitem>
 <listitem>Edit the active target. Add an <quote>Installation</quote>, using the path to the delta pack's
 <filename>eclipse</filename> directory.
@@ -796,32 +835,10 @@ allow you to un-install the patch, or later add additional feature patches.
 <sect1 xml:id="sec_headless_build">  <title>Headless Build</title>
 
 <para>The Headless Build<indexterm><primary>Headless Build</primary></indexterm>
-is similar to the Tycho/Maven Build,
-but using older tools.
-At this time, you should try to use the Tycho/Maven Build.
-</para>
-
-<figure xml:id="fig_comp_headless">  <title>Headless Build</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="comp_headless.png" width="80%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
-
-<para>The headless build does <emphasis>not</emphasis> use the workspace nor the graphical IDE.
-Instead, it is command-line driven and expects to find all feature and plugin projects
-in subdirectories of the build directory which have to be named <filename>features</filename>
-respectively <filename>plugins</filename>.
-</para>
-<para>This usually requires a shell script or a build file for <code>ant</code>
-to copy all feature and plugin projects that are part of your product into such a build directory layout.
-In addition, you need a file <filename>build.properties</filename> to specify which
-product or feature to build, which target architectures to use, and how to name the generated
-archive files.
-</para>
-<para>For details, check the Eclipse online help for Headless Build,
-or refer to the scripts that other CSS sites use to build their products,
-which can be found in the <filename>build</filename> and <filename>products</filename>
-subdirectories of the CSS sources.
+is similar to the Tycho/Maven Build, but using older tools.
+Originally, it was the standard way to compile CSS source code from the command line,
+for example as part of nightly builds.
+It has been replaced by the Tycho/Maven Build.
 </para>
 </sect1>
 
