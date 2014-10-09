@@ -323,6 +323,9 @@ except for Mac OS X which offers it in the <code>Eclipse</code> menu.
 <listitem>Locate entry <code>Maven</code>, <code>Discovery</code>.</listitem>
 <listitem>Press <code>Open Catalog</code>, enter <code>tycho</code>, select the <code>Tycho Configurator</code>.</listitem>
 <listitem>Press <code>Finish</code> and restart Eclipse when prompted.</listitem>
+<listitem>After the restart, you should find the <code>Tycho Configurator</code> listed under the menu
+          <code>Help</code>, <code>Installation Details</code>, <code>Installed Software</code>.
+</listitem>
 </itemizedlist>
 </para>
 
