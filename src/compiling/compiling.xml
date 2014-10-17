@@ -470,6 +470,19 @@ to resolve all errors.
 <para>In the Eclipse <code>Package Explorer</code><indexterm><primary>Project Explorer</primary></indexterm>,
 select the view drop-down menu <code>Top Level Elements</code> and pick <code>Working Sets</code>.
 </para>
+
+<para>The IDE should now compile the imported sources.
+With sources checked out from the <code>master</code> branch,
+there should be no compilation errors.
+If there are, check that the Eclipse Maven or Tycho support has not
+changed the compilation settings.
+At least with Eclipse 4.4.1 it tends to update the <code>.classpath</code>
+files to match IDE settings.
+Select the files or directories that appear to have source code changes in the Package Explorer,
+they are indicate by a greater-than sign,
+and use the context menu <code>Replace With</code>, <code>HEAD Revision</code>.
+</para>
+
 </sect1>
 
 <sect1>  <title>Using Products in IDE</title>
@@ -483,9 +496,9 @@ You can use the Eclipse <code>Search</code>, <code>File</code> menu to
 locate all available product files as shown in <xref linkend="fig_comp_search_prod"/>
 </para>
 
-<figure xml:id="fig_comp_product">  <title>Eclipse Product Editor</title>
+<figure xml:id="fig_comp_search_prod">  <title>Locating all Product Files</title>
   <mediaobject>
-    <imageobject><imagedata fileref="comp_product.png" width="100%" format="PNG"/></imageobject>
+    <imageobject><imagedata fileref="comp_search_prod.png" width="75%" format="PNG"/></imageobject>
   </mediaobject>
 </figure>
 
@@ -494,6 +507,13 @@ In the <code>Overview</code> tab, first press <code>Synchronize</code>,
 then press <code>Launch an Eclipse Application</code> to run the product from within the IDE.
 The product should start up.
 </para>
+
+<figure xml:id="fig_comp_product">  <title>Eclipse Product Editor</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_product.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
 
 <para>When running a product from within the IDE for the first time,
 the main goal is that the product should <emphasis>start</emphasis>.
