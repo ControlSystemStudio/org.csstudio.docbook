@@ -154,10 +154,14 @@ It will place Tycho in a local Maven repository, so subsequent calls will
 not require a complete download, but Maven will continue to check
 remote sites for updates, even when invoking a simple <code>mvn clean</code> command.
 </para>
-<para>Maven is usually executed as <code>mvn install</code>.
+<para>
+<emphasis role="strong">Note:</emphasis>
+Maven is usually executed as <code>mvn install</code>.
 This will compile the source code and place the results in the local
-Maven repository. For compiling CSS, especially when the source code changes quite often
-while you are developing, this is <emphasis>not</emphasis> recommended.
+Maven repository. For compiling CSS, <emphasis>this is not recommended</emphasis>.
+Do not invoke the Maven <code>install</code> command, because this will
+result in version conflicts between artifacts that Maven then installs in its local
+repository and the current sources of CSS.
 Instead, the following recipe uses <code>mvn verify</code> and settings
 that place the generated CSS binaries in a separate Maven repository
 which can easily be deleted and re-created.
@@ -204,11 +208,11 @@ them in your settings file, you can use these commands
 in any of the CSS source tree locations that contain a Maven <code>pom.xml</code>:
 </para>
 <programlisting># Should list "my-css-settings"
-mvn help:active-profiles
+(cd maven-osgi-bundles; mvn help:active-profiles)
 
 # In the long output, locate the &lt;properties> and
 # verify they include what you entered in settings.xml 
-mvn help:effective-pom
+(cd maven-osgi-bundles; mvn help:effective-pom)
 </programlisting>
 
 <para>Finally, to build CSS from sources, run Maven like this:
@@ -218,6 +222,15 @@ mvn help:effective-pom
 # Use the path that you set for your
 # &lt;csstudio.local.repo> in the settings.xml
 rm -rf /tmp/my_build_repo
+
+# If you have accidentally invoked
+#   mvn install
+# then also delete the local Maven repo.
+# If you only used
+#  mvn verify
+# then removing that &lt;csstudio.local.repo>
+# is sufficient
+rm -rf $HOME/.m2/repository
 
 # Fetch external artifacts, wrap as Eclipse plugins
 (cd maven-osgi-bundles; mvn clean verify)
