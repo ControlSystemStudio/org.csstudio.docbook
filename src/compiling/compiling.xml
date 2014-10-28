@@ -491,10 +491,23 @@ If there are, check that the Eclipse Maven or Tycho support has not
 changed the compilation settings.
 At least with Eclipse 4.4.1 it tends to update the <code>.classpath</code>
 files to match IDE settings.
+In <xref linkend="fig_comp_search_prod"/>, note that the package
+<code>org.csstudio.trends.databrowser2</code>
+has a greater-than sign in front of its name.
+This indicates that the source code has changed from the original version
+obtained from Git. When comparing against the <code>HEAD Revision</code>,
+you will find a modified <code>.classpath</code> file.
 Select the files or directories that appear to have source code changes in the Package Explorer,
-they are indicate by a greater-than sign,
-and use the context menu <code>Replace With</code>, <code>HEAD Revision</code>.
+and use the context menu <code>Replace With</code>, <code>HEAD Revision</code>
+to restore their original state. The automated recompilation of the IDE should now succeed.
 </para>
+
+<figure xml:id="fig_comp_ncomitted">  <title>Changed Files</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="comp_uncomitted.png" width="50%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
 
 </sect1>
 
