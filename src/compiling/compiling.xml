@@ -120,7 +120,7 @@ git clone https://github.com/ControlSystemStudio/cs-studio.git
 git clone https://github.com/ControlSystemStudio/org.csstudio.product.git
 
 # 4.2) SNS products
-git clone https://github.com/ControlSystemStudio/cs-studio-SNS.git
+git clone https://github.com/ControlSystemStudio/org.csstudio.sns.git
 
 # 4.3) NSLS2 product
 git clone https://github.com/cs-studio-nsls2/org.csstudio.nsls2.product.git
@@ -247,7 +247,7 @@ rm -rf $HOME/.m2/repository
 # Compile desired products
 (cd org.csstudio.product; mvn clean verify)
 # or:
-(cd cs-studio-SNS; mvn clean verify)
+(cd org.csstudio.sns; mvn clean verify)
 # or:
 (cd org.csstudio.nsls2.product; mvn clean verify)
 </programlisting>
