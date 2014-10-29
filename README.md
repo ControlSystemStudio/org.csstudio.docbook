@@ -1,7 +1,7 @@
 cs-studio-docbook
 =================
 
-cs-studio manual
+Manual for building and using (much) of CS-Studio
 
 This manual is automagically posted to http://cs-studio.sourceforge.net/docbook/ and http://cs-studio.sourceforge.net/docbook/css_book.pdf
 
