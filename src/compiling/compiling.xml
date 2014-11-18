@@ -70,11 +70,11 @@ To build CSS from sources with Maven, you need
 <listitem><code>java</code>:
     A Java Development Kit (JDK)<indexterm><primary>Java Development Kit, JDK</primary></indexterm>
     is necessary to compile the sources.
-	It should be the JDK, not just a Java Runtime Environment (JRE).
-	It should be the Sun/Oracle JDK.
-	OpenJDK, the GNU Compiler for the Java (GCJ)
-	and other environments are currently not fully compatible
-	with the Sun/Oracle JDK.
+    It should be the JDK, not just a Java Runtime Environment (JRE).
+    It should be the Sun/Oracle JDK.
+    OpenJDK, the GNU Compiler for the Java (GCJ)
+    and other environments are currently not fully compatible
+    with the Sun/Oracle JDK.
     Google for <quote>Oracle JDK</quote>.
 </listitem>
 <listitem><code>mvn</code>:
@@ -82,6 +82,13 @@ To build CSS from sources with Maven, you need
     See <link xlink:href="http://maven.apache.org">http://maven.apache.org</link>.
 </listitem>
 </itemizedlist>
+
+<para>Add the desired version of Java to the <code>JAVA_HOME</code>
+environment variable as well as the <code>PATH</code>:
+</para>
+<programlisting>export JAVA_HOME=/path/to/the/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+</programlisting>
 
 </sect1>
 
@@ -213,6 +220,15 @@ in any of the CSS source tree locations that contain a Maven <code>pom.xml</code
 # In the long output, locate the &lt;properties> and
 # verify they include what you entered in settings.xml 
 (cd maven-osgi-bundles; mvn help:effective-pom)
+</programlisting>
+
+<para>Also verify that Maven is using the desired version of Java.
+Note that the first Java found on your <code>$PATH</code> may not be what Maven uses
+because it checks <code>$JAVA_HOME</code>.
+Verify by checking the output of
+</para>
+
+<programlisting>mvn -version
 </programlisting>
 
 <para>Finally, to build CSS from sources, run Maven like this:
