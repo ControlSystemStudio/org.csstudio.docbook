@@ -189,7 +189,7 @@ with the following content:
       &lt;id>my-css-settings&lt;/id>
       &lt;properties>
         &lt;!-- Path to your maven build repo -->
-        &lt;csstudio.local.repo>/tmp/my_build_repo&lt;/csstudio.local.repo>
+        &lt;csstudio.local.repo>/my_build_repo&lt;/csstudio.local.repo>
         
         &lt;!-- Issue warnings instead of aborting on error -->
         &lt;baselineMode>warn&lt;/baselineMode>
@@ -237,7 +237,7 @@ Verify by checking the output of
 <programlisting># To start fresh, clean your local repository
 # Use the path that you set for your
 # &lt;csstudio.local.repo> in the settings.xml
-rm -rf /tmp/my_build_repo
+rm -rf /my_build_repo
 
 # If you have accidentally invoked
 #   mvn install
@@ -437,7 +437,7 @@ browsing to the path that you set for your <code>&lt;csstudio.local.repo></code>
 <listitem>Press <code>Finish</code>, and assert that your new target platform is selected as the active one.</listitem>
 </itemizedlist>
 
-<para>As a result, your target platform should contain two entries: <code>${eclipse_home}</code> and for example <code>/tmp/my_build_repo</code>.
+<para>As a result, your target platform should contain two entries: <code>${eclipse_home}</code> and for example <code>/my_build_repo</code>.
 </para>
 
 <para>This option has the advantage that your IDE target platform contains
