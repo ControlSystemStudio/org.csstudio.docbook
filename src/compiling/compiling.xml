@@ -191,6 +191,11 @@ with the following content:
         &lt;!-- Path to your maven build repo -->
         &lt;csstudio.local.repo>/my_build_repo&lt;/csstudio.local.repo>
         
+        &lt;!-- Setting this property disables
+             the download.controlsystemstudio.org repos,
+             so you use only the local repo -->
+        &lt;cs-studio>dummy_value&lt;/cs-studio>
+        
         &lt;!-- Issue warnings instead of aborting on error -->
         &lt;baselineMode>warn&lt;/baselineMode>
         &lt;jgit.dirtyWorkingTree>warning&lt;/jgit.dirtyWorkingTree>
