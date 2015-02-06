@@ -106,31 +106,34 @@ The project web site is
 Example for fetching a complete copy of the source code:
 </para>
 
-<programlisting># 1) Maven bundles
+<programlisting># Define base URL
+GH=https://github.com/ControlSystemStudio
+
+# 1) Maven bundles
 # Code from existing Maven repositories,
 # used "as is", wrapped into Eclipse bundles
-git clone https://github.com/ControlSystemStudio/maven-osgi-bundles.git
+git clone $GH/maven-osgi-bundles.git
 
 # 2) Third party
 # Sources provided by others
 # which needed minimal additions/modifications
-git clone https://github.com/ControlSystemStudio/cs-studio-thirdparty.git
+git clone $GH/cs-studio-thirdparty.git
 
 # 3) Bulk of CSS sources
-git clone https://github.com/ControlSystemStudio/cs-studio.git
+git clone $GH/cs-studio.git
 
 # Depending on your site, you would only fetch one of the following
 # examples, or use one that you created for your own purposes
 
 # 4.1) 'common' product
 # Eventually, the goal is for most sites to use this
-git clone https://github.com/ControlSystemStudio/org.csstudio.product.git
+git clone $GH/org.csstudio.product.git
 
 # 4.2) SNS products
-git clone https://github.com/ControlSystemStudio/org.csstudio.sns.git
+git clone $GH/org.csstudio.sns.git
 
 # 4.3) NSLS2 product
-git clone https://github.com/cs-studio-nsls2/org.csstudio.nsls2.product.git
+git clone $GH/org.csstudio.nsls2.product.git
 
 # 4.4) Your product?
 git clone you_would_need_to_know_what_to_get
@@ -148,6 +151,79 @@ git clone you_would_need_to_know_what_to_get
 </sect1>
 
 
+
+<sect1> <title>Composite P2 Repository</title>
+
+<para>When you compiling the sources just fetched from git,
+building each module results in a P2 repository for the created artifacts.
+Compilation of a module typically depends on other previously created modules.
+When finally building the products, this will require access to all
+the previously created module repositories.
+</para>
+
+<para>A composite P2 repository can lists all the locally created artifacts.
+This is best when you need to work on the software.
+To simply assemble a product, you could also use a composite P2 repository
+that lists web sites which already contain the binary artifacts,
+without first compiling them locally from source code.
+</para>
+
+<para>To create a composite repository,
+create a directory <code>my_css_repo</code> in the same directory
+that also contains the previously cloned source modules
+with the following two files:
+</para>
+
+<programlisting>&lt;!-- File my_css_repo/compositeContent.xml -->
+&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;?compositeMetadataRepository version='1.0.0'?>
+&lt;repository name='Local Composite Repository'
+type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository'
+            version='1.0.0'>
+  &lt;properties size='1'>
+    &lt;property name='p2.atomic.composite.loading' value='false'/>
+  &lt;/properties>
+  &lt;children size="4">
+    &lt;child location="../maven-osgi-bundles/repository/target/repository"/>
+    &lt;child location="../cs-studio-thirdparty/repository/target/repository"/>
+    &lt;child location="../cs-studio/core/p2repo"/>
+    &lt;child location="../cs-studio/applications/p2repo"/>
+  &lt;/children>
+&lt;/repository>
+</programlisting>
+
+
+<programlisting>&lt;!-- File my_css_repo/compositeArtifacts.xml -->
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;?compositeArtifactRepository version='1.0.0'?>
+&lt;repository name="Local Composite Repository"
+type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository"
+            version="1.0.0">
+  &lt;properties size="1">
+    &lt;property name='p2.atomic.composite.loading' value='false'/>
+  &lt;/properties>
+  &lt;children size="4">
+    &lt;child location="../maven-osgi-bundles/repository/target/repository"/>
+    &lt;child location="../cs-studio-thirdparty/repository/target/repository"/>
+    &lt;child location="../cs-studio/core/p2repo"/>
+    &lt;child location="../cs-studio/applications/p2repo"/>
+  &lt;/children>
+&lt;/repository>
+</programlisting>
+
+<para>The <code>p2.atomic.composite.loading</code> controls how missing child locations
+are treated.
+Setting it to <code>true</code> will check if all listed child locations contain valid repositories.
+This can be used to test the correctnes of the composite repository settings.
+On the other hand, when we start out fresh and compile the <code>cs-studio/core</code> module,
+the <code>cs-studio/applications/p2repo</code> will not exist, yet, because it is generated
+in a later step, so we need to set <code>p2.atomic.composite.loading</code> to <code>false</code>.
+</para>
+
+</sect1>
+
+
+
 <sect1> <title>Configuring and Invoking Maven</title>
 
 <para>When obtaining the Maven Build tools and CSS sources,
@@ -157,8 +233,9 @@ including Tycho and Eclipse, and work like a charm as long as it feels like doin
 The horror of Maven is that it always appears to download the internet.
 When the commands listed in the following instructions
 are run for the first time, Maven will initially download Tycho.
-It will place Tycho in a local Maven repository, so subsequent calls will
-not require a complete download, but Maven will continue to check
+It will place Tycho in a local Maven repository,
+typically under <code>~/.m2/repository</code>.
+Subsequent calls will not require a complete download, but Maven will continue to check
 remote sites for updates, even when invoking a simple <code>mvn clean</code> command.
 </para>
 <para>
@@ -179,16 +256,8 @@ or in a user-specific file <code>$HOME/.m2/settings.xml</code>.
 You could also specify the properties listed in this file on the command line,
 invoking Maven as <code>mvn -Dcsstudio.local.repo=/... -DbaselineMode=warn</code>,
 but to assert that the same settings will also be effective when you later
-use Maven from within the Eclipse IDE, they are best placed in a <code>settings.xml</code> file
+use Maven from within the Eclipse IDE, they are best placed in a <code>/.m2/settings.xml</code> file
 with the following content:
-</para>
-
-<para>
-<emphasis role="strong">
-The following needs to be updated.
-Use of the csstudio.local.repo is no longer recommended.
-Instead, use a composite repo, to be explained in here soon.
-</emphasis>
 </para>
 
 <programlisting>&lt;!-- Maven settings.xml -->
@@ -197,12 +266,13 @@ Instead, use a composite repo, to be explained in here soon.
     &lt;profile>
       &lt;id>my-css-settings&lt;/id>
       &lt;properties>
-        &lt;!-- Path to your maven build repo -->
-        &lt;csstudio.local.repo>/my_build_repo&lt;/csstudio.local.repo>
+        &lt;!-- Path to your composite repo -->
+        &lt;csstudio.composite.repo>/path/to/my_css_repo&lt;/csstudio.composite.repo>
         
-        &lt;!-- Setting this property disables
-             the download.controlsystemstudio.org repos,
-             so you use only the local repo -->
+        &lt;!-- Setting this property DISABLES
+             downloads from
+             download.controlsystemstudio.org,
+             so you use only your composite repo -->
         &lt;cs-studio>dummy_value&lt;/cs-studio>
         
         &lt;!-- Issue warnings instead of aborting on error -->
@@ -249,17 +319,9 @@ Verify by checking the output of
 </para>
 
 <programlisting># To start fresh, clean your local repository
-# Use the path that you set for your
-# &lt;csstudio.local.repo> in the settings.xml
-rm -rf /my_build_repo
-
 # If you have accidentally invoked
 #   mvn install
-# then also delete the local Maven repo.
-# If you only used
-#  mvn verify
-# then removing that &lt;csstudio.local.repo>
-# is sufficient
+# or want to assert that you start over fresh:
 rm -rf $HOME/.m2/repository
 
 # Fetch external artifacts, wrap as Eclipse plugins
