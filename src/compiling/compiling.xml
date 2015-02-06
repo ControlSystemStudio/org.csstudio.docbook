@@ -182,6 +182,15 @@ but to assert that the same settings will also be effective when you later
 use Maven from within the Eclipse IDE, they are best placed in a <code>settings.xml</code> file
 with the following content:
 </para>
+
+<para>
+<emphasis role="strong">
+The following needs to be updated.
+Use of the csstudio.local.repo is no longer recommended.
+Instead, use a composite repo, to be explained in here soon.
+</emphasis>
+</para>
+
 <programlisting>&lt;!-- Maven settings.xml -->
 &lt;settings>
   &lt;profiles>
