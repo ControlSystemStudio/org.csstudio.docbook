@@ -169,12 +169,12 @@ without first compiling them locally from source code.
 </para>
 
 <para>To create a composite repository,
-create a directory <code>my_css_repo</code> in the same directory
+create a directory <code>my_comp_repo</code> in the same directory
 that also contains the previously cloned source modules
 with the following two files:
 </para>
 
-<programlisting>&lt;!-- File my_css_repo/compositeContent.xml -->
+<programlisting>&lt;!-- File my_comp_repo/compositeContent.xml -->
 &lt;?xml version='1.0' encoding='UTF-8'?>
 &lt;?compositeMetadataRepository version='1.0.0'?>
 &lt;repository name='Local Composite Repository'
@@ -193,7 +193,7 @@ type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepos
 </programlisting>
 
 
-<programlisting>&lt;!-- File my_css_repo/compositeArtifacts.xml -->
+<programlisting>&lt;!-- File my_comp_repo/compositeArtifacts.xml -->
 &lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;?compositeArtifactRepository version='1.0.0'?>
 &lt;repository name="Local Composite Repository"
@@ -221,6 +221,24 @@ in a later step, so we need to set <code>p2.atomic.composite.loading</code> to <
 
 </sect1>
 
+
+<sect1> <title>Local P2 Repository</title>
+
+<para>When compiling the sources, you can configure Maven to collect
+all created artifacts in one larger local P2 repository.
+The previously described composite repository already lists all the artifacts
+in their child sub-repositories, and in principle it should not be neccessary
+to copy them all into another local P2 repository.
+</para>
+
+<para>The copy process, however, does not only copy the basic artifacts but
+also their dependencies.
+While the previously described composite repository is sufficient to build
+all of CS-Studio via the Maven command line, you need to build a local repository
+to work on the products within the Eclipse IDE.
+</para>
+
+</sect1>
 
 
 <sect1> <title>Configuring and Invoking Maven</title>
@@ -265,13 +283,22 @@ with the following content:
     &lt;profile>
       &lt;id>my-css-settings&lt;/id>
       &lt;properties>
+        &lt;!-- Configure either a composite repo -->
+             or a local repository, not both!
+          -->
+
         &lt;!-- Path to your composite repo -->
-        &lt;csstudio.composite.repo>/path/to/my_css_repo&lt;/csstudio.composite.repo>
+        &lt;csstudio.composite.repo>/path/to/my_comp_repo&lt;/csstudio.composite.repo>
+
+        &lt;!-- Path to your local repo -->
+        &lt;csstudio.local.repo>/path/to/my_local_repo&lt;/csstudio.local.repo>
         
         &lt;!-- Setting this property DISABLES
              downloads from
              download.controlsystemstudio.org,
-             so you use only your composite repo -->
+             so you use only your
+             local or composite repo
+         -->
         &lt;cs-studio>dummy_value&lt;/cs-studio>
         
         &lt;!-- Issue warnings instead of aborting on error -->
@@ -506,15 +533,13 @@ you can use that as your target platform.
 <listitem>Open the menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>.</listitem>
 <listitem>Select <code>New</code>, then the option to base the new target on the <code>Current Target: Copy settings from the current target platform</code>.</listitem>
 <listitem>Enter a name, for example <quote>IDE and Local</quote>.</listitem>
-<listitem><code>Add</code> a <code>Software Site</code>,
-browsing to the path that you set for your <code>/path/to/my_css_repo</code> in the Maven <code>settings.xml</code>.
+<listitem><code>Add</code> a <code>Directory</code>,
+browsing to the path that you set for your local <code>/path/to/my_local_repo</code> in the Maven <code>settings.xml</code>.
 </listitem>
-<listitem>The dialog will list several items which are found in that repository. Set the check mark on each one!</listitem>
-<listitem>Un-check the option <quote>Include required software</quote>.</listitem>
 <listitem>Press <code>Finish</code>, and assert that your new target platform is selected as the active one.</listitem>
 </itemizedlist>
 
-<para>As a result, your target platform should contain two entries: <code>${eclipse_home}</code> and for example <code>/my_build_repo</code>.
+<para>As a result, your target platform should contain two entries: <code>${eclipse_home}</code> and for example <code>/my_local_repo</code>.
 </para>
 
 <para>This option has the advantage that your IDE target platform contains
