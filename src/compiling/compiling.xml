@@ -199,8 +199,7 @@ type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepos
 &lt;repository name="Local Composite Repository"
 type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository"
             version="1.0.0">
-  &lt;properties size="1">
-    &lt;property name='p2.atomic.composite.loading' value='false'/>
+  &lt;properties size="0">
   &lt;/properties>
   &lt;children size="4">
     &lt;child location="../maven-osgi-bundles/repository/target/repository"/>
@@ -497,7 +496,7 @@ For CSS development, you need a target platform that includes the following:
 </para>
 
 
-<sect2> <title>Current IDE and Result of Maven Build</title>
+<sect2> <title>Local Target: Current IDE and Result of Maven Build</title>
 <para>If your IDE matches the version that is currently required to compile CSS,
 and you completed the Maven Build from the command line as described earlier in this chapter,
 you can use that as your target platform.
@@ -507,9 +506,11 @@ you can use that as your target platform.
 <listitem>Open the menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>.</listitem>
 <listitem>Select <code>New</code>, then the option to base the new target on the <code>Current Target: Copy settings from the current target platform</code>.</listitem>
 <listitem>Enter a name, for example <quote>IDE and Local</quote>.</listitem>
-<listitem><code>Add</code> a <code>Directory</code>,
-browsing to the path that you set for your <code>&lt;csstudio.local.repo></code> in the <code>settings.xml</code>.
+<listitem><code>Add</code> a <code>Software Site</code>,
+browsing to the path that you set for your <code>/path/to/my_css_repo</code> in the Maven <code>settings.xml</code>.
 </listitem>
+<listitem>The dialog will list several items which are found in that repository. Set the check mark on each one!</listitem>
+<listitem>Un-check the option <quote>Include required software</quote>.</listitem>
 <listitem>Press <code>Finish</code>, and assert that your new target platform is selected as the active one.</listitem>
 </itemizedlist>
 
@@ -525,38 +526,39 @@ network access.
 </sect2>
 
 
-<sect2> <title>Prepared Networked Target Platform</title>
-<para>After you imported sources, for example <code>cs-csstudio/applications</code>
-as described in the following section <xref linkend="sec_import_into_IDE"/>,
-you will find that many of them contain a target platform file like <code>cs-csstudio/applications/repository/cs-studio.target</code>.
-This target file contains links to online repositories, for example
-<code>http://download.eclipse.org/releases/luna</code> to obtain the correct version of Eclipse,
-<code>http://download.controlsystemstudio.org/updates/4.0</code> for compiled CSS sources and so on.
-</para>
-
-<itemizedlist>
-<listitem>Open that target file.</listitem>
-<listitem>In the upper right corner of the first tab of the target definition editor, select <code>Set as Target Platform</code>.</listitem>
-</itemizedlist>
-
-<para>While this option appears straight forward,
-the IDE support for target with network links is fragile at the time of this writing.
-When you open the target file, it is likely to show errors <quote>Unable to locate installable unit ..</quote>.
-Press the <code>Update</code> button, or press <code>Edit...</code> and then select all the listed
-categories to force the IDE to re-try a fetch of the remote repositories.
-You may have to do this several times.
-</para>
+<sect2> <title>Networked Target</title>
 <para>
-Furthermore, there is a chicken-and-egg problem because you need to import CSS sources to get the target file.
-These sources will show initial compilation errors because of missing dependencies, provided in the target file.
-After you select the target file, the IDE tends to re-compile, but you may have to force another compilation
-to resolve all errors.
+Instead of using a composite repository that lists locally built binary repositories,
+you can also use a composite repository that
+contains links to online repositories, for example
+<code>http://download.eclipse.org/releases/luna</code> to obtain the correct version of Eclipse,
+<code>http://download.controlsystemstudio.org/updates/4.1</code> for compiled CSS sources and so on.
+</para>
+
+<para>This option does not require you to first create the local binary repositories
+by compiling the source code,
+but IDE support for network links to repositories is fragile at the time of this writing.
 </para>
 </sect2>
 </sect1>
 
 
 <sect1 xml:id="sec_import_into_IDE">  <title>Import Sources Into IDE</title>
+
+<para>
+You only need to import the sources on which you want to work.
+For example, you can import just the product sources, then start the product
+within the IDE. All its dependencies, for example required <filename>cs-studio/core</filename>
+plugins, will be obtained from the target platform, and you can even debug into them
+in the source-level debugger.
+</para>
+<para>
+If you want to work on plugins from <filename>cs-studio/applications</filename> or
+<filename>cs-studio/core</filename>, you can later import them as needed.
+</para>
+<para>
+To import the desired sources into the IDE:
+</para>
 
 <itemizedlist>
 <listitem>In the IDE, select the menu <code>File/Import...</code>, <code>Maven</code>, <code>Existing Maven Project</code>.</listitem>
