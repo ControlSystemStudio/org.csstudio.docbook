@@ -347,8 +347,13 @@ Verify by checking the output of
 <programlisting># To start fresh, clean your local repository
 # If you have accidentally invoked
 #   mvn install
-# or want to assert that you start over fresh:
+# or want to assert that you start over fresh,
+# delete the Maven repository:
 rm -rf $HOME/.m2/repository
+
+# Similarly, you may want to delete
+# a previously built local repo:
+rm -rf /path/to/my_local_repo
 
 # Fetch external artifacts, wrap as Eclipse plugins
 (cd maven-osgi-bundles; mvn clean verify)
