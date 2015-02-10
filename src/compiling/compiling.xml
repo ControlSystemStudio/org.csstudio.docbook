@@ -37,10 +37,37 @@ where you can interactively run, debug and export binary products.
 Similar to the Tyco/Maven Build, but using older tools, and no longer actively supported.
 </listitem>
 </itemizedlist>
+</para>
 
-We start by describing the Tycho/Maven Build based on a complete set of CSS source code.
+<para>In addition to the different ways of compiling the CSS sources,
+you also need to decide how much you want to compile, and what you
+treat as a binary dependency.
+To build a CSS product, there are two extreme approaches.
+</para>
+
+<itemizedlist>
+<listitem>
+Prefer remote binaries:
+You can use a minimal set of sources
+for just the product configuration, and fetch all the required
+CSS plugins for this product as binaries from remote repositories.
+</listitem>
+<listitem>
+Prefer local source code:
+As another extreme, you can compile all the CSS sources into plugin
+binaries, and finally build the product from these locally created
+binaries.
+</listitem>
+</itemizedlist>
+
+<para>
+In addition, there are intermediate approaches.
+</para>
+<para>
+In the following we prefer the local source approach, describing the Tycho/Maven Build based on a complete set of CSS source code.
 Later, we describe how the Eclipse IDE can be used to study the source code, execute it within the IDE,
-debug it, extend it.
+debug it, extend it, also providing an example for using remote repositories instead of locally
+compiled sources.
 </para>
 
 
@@ -560,14 +587,23 @@ network access.
 <para>
 Instead of using a composite repository that lists locally built binary repositories,
 you can also use a composite repository that
-contains links to online repositories, for example
-<code>http://download.eclipse.org/releases/luna</code> to obtain the correct version of Eclipse,
-<code>http://download.controlsystemstudio.org/updates/4.1</code> for compiled CSS sources and so on.
+contains links to online repositories, for example:
+</para>
+<itemizedlist>
+<listitem><code>http://download.eclipse.org/releases/luna</code> to obtain the correct version of Eclipse, unless your target platform already includes the correct IDE</listitem>
+<listitem><code>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository</code> for third party features</listitem>
+<listitem><code>http://diirt.download.controlsystemstudio.org/diirt/master</code> for compiled diirt</listitem>
+<listitem><code>http://download.eclipse.org/efxclipse/runtime-nightly/site</code> for Java FX</listitem>
+<listitem><code>http://download.controlsystemstudio.org/updates/4.1</code> for compiled CSS sources</listitem>
+</itemizedlist>
+
+<para>
+For details check the <code>pom.xml</code> files of the CSS source modules for their list
+of currently required repositories.
 </para>
 
 <para>This option does not require you to first create the local binary repositories
-by compiling the source code,
-but IDE support for network links to repositories is fragile at the time of this writing.
+by compiling the source code.
 </para>
 </sect2>
 </sect1>
