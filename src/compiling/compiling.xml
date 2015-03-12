@@ -638,6 +638,9 @@ To import the desired sources into the IDE:
 </listitem>
 <listitem>Check the option <code>Add Projects to Working Set</code> and enter a suitable name.</listitem>
 <listitem>Press <code>Finish</code>.</listitem>
+<listitem>After waiting a little while, you likely need to reset the sources to their original state
+          as described below because Eclipse will update <code>.classpath</code> files, see below.
+</listitem>
 </itemizedlist>
 
 <para>In the Eclipse <code>Package Explorer</code><indexterm><primary>Project Explorer</primary></indexterm>,
@@ -657,9 +660,11 @@ has a greater-than sign in front of its name.
 This indicates that the source code has changed from the original version
 obtained from Git. When comparing against the <code>HEAD Revision</code>,
 you will find a modified <code>.classpath</code> file.
-Select the files or directories that appear to have source code changes in the Package Explorer,
-and use the context menu <code>Replace With</code>, <code>HEAD Revision</code>
-to restore their original state. The automated recompilation of the IDE should now succeed.
+The easiest way to restore the files to their original state, reverting those
+changes applied by the IDE:
+Select the top-level directory within the working set, for example the <code>core</code> directory within the working set of the same name.
+On its context menu, invoke <code>Team</code>, <code>Reset</code>, and select the option to reset <code>Hard</code>.
+The automated recompilation of the IDE should now succeed.
 </para>
 
 <figure xml:id="fig_comp_ncomitted">  <title>Changed Files</title>
