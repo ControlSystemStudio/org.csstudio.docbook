@@ -8,7 +8,7 @@
 <subtitle>For installers and maintainers of CS-Studio</subtitle>
 <author><firstname>Kay</firstname><surname>Kasemir</surname></author>
 <author><firstname>Gabriele</firstname><surname>Carcassi</surname></author>
-<copyright><year>2011, 2014</year><holder>Oak Ridge National Laboratory</holder></copyright>
+<copyright><year>2011, 2015</year><holder>Oak Ridge National Laboratory</holder></copyright>
 
 <!--
    Tried to get the 'current date' into the output.
@@ -95,9 +95,6 @@ and CSS in general, you might also want to refer to:
    </itemizedlist>
 </listitem>
 <listitem>The Eclipse IDE online help section <quote>Platform Plug-in Developer Guide</quote>
-</listitem>
-<listitem>The CSS wiki on
-<link xlink:href="http://sourceforge.net/apps/trac/cs-studio/wiki">http://sourceforge.net/apps/trac/cs-studio/wiki</link>.
 </listitem>
 <listitem>Finally, a Google search often gives good results because Eclipse/RCP
 is used all over the world by many developers.
