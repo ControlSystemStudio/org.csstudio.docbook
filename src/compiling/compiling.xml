@@ -576,10 +576,13 @@ browsing to the path that you set for your local <code>/path/to/my_local_repo</c
 
 <para>This option has the advantage that your IDE target platform contains
 only locally available plugins. Any external dependencies have been fetched
-by the inital Maven Build from the command line.
+by the initial Maven Build from the command line.
 This results in a robust target platform that you can use without requiring
 network access.
 </para>
+<para>On the downside, this approach requires you to first build everything from sources using the Maven command line.
+</para>
+
 </sect2>
 
 
@@ -604,6 +607,8 @@ of currently required repositories.
 
 <para>This option does not require you to first create the local binary repositories
 by compiling the source code.
+On the downside, your IDE now depends on network connections. As the content of the remote repostories
+changes or becomes temporarily unavailable, you may be unable to work in the IDE.
 </para>
 </sect2>
 </sect1>
