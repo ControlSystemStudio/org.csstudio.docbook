@@ -59,7 +59,7 @@ and the current PDF is at
 </para>
 </acknowledgements>
 
-<part xml:id="part_guide"> <title>CSS Guide</title>
+<part xml:id="part_guide"> <title>CS-Studio Guide</title>
 <partintro>
 <para>This book has two parts.
 The first part consists of an introduction to CSS.
@@ -77,6 +77,11 @@ and CSS in general, you might also want to refer to:
 <itemizedlist>
 <listitem>Books
    <itemizedlist>
+   <listitem>Lars Vogel and Mike Milinkovich,
+             <citetitle pubwork="book">Eclipse 4 RCP:
+             The complete guide to Eclipse application development</citetitle>,
+             2013.
+   </listitem>
    <listitem>Clayberg and Rubel,
              <citetitle pubwork="book">eclipse: Building Commercial Quality Plug-ins</citetitle>
              and the 2008 update 
@@ -102,24 +107,6 @@ is used all over the world by many developers.
 </itemizedlist>
 </para>
 </partintro>
-
-<!-- 
-* Installing, configuring, running CSS
- Starting with MySQL, JMS, Java, Eclipse and the CSS sources,
- how to build the Archive Engine, Alarm Server, CSS GUI.
- How to configure them.
- How to run the archive engine.
- How to tweak CSS for your site's end users.
- How to run the alarm server.
- (1-2 days)
-
-* Basic CSS/Eclipse usage (half day)
- Data Browser, EPICS PV tree, ...
-
-* BOY (Maybe 1 day)
-
-* Alarm Handler (half day)
- -->
 
 <xi:include href="introduction.xml" />
 <xi:include href="css_intro/introduction.xml" />
@@ -152,8 +139,10 @@ is used all over the world by many developers.
 
 <part xml:id="part_plugin_reference">  <title>Plug-in Reference</title>
 <partintro>
-<para>The following chapters contain references for certain
-CSS plugins.
+<para>The following chapters contain references regarding the API
+or internals of certain CS-Studio plugins.
+Information for end users tends to be located in the online help,
+so check there as well.
 </para>
 </partintro>
 
