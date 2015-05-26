@@ -2,11 +2,7 @@
 <chapter xmlns="http://docbook.org/ns/docbook"  version="5.0"
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xml:id="chap_compiling">
-<title>BEING UPDATED: Compiling, Running, Debugging CSS</title>
-
-<para>
-THIS IS BEING UPDATED BASED ON RECENT CHANGES TO THE BUILD SETUP.
-</para>
+<title>Compiling, Running, Debugging CSS</title>
 
 <para>This chapter describes how you, as a developer,
 compile CSS from source code.
@@ -403,6 +399,14 @@ environment variable as well as the <code>PATH</code>:
 export PATH=$JAVA_HOME/bin:$PATH
 </programlisting>
 
+<para>Verify that Maven is using the desired version of Java.
+Note that the first Java found on your <code>$PATH</code> may not be what Maven uses
+because it checks <code>$JAVA_HOME</code>.
+Verify by checking the output of
+</para>
+<programlisting>mvn -version
+</programlisting>
+
 </sect1>
 
 
@@ -420,6 +424,7 @@ typically under <code>~/.m2/repository</code>.
 Subsequent calls will not require a complete download, but Maven will continue to check
 remote sites for updates, even when invoking a simple <code>mvn clean</code> command.
 </para>
+
 <para>
 <emphasis role="strong">Note:</emphasis>
 If you have used Maven on a previous project, you may be familiar with executing it as <code>mvn install</code>.
@@ -431,8 +436,24 @@ repository and the current sources of CSS.
 Instead, we use <code>mvn verify</code>, and the generated CSS binaries
 are placed in the previously described local P2 repositories within the source tree.
 </para>
-<para>Maven settings can be placed either in a global file
-<code>$M2_HOME/conf/settings.xml</code>,
+
+<para>If you do not further configure Maven, all CSS compilation will default to
+using remote repositories.
+For example, if you only obtained the source code for the common CSS product,
+the following will build it, obtaining all required depdendencies from
+remote repositories which are configured in the <code>pom.xml</code> files
+of the product:
+</para>
+<programlisting># Compile common product
+(cd org.csstudio.product; mvn clean verify)
+</programlisting>
+
+<para>As you develop CSS, you might prefer to download more of the source code
+so that you can inspect and maybe modify it. You then configure a composite
+repository that lists your locally created repositories, based on locally edited
+sources, over the remote repositories.
+To configure Maven to use your composite repository as well as additional settings,
+create either a global file <code>$M2_HOME/conf/settings.xml</code>,
 or in a user-specific file <code>$HOME/.m2/settings.xml</code>.
 You could also specify the properties listed in this file on the command line,
 invoking Maven as <code>mvn -Dcsstudio.composite.repo=..</code>,
@@ -452,7 +473,6 @@ based on the following example:
              In your composite repository, you can list
              local repositories.
           -->
-
         &lt;!-- Path to your composite repo -->
         &lt;csstudio.composite.repo>/path/to/my_comp_repo&lt;/csstudio.composite.repo>
 
@@ -505,15 +525,6 @@ in any of the CSS source tree locations that contain a Maven <code>pom.xml</code
 (cd maven-osgi-bundles; mvn help:effective-pom)
 </programlisting>
 
-<para>Also verify that Maven is using the desired version of Java.
-Note that the first Java found on your <code>$PATH</code> may not be what Maven uses
-because it checks <code>$JAVA_HOME</code>.
-Verify by checking the output of
-</para>
-
-<programlisting>mvn -version
-</programlisting>
-
 <para>Finally, to build CSS from sources, run Maven like this:
 </para>
 
@@ -556,11 +567,16 @@ org.csstudio.sns/repository/target/products
 org.csstudio.nsls2.product/repository/target/products
 </programlisting>
 
-There may also be a P2 udpate repository from which the generated product
+Most products also create a P2 update repository from which the generated product
 can install optional features, for example
 <programlisting>org.csstudio.sns/repository/target/repository
 </programlisting>
+</para>
 
+<para>After changes to the source code, you do not need to recompile everything.
+If you change for example code under <code>cs-studio/applications/logbook</code>,
+you can build only that sub-module of applications via
+<programlisting>(cd cs-studio/applications/logbook; mvn verify)</programlisting>
 </para>
 
 </sect1>
@@ -573,7 +589,6 @@ can install optional features, for example
 <para>Fundamentally, using the Eclipse Integrated Development Environment
 (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>
 for CSS development is easy:<indexterm><primary>Compile in Eclipse IDE</primary></indexterm>
-
 </para>
 <orderedlist>
 <listitem>Get Java and Eclipse</listitem>
@@ -582,21 +597,11 @@ for CSS development is easy:<indexterm><primary>Compile in Eclipse IDE</primary>
 <listitem>Open the <filename>*.product</filename> file for CSS, ArchiveEngine, ... and launch it.</listitem>
 </orderedlist>
 
-<para>In addition, the IDE allows you to run the products in debug mode,
+<para>The IDE allows you to run the products in debug mode,
 setting breakpoints, examining the source code.
 </para>
 <para>Once the product is acceptable for use at your site, you can export
 it from the IDE and install the result on the desired computers.
-</para>
-
-<para>At the time of this writing, CSS just started to use a Maven Build.
-The Eclipse 4.4 (Luna) IDE includes Maven support, but you need to add Tycho tooling.
-The tooling sometimes results in errors that are hard to reproduce or understand.
-While the IDE includes very good GIT support, it is currently suggested to perform
-the initial <code>git clone</code> on the command line,
-and maybe even perform the Maven Build on the command line as described above
-to assert that all is in order with your JDK, Maven, and the current set of CSS sources,
-before starting to use the IDE to inspect and possibly change the source code.
 </para>
 
 </sect1>
@@ -610,7 +615,7 @@ before starting to use the IDE to inspect and possibly change the source code.
 <listitem><quote>Eclipse IDE for RCP and RAP Developers</quote>.
     See <link xlink:href="https://www.eclipse.org/downloads">https://www.eclipse.org/downloads</link>.
 </listitem>
-<listitem>Source code from GIT repository as already described in <xref linkend="sec_get_sources"/>.
+<listitem>Desired source code from GIT repository as already described in <xref linkend="sec_get_sources"/>.
 </listitem>
 </itemizedlist>
 </para>
@@ -630,7 +635,9 @@ except for Mac OS X which offers it in the <code>Eclipse</code> menu.
 </itemizedlist>
 </para>
 
-<para>Add Tycho support.
+<para>The Eclipse 4.4 (Luna) IDE includes Maven support, but it will report errors on each <code>pom.xml</code>
+because it does not understand the Tycho commands which Maven self-installs on its first run.
+For the most part you can ignore these errors, or add Tycho support to the IDE:
 <itemizedlist>
 <listitem>Open the <code>Preferences</code> menu item.</listitem>
 <listitem>Locate entry <code>Maven</code>, <code>Discovery</code>.</listitem>
@@ -642,23 +649,14 @@ except for Mac OS X which offers it in the <code>Eclipse</code> menu.
 </itemizedlist>
 </para>
 
-<para>Configure Maven.
-Eclipse includes a simplified version of Maven.
-For consistent results, configure it to use the same <code>mvn</code>
-that you call on the command line.
-<itemizedlist>
-<listitem>Open the <code>Preferences</code> menu item.</listitem>
-<listitem>Locate entry <code>Maven</code>, <code>Installations</code>.</listitem>
-<listitem>Press <code>Add</code> to add your command-line version of <code>mvn</code>.</listitem>
-</itemizedlist>
-
-Ignore warnings from unit tests:
+<para>The IDE may still not understand all the maven commands found in the <code>pom.xml</code>.
+This is not a problem, because several commands are only meant for maven execution outside of the IDE.
+To ignore such errors:
 <itemizedlist>
 <listitem>Open the <code>Preferences</code> menu item.</listitem>
 <listitem>Locate entry <code>Maven</code>, <code>Error/Warnings</code>.</listitem>
 <listitem>Select <code>Ignore</code> for <code>Plugin execution not covered by lifecycle configuration</code>.</listitem>
 </itemizedlist>
-
 </para>
 
 </sect1>
@@ -666,16 +664,15 @@ Ignore warnings from unit tests:
 
 <sect1>  <title>Target Platform<indexterm><primary>Target Platform</primary></indexterm></title>
 
-<para>CSS uses Eclipse and some publicly available external resources like <code>javax.mail</code>.
-Even if you imported <quote>all</quote> CSS source code into the Eclipse IDE,
-you still need those external resources.
+<para>Even if you import the complete CSS source code into the Eclipse IDE,
+you still need certain external dependencies that are not included in the source code.
 The Maven Build obtains external resources from online repositories listed in the <code>pom.xml</code> files.
 While the Eclipse IDE reads the <code>pom.xml</code> files to some extend,
 it will not fetch external resources.
 </para>
 
 <para>An Eclipse <code>Target Platform</code> lists a set of plugins that the IDE
-should use when compiling source code.
+uses when compiling source code.
 By default, the target platform of the IDE includes only the IDE itself.
 For CSS development, you need a target platform that includes the following:
 </para>
@@ -701,67 +698,78 @@ For CSS development, you need a target platform that includes the following:
 </listitem>
 </itemizedlist>
 
-<para>Depending on your needs, use one of the following target platforms.
+<sect2> <title>Common CS-Studio Target</title>
+<para>You are encouraged to use the target configurations included in the CSS sources.
+By using these, other developers will be able to reproduce your setup,
+help with problems, and everybody should get the same results:
+</para>
+<itemizedlist>
+<listitem>Obtain a copy of the <code>cs-studio</code> repository.</listitem>
+<listitem>In the Eclipse IDE, invoke the menu File, Import, General, Existing Projects into Workspace.</listitem>
+<listitem>For the root directory, navigate to the folder <code>cs-studio/build/target-files</code>.</listitem>
+<listitem>Once the project is imported, check the <code>*.target</code> files.</listitem>
+<listitem>Open for example the <code>target-dev</code> file, which will display it in the
+          Target Editor<indexterm><primary>Target Editor</primary></indexterm>.
+</listitem>
+<listitem>Wait until the background operation <quote>Resolving Target Definition</quote> completes.
+          When opening the target for the first time, this will take several minutes,
+          because it downloads the remote repositories.
+</listitem>
+<listitem>There can be errors because some remote repositories are not accessible.
+          In the Target Editor, you can select the locations that indicate errors
+          and use the <code>Update</code> button to re-try.
+          We have seen cases where some artifacts failed to resolve, but these
+          were not essential for building CSS and could be ignored.
+</listitem>
+<listitem>Press <code>Set as Target Platform</code>.</listitem>
+</itemizedlist>
+
+<para>Once you set a target platform, all work within the IDE uses local
+copies of the retrieved artifacts.
 </para>
 
+<para>The development target, <code>target-dev</code>, is meant for working
+on the most recent source code from the git <code>master</code> branch.
+These sources change. If you are already importing most of the CSS source code into
+your IDE, you have those updates available.
+On the other hand, if you only import a few selected source modules and depend on the target
+to provide the rest, you might want to periodically update your target
+to fetch the latest binaries.
+</para>
 
-<sect2> <title>Local Target: Current IDE and Result of Maven Build</title>
-<para>If your IDE matches the version that is currently required to compile CSS,
-and you completed the Maven Build from the command line as described earlier in this chapter,
+<para>Target platform definitions for released branches are expected to be stable.
+</para>
+
+</sect2>
+</sect1>
+
+
+<sect2> <title>Local Target: Result of Maven Build</title>
+<para>While this is not the suggested setup,
+once you completed the Maven Build from the command line as described earlier in this chapter,
 you can use that as your target platform.
 </para>
 
 <itemizedlist>
 <listitem>Open the menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Platform</code>.</listitem>
-<listitem>Select <code>New</code>, then the option to base the new target on the <code>Current Target: Copy settings from the current target platform</code>.</listitem>
+<listitem>Select <code>Add</code>, then the option to base the new target on the <code>Default</code>.</listitem>
 <listitem>Enter a name, for example <quote>IDE and Local</quote>.</listitem>
-<listitem><code>Add</code> a <code>Directory</code>,
-browsing to the path that you set for your local <code>/path/to/my_local_repo</code> in the Maven <code>settings.xml</code>.
+<listitem><code>Add</code> a <code>Directory</code>.
+Browse to the <code>repository/target/repository</code> of your product build tree, or to the actual binary product
+which has a <code>plugins</code> subdirectory.
 </listitem>
 <listitem>Press <code>Finish</code>, and assert that your new target platform is selected as the active one.</listitem>
 </itemizedlist>
 
-<para>As a result, your target platform should contain two entries: <code>${eclipse_home}</code> and for example <code>/my_local_repo</code>.
-</para>
-
 <para>This option has the advantage that your IDE target platform contains
-only locally available plugins. Any external dependencies have been fetched
-by the initial Maven Build from the command line.
-This results in a robust target platform that you can use without requiring
-network access.
+only locally available plugins, avoiding the sometimes problematic resolution of
+remote dependencies.
 </para>
 <para>On the downside, this approach requires you to first build everything from sources using the Maven command line.
+The resulting target will only contain those artifacts that were required to build a specific product.
 </para>
 
 </sect2>
-
-
-<sect2> <title>Networked Target</title>
-<para>
-Instead of using a composite repository that lists locally built binary repositories,
-you can also use a composite repository that
-contains links to online repositories, for example:
-</para>
-<itemizedlist>
-<listitem><code>http://download.eclipse.org/releases/luna</code> to obtain the correct version of Eclipse, unless your target platform already includes the correct IDE</listitem>
-<listitem><code>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository</code> for third party features</listitem>
-<listitem><code>http://diirt.download.controlsystemstudio.org/diirt/master</code> for compiled diirt</listitem>
-<listitem><code>http://download.eclipse.org/efxclipse/runtime-nightly/site</code> for Java FX</listitem>
-<listitem><code>http://download.controlsystemstudio.org/updates/4.1</code> for compiled CSS sources</listitem>
-</itemizedlist>
-
-<para>
-For details check the <code>pom.xml</code> files of the CSS source modules for their list
-of currently required repositories.
-</para>
-
-<para>This option does not require you to first create the local binary repositories
-by compiling the source code.
-On the downside, your IDE now depends on network connections. As the content of the remote repostories
-changes or becomes temporarily unavailable, you may be unable to work in the IDE.
-</para>
-</sect2>
-</sect1>
 
 
 <sect1 xml:id="sec_import_into_IDE">  <title>Import Sources Into IDE</title>
@@ -770,8 +778,7 @@ changes or becomes temporarily unavailable, you may be unable to work in the IDE
 You only need to import the sources on which you want to work.
 For example, you can import just the product sources, then start the product
 within the IDE. All its dependencies, for example required <filename>cs-studio/core</filename>
-plugins, will be obtained from the target platform, and you can even debug into them
-in the source-level debugger.
+plugins, will be obtained from the target platform.
 </para>
 <para>
 If you want to work on plugins from <filename>cs-studio/applications</filename> or
@@ -784,17 +791,16 @@ To import the desired sources into the IDE:
 <itemizedlist>
 <listitem>In the IDE, select the menu <code>File/Import...</code>, <code>Maven</code>, <code>Existing Maven Project</code>.</listitem>
 <listitem>As a root directory, you generally select the top-level directory as it was cloned from GIT,
-          for example the <filename>maven-osgi-bundles</filename>, <filename>cs-studio-thirdparty</filename>
-          or <filename>org.csstudio.product</filename> directory, which all contain a top-level <code>pom.xml</code>.
+          for example the <filename>org.csstudio.product</filename> directory.
           For the <filename>cs-studio</filename> source tree, select either the 
           <filename>cs-studio/core</filename> or
           <filename>cs-studio/applications</filename> subdirectory,
-          because <filename>cs-studio</filename> itself has no top-level <code>pom.xml</code>.
+          or a specific sub module like <filename>cs-studio/applications/logbook</filename>.
 </listitem>
 <listitem>Check the option <code>Add Projects to Working Set</code> and enter a suitable name.</listitem>
 <listitem>Press <code>Finish</code>.</listitem>
 <listitem>After waiting a little while, you likely need to reset the sources to their original state
-          as described below because Eclipse will update <code>.classpath</code> files, see below.
+          as described below because Eclipse will update <filename>.classpath</filename> files, see below.
 </listitem>
 </itemizedlist>
 
@@ -803,11 +809,10 @@ select the view drop-down menu <code>Top Level Elements</code> and pick <code>Wo
 </para>
 
 <para>The IDE should now compile the imported sources.
-With sources checked out from the <code>master</code> branch,
-there should be no compilation errors.
-If there are, check that the Eclipse Maven or Tycho support has not
+There should be no compilation errors.
+If there are, check that the Eclipse Maven support has not
 changed the compilation settings.
-At least with Eclipse 4.4.1 it tends to update the <code>.classpath</code>
+At least with Eclipse 4.4 it tends to update the <code>.classpath</code>
 files to match IDE settings.
 In <xref linkend="fig_comp_search_prod"/>, note that the package
 <code>org.csstudio.trends.databrowser2</code>
@@ -819,7 +824,7 @@ The easiest way to restore the files to their original state, reverting those
 changes applied by the IDE:
 Select the top-level directory within the working set, for example the <code>core</code> directory within the working set of the same name.
 On its context menu, invoke <code>Team</code>, <code>Reset</code>, and select the option to reset <code>Hard</code>.
-The automated recompilation of the IDE should now succeed.
+The IDE should automatically recompile, this time without errors.
 </para>
 
 <figure xml:id="fig_comp_ncomitted">  <title>Changed Files</title>
@@ -836,7 +841,7 @@ The automated recompilation of the IDE should now succeed.
 <para>Open one of the <code>*.product</code> files, for example
 <programlisting>org.csstudio.product/repository/cs-studio.product</programlisting>
 or
-<programlisting>cs-studio-SNS/repository/basic-epics.product</programlisting>
+<programlisting>org.studio.sns/repository/basic-epics.product</programlisting>
 
 You can use the Eclipse <code>Search</code>, <code>File</code> menu to
 locate all available product files as shown in <xref linkend="fig_comp_search_prod"/>
