@@ -1,5 +1,8 @@
 # Docbook XSL files, downloaded
 docbook-xsl-1.76.1
 
+# FOP, downloaded
+fop-1.1
+
 # Output
 out
