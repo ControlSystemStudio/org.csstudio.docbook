@@ -2,7 +2,17 @@
 <chapter xmlns="http://docbook.org/ns/docbook"  version="5.0"
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xml:id="chap_compiling">
-<title>Compiling, Running, Debugging CSS</title>
+<title>BEING UPDATED: Compiling, Running, Debugging CSS</title>
+
+<para>
+THIS IS BEING UPDATED BASED ON RECENT CHANGES TO THE BUILD SETUP.
+</para>
+
+<para>This chapter describes how you, as a developer,
+compile CSS from source code.
+This allows you to execute CSS within the Eclipse development environment,
+where you can edit the source code and execute it in the debugger.
+</para>
 
 <para>End users of CSS should not have to compile CSS.
 In the control room, they should already find it installed.
@@ -20,60 +30,337 @@ a complete installation will also require you to compile the Archive Engine, Ala
 tools to configure the archive and alarm system, maybe more.
 </para>
 
-<para>There are different ways of compiling CSS sources into executable binaries:
-<itemizedlist>
-<listitem>Tycho/Maven Build<indexterm><primary>Compile with Tycho/Maven</primary></indexterm>:
-This allows you to create products from the command-line.
-It can be automated.
-For example, Hudson/Jenkins can create product binaries each night,
-or whenever  the source code has changed in the software repository .
-</listitem>
-<listitem>Eclipse IDE<indexterm><primary>Compile in Eclipse IDE</primary></indexterm>:
-You import the required CSS source code into the Eclipse
-Integrated Development Environment (IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>,
-where you can interactively run, debug and export binary products.
-</listitem>
-<listitem>Headless PDE Build<indexterm><primary>Compile with Headless PDE</primary></indexterm>:
-Similar to the Tyco/Maven Build, but using older tools, and no longer actively supported.
-</listitem>
-</itemizedlist>
-</para>
 
-<para>In addition to the different ways of compiling the CSS sources,
-you also need to decide how much you want to compile, and what you
-treat as a binary dependency.
-To build a CSS product, there are two extreme approaches.
+<sect1 xml:id="sec_build_modules">  <title>Source Repository, Build Modules, P2 Sites</title>
+
+<para>As the amount of CSS source code grew, it has been split into several modules.
+To build a CSS product from these, there are two extreme approaches.
 </para>
 
 <itemizedlist>
-<listitem>
-Prefer remote binaries:
-You can use a minimal set of sources
-for just the product configuration, and fetch all the required
-CSS plugins for this product as binaries from remote repositories.
-</listitem>
 <listitem>
 Prefer local source code:
-As another extreme, you can compile all the CSS sources into plugin
-binaries, and finally build the product from these locally created
-binaries.
+You obtain the source code for each module and compile it.
+Then you assemble your product from these locally created binaries.
+</listitem>
+<listitem>
+Prefer remote binaries:
+All CSS modules are already available in binary form.
+You can use a minimal set of sources for just the product configuration,
+and fetch all the required CSS module binaries from remote repositories.
 </listitem>
 </itemizedlist>
 
-<para>
-In addition, there are intermediate approaches.
+<para>Obtaining and compiling the complete source code is time consuming.
+In practice, you often use an intermediate approach.
+You obtain the source code for modules that you want to investigate further,
+for example to fix a bug or to add new functionality.
+For the remaining modules, you rely on binaries in a remote P2 repository.
 </para>
-<para>
-In the following we prefer the local source approach, describing the Tycho/Maven Build based on a complete set of CSS source code.
-Later, we describe how the Eclipse IDE can be used to study the source code, execute it within the IDE,
-debug it, extend it, also providing an example for using remote repositories instead of locally
-compiled sources.
+
+<para>Which exact approach you use depends on your situation.
+You may want to configure a local Hudson/Jenkins instance to perform a complete
+nightly build for your site, obtaining all the source code and compiling it.
+Or you may prefer to configure your Eclipse IDE target platform to use
+remote P2 repositories, then import only the source code for a site specific
+product and run it in the IDE.
+Read through the remainder of this chapter to learn about the options and tools,
+then make your decision.
 </para>
+
+</sect1>
+
+<sect1 xml:id="sec_get_sources"> <title>Obtaining CSS Sources</title>
+
+<para>The complete CSS sources are in a shared
+GitHub<indexterm><primary>Git, GitHub</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
+repository using the GIT version control system.
+The project web site is
+<link xlink:href="https://github.com/ControlSystemStudio">https://github.com/ControlSystemStudio</link>.
+</para>
+
+<para>For GIT in general, see 
+<link xlink:href="http://git-scm.com">http://git-scm.com</link>.
+</para>
+
+<sect2> <title>Maven OSGi Bundles</title>
+<itemizedlist>
+<listitem>https://github.com/ControlSystemStudio/maven-osgi-bundles.git</listitem>
+</itemizedlist>
+
+<para>This module lists external CSS dependencies, for example MySQL client libraries
+or other common Java libraries. Their binaries are fetched from online repositories
+outside of CSS, for example Maven central, and they are wrapped into Eclipse bundles.
+</para>
+</sect2>
+
+<sect2> <title>Third party</title>
+<itemizedlist>
+<listitem>https://github.com/ControlSystemStudio/cs-studio-thirdparty.git</listitem>
+</itemizedlist>
+
+<para>This module contains sources provided by others which
+needed minimal additions or modifications.
+</para>
+</sect2>
+
+<sect2> <title>CS-Studio</title>
+<itemizedlist>
+<listitem>https://github.com/ControlSystemStudio/cs-studio.git</listitem>
+</itemizedlist>
+
+<para>This source repository contains the bulk of CSS sources.
+It is structured into subdirectories <quote>core</quote> and <quote>applications</quote>,
+which each have further subdirectories.
+</para>
+</sect2>
+
+<sect2> <title>Common Product</title>
+<itemizedlist>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.product.git</listitem>
+</itemizedlist>
+
+<para>A generic CS-Studio product.
+</para>
+</sect2>
+
+<sect2> <title>Site-Specific Products</title>
+<itemizedlist>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.askap.product.git</listitem>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.dls.product.git</listitem>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.ess.product.git</listitem>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.iter.git</listitem>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.nsls2.product.git</listitem>
+<listitem>https://github.com/ControlSystemStudio/org.csstudio.sns.git</listitem>
+<listitem>more ...</listitem>
+</itemizedlist>
+
+<para>Many sites create a set of products that combine desired common features
+with site-specific additions, for example support for a local log book
+or data sources.
+</para>
+</sect2>
+
+<para>
+Below is an example for fetching a complete copy of the source code.
+If you choose to rely on remote binaries for all but the product,
+you would only perform step 4.x.
+</para>
+
+<programlisting># Define base URL
+GH=https://github.com/ControlSystemStudio
+
+# 1) Maven bundles
+git clone $GH/maven-osgi-bundles
+
+# 2) Third party
+git clone $GH/cs-studio-thirdparty
+
+# 3) Bulk of CSS sources
+git clone $GH/cs-studio
+
+# Depending on your site, you would only fetch one of the following
+# examples, or use one that you created for your own purposes
+
+# 4.1) 'common' product
+git clone $GH/org.csstudio.product
+
+# 4.2) SNS products
+git clone $GH/org.csstudio.sns
+
+# 4.3) NSLS2 product
+git clone $GH/org.csstudio.nsls2.product
+
+# 4.4) Your product?
+git clone you_would_need_to_know_what_to_get
+</programlisting>
+
+<para>The <code>master</code> branch of each repository contains the most recent set
+of sources. For each release, there is a numbered release branch, for example <code>4.0.x</code>.
+New functionality and bug fixes are added to the master branch, while the release branches
+are only updated for essential bug fixes.
+</para>
+
+<para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
+<orderedlist>
+<listitem>Obtain GitHub account.</listitem>
+<listitem>Become familiar with GIT.</listitem>
+<listitem>Perform your changes on a branch or a forked repository.</listitem>
+<listitem>Submit pull requests to merge your changes.</listitem>
+</orderedlist>
+
+</sect1>
+
+
+<sect1> <title>P2 Repositories</title>
+
+<para>When you compile CSS sources, building each module results in a P2 repository
+of artifacts.<indexterm><primary>P2 Repository</primary></indexterm>
+Compilation of a module typically depends on other previously created modules.
+For example, compiling the cs-studio sources requires access to P2 repositories for the
+maven-osgi-bundles and cs-studio-thirdparty artifacts.
+</para>
+
+<para>When you compile from sources, these P2 repositories will be created in subdirectories
+<code>repository/target/repository</code> of your source tree.
+If you prefer to skip local compilation and instead use remote repositories,
+these are under <code>http://download.controlsystemstudio.org</code>.
+In the following description of remote repository URLs, note that each URL contains a version number.
+When working with a relased version, the URL simply contains the version number.
+For the source code on the git <code>master</code> branch, the URL uses the next to-be-released
+version number.
+</para>
+
+<sect2> <title>Maven OSGi Bundles</title>
+<para>Local repository:</para>
+<itemizedlist>
+<listitem>maven-osgi-bundles/repository/target/repository</listitem>
+</itemizedlist>
+<para>Remote repository:</para>
+<itemizedlist>
+<listitem>http://download.controlsystemstudio.org/maven-osgi-bundles/4.1</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2> <title>Third party</title>
+<para>Local repository:</para>
+<itemizedlist>
+<listitem>cs-studio-thirdparty/repository/target/repository</listitem>
+</itemizedlist>
+<para>Remote repository:</para>
+<itemizedlist>
+<listitem>http://download.controlsystemstudio.org/thirdparty/4.1</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2> <title>CS-Studio</title>
+<para>Local repositories:</para>
+<itemizedlist>
+<listitem>cs-studio/core/p2repo</listitem>
+<listitem>cs-studio/applications/p2repo</listitem>
+</itemizedlist>
+<para>Remote repositories:</para>
+<itemizedlist>
+<listitem>http://download.controlsystemstudio.org/core/4.1</listitem>
+<listitem>http://download.controlsystemstudio.org/applications/4.1</listitem>
+</itemizedlist>
+<para>The CS-Studio sources are split into core and applications,
+which each result in their own repository.
+</para>
+</sect2>
+
+<para>The Eclipse IDE as well as each CSS product contain the P2 Director
+application<indexterm><primary>P2 Director</primary></indexterm>
+which can be used to list the content of a repository:
+
+<programlisting># Use either the Eclipse IDE or a CSS product.
+# Both should include the Equinox launcher
+# plugin which in turn contains the P2 director
+export APP_PLUGINS=/path/to/my/eclipse
+
+DIRECTOR="java \
+ -jar $APP_PLUGINS/plugins/org.eclipse.equinox.launcher_*.jar \
+ -debug -consolelog \
+ -application org.eclipse.equinox.p2.director"
+
+# List content of a remote repository.
+$DIRECTOR -list -repository http://download.eclipse.org/releases/luna/
+
+# List content of a local repository.
+# Path needs to start with 'file://' and be absolute.
+$DIRECTOR -list -repository \
+ file://path/to/maven-osgi-bundles/repository/target/repository
+</programlisting>
+</para>
+
+</sect1>
+
+
+<sect1> <title>Composite P2 Repository</title>
+
+<para>Assembling a product typically requires artifacts from <code>maven-osgi-bundles</code>,
+<code>cs-studio-thirdparty</code>, <code>cs-studio/core</code>, <code>cs-studio/applications</code> and maybe locally
+created site-specific additions.
+</para>
+
+<para>A composite P2 repository<indexterm><primary>Composite P2 Repository</primary></indexterm>
+is simply a list of other P2 repositories.
+It can list local as well as remote repositories, which is useful because you typically need to
+use a combined approach.
+For example, you may want to use remote repositories for <code>maven-osgi-bundles</code> and
+<code>cs-studio-thirdparty</code>, but prefer locally created artifacts for the rest.
+</para>
+
+<para>To create a composite repository,
+create a directory <code>my_comp_repo</code> in the same directory
+that also contains the previously cloned source modules
+with the following two files:
+</para>
+
+<programlisting>&lt;!-- File my_comp_repo/compositeContent.xml -->
+&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;?compositeMetadataRepository version='1.0.0'?>
+&lt;repository name='Local Composite Repository'
+type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository'
+            version='1.0.0'>
+  &lt;properties size='1'>
+    &lt;property name='p2.atomic.composite.loading' value='false'/>
+  &lt;/properties>
+  &lt;children size="4">
+    &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.1"/>
+    &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.1"/>
+    &lt;child location="../cs-studio/core/p2repo"/>
+    &lt;child location="../cs-studio/applications/p2repo"/>
+  &lt;/children>
+&lt;/repository>
+</programlisting>
+
+
+<programlisting>&lt;!-- File my_comp_repo/compositeArtifacts.xml -->
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;?compositeArtifactRepository version='1.0.0'?>
+&lt;repository name="Local Composite Repository"
+type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository"
+            version="1.0.0">
+  &lt;properties size="0">
+  &lt;/properties>
+  &lt;children size="4">
+    &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.1"/>
+    &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.1"/>
+    &lt;child location="../cs-studio/core/p2repo"/>
+    &lt;child location="../cs-studio/applications/p2repo"/>
+  &lt;/children>
+&lt;/repository>
+</programlisting>
+
+<para>In this example, we depend on remote repositories for <code>maven-osgi-bundles</code>
+and <code>cs-studio-thirdparty</code>, while using locally created artifacts for the rest.
+For local child locations, entries starting in <code>file:/</code> refer to the root directory
+and need to be absolute. The child locations in the example refer to locations relative
+to the XML files.
+</para>
+
+<para>For further examples, check the <code>core/p2repo</code> or <code>applications/p2repo</code>
+which themselves are composite repositories.
+</para>
+
+<para>The <code>p2.atomic.composite.loading</code> controls how missing child locations
+are treated.
+Setting it to <code>true</code> will check if all listed child locations contain valid repositories.
+This can be used to test the correctnes of the composite repository settings.
+On the other hand, when we start out fresh and compile the <code>cs-studio/core</code> module,
+the <code>cs-studio/applications/p2repo</code> will not exist, yet, because it is generated
+in a later step, so we need to set <code>p2.atomic.composite.loading</code> to <code>false</code>.
+</para>
+
+
+</sect1>
 
 
 <sect1 xml:id="sec_tycho_build">  <title>Tycho/Maven Build</title>
 
-<para><code>Maven</code><indexterm><primary>Maven</primary></indexterm>
+<para><code>Maven</code><indexterm><primary>Maven</primary></indexterm><indexterm>
+<primary>Compile with Tycho/Maven</primary></indexterm>
 is a generic build tool for Java.
 It uses <code>pom.xml</code><indexterm><primary>POM Files, pom.xml</primary></indexterm> files
 to define how a piece of software needs to be compiled, and to list its dependencies.
@@ -89,10 +376,9 @@ To build CSS from sources with Maven, you need
 </para>
 
 <itemizedlist>
-<listitem><code>git</code>:
-    Git it used to obtain a copy of the CSS sources from the software repository.
-    See <link xlink:href="http://git-scm.com">http://git-scm.com</link>.
-    As a developer, you would also use git to submit code updates.
+<listitem><code>Sources</code>:
+    The sources you want to compile. Obtain them from Github as described earlier in
+    this chapter. You only need to fetch those sources that you want to compile.
 </listitem>
 <listitem><code>java</code>:
     A Java Development Kit (JDK)<indexterm><primary>Java Development Kit, JDK</primary></indexterm>
@@ -120,154 +406,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 </sect1>
 
 
-<sect1 xml:id="sec_get_sources"> <title>Obtaining CSS Sources</title>
-
-<para>The complete CSS sources are in a shared
-GitHub<indexterm><primary>GitHub</primary></indexterm><indexterm><primary>Source Code</primary></indexterm>
-repository using the GIT version control system.
-The project web site is
-<link xlink:href="https://github.com/ControlSystemStudio">https://github.com/ControlSystemStudio</link>.
-</para>
-
-<para>
-Example for fetching a complete copy of the source code:
-</para>
-
-<programlisting># Define base URL
-GH=https://github.com/ControlSystemStudio
-
-# 1) Maven bundles
-# Code from existing Maven repositories,
-# used "as is", wrapped into Eclipse bundles
-git clone $GH/maven-osgi-bundles.git
-
-# 2) Third party
-# Sources provided by others
-# which needed minimal additions/modifications
-git clone $GH/cs-studio-thirdparty.git
-
-# 3) Bulk of CSS sources
-git clone $GH/cs-studio.git
-
-# Depending on your site, you would only fetch one of the following
-# examples, or use one that you created for your own purposes
-
-# 4.1) 'common' product
-# Eventually, the goal is for most sites to use this
-git clone $GH/org.csstudio.product.git
-
-# 4.2) SNS products
-git clone $GH/org.csstudio.sns.git
-
-# 4.3) NSLS2 product
-git clone $GH/org.csstudio.nsls2.product.git
-
-# 4.4) Your product?
-git clone you_would_need_to_know_what_to_get
-</programlisting>
-
-<para>To work on the CSS source code, i.e. to be able to submit changes, several steps are necessary:</para>
-<orderedlist>
-<listitem>Obtain GitHub account.</listitem>
-<listitem>Become familiar with GIT,
-          learn how to clone the repository, how to submit pull requests.
-</listitem>
-<listitem>Contact one of the CSS developers to gain direct write access to the repository.</listitem>
-</orderedlist>
-
-</sect1>
-
-
-
-<sect1> <title>Composite P2 Repository</title>
-
-<para>When you compiling the sources just fetched from git,
-building each module results in a P2 repository for the created artifacts.
-Compilation of a module typically depends on other previously created modules.
-When finally building the products, this will require access to all
-the previously created module repositories.
-</para>
-
-<para>A composite P2 repository can lists all the locally created artifacts.
-This is best when you need to work on the software.
-To simply assemble a product, you could also use a composite P2 repository
-that lists web sites which already contain the binary artifacts,
-without first compiling them locally from source code.
-</para>
-
-<para>To create a composite repository,
-create a directory <code>my_comp_repo</code> in the same directory
-that also contains the previously cloned source modules
-with the following two files:
-</para>
-
-<programlisting>&lt;!-- File my_comp_repo/compositeContent.xml -->
-&lt;?xml version='1.0' encoding='UTF-8'?>
-&lt;?compositeMetadataRepository version='1.0.0'?>
-&lt;repository name='Local Composite Repository'
-type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository'
-            version='1.0.0'>
-  &lt;properties size='1'>
-    &lt;property name='p2.atomic.composite.loading' value='false'/>
-  &lt;/properties>
-  &lt;children size="4">
-    &lt;child location="../maven-osgi-bundles/repository/target/repository"/>
-    &lt;child location="../cs-studio-thirdparty/repository/target/repository"/>
-    &lt;child location="../cs-studio/core/p2repo"/>
-    &lt;child location="../cs-studio/applications/p2repo"/>
-  &lt;/children>
-&lt;/repository>
-</programlisting>
-
-
-<programlisting>&lt;!-- File my_comp_repo/compositeArtifacts.xml -->
-&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;?compositeArtifactRepository version='1.0.0'?>
-&lt;repository name="Local Composite Repository"
-type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository"
-            version="1.0.0">
-  &lt;properties size="0">
-  &lt;/properties>
-  &lt;children size="4">
-    &lt;child location="../maven-osgi-bundles/repository/target/repository"/>
-    &lt;child location="../cs-studio-thirdparty/repository/target/repository"/>
-    &lt;child location="../cs-studio/core/p2repo"/>
-    &lt;child location="../cs-studio/applications/p2repo"/>
-  &lt;/children>
-&lt;/repository>
-</programlisting>
-
-<para>The <code>p2.atomic.composite.loading</code> controls how missing child locations
-are treated.
-Setting it to <code>true</code> will check if all listed child locations contain valid repositories.
-This can be used to test the correctnes of the composite repository settings.
-On the other hand, when we start out fresh and compile the <code>cs-studio/core</code> module,
-the <code>cs-studio/applications/p2repo</code> will not exist, yet, because it is generated
-in a later step, so we need to set <code>p2.atomic.composite.loading</code> to <code>false</code>.
-</para>
-
-</sect1>
-
-
-<sect1> <title>Local P2 Repository</title>
-
-<para>When compiling the sources, you can configure Maven to collect
-all created artifacts in one larger local P2 repository.
-The previously described composite repository already lists all the artifacts
-in their child sub-repositories, and in principle it should not be neccessary
-to copy them all into another local P2 repository.
-</para>
-
-<para>The copy process, however, does not only copy the basic artifacts but
-also their dependencies.
-While the previously described composite repository is sufficient to build
-all of CS-Studio via the Maven command line, you need to build a local repository
-to work on the products within the Eclipse IDE.
-</para>
-
-</sect1>
-
-
 <sect1> <title>Configuring and Invoking Maven</title>
 
 <para>When obtaining the Maven Build tools and CSS sources,
@@ -284,24 +422,22 @@ remote sites for updates, even when invoking a simple <code>mvn clean</code> com
 </para>
 <para>
 <emphasis role="strong">Note:</emphasis>
-Maven is usually executed as <code>mvn install</code>.
+If you have used Maven on a previous project, you may be familiar with executing it as <code>mvn install</code>.
 This will compile the source code and place the results in the local
 Maven repository. For compiling CSS, <emphasis>this is not recommended</emphasis>.
 Do not invoke the Maven <code>install</code> command, because this will
 result in version conflicts between artifacts that Maven then installs in its local
 repository and the current sources of CSS.
-Instead, the following recipe uses <code>mvn verify</code> and settings
-that place the generated CSS binaries in a separate Maven repository
-which can easily be deleted and re-created.
+Instead, we use <code>mvn verify</code>, and the generated CSS binaries
+are placed in the previously described local P2 repositories within the source tree.
 </para>
 <para>Maven settings can be placed either in a global file
 <code>$M2_HOME/conf/settings.xml</code>,
 or in a user-specific file <code>$HOME/.m2/settings.xml</code>.
 You could also specify the properties listed in this file on the command line,
-invoking Maven as <code>mvn -Dcsstudio.local.repo=/... -DbaselineMode=warn</code>,
-but to assert that the same settings will also be effective when you later
-use Maven from within the Eclipse IDE, they are best placed in a <code>/.m2/settings.xml</code> file
-with the following content:
+invoking Maven as <code>mvn -Dcsstudio.composite.repo=..</code>,
+but to assert consistency are best placed in a <code>/.m2/settings.xml</code> file
+based on the following example:
 </para>
 
 <programlisting>&lt;!-- Maven settings.xml -->
@@ -310,24 +446,34 @@ with the following content:
     &lt;profile>
       &lt;id>my-css-settings&lt;/id>
       &lt;properties>
-        &lt;!-- Configure either a composite repo -->
-             or a local repository, not both!
+        &lt;!-- Optionally, configure a composite repo.
+             By default, the Maven build will fetch all
+             depenencies from remote repositories.
+             In your composite repository, you can list
+             local repositories.
           -->
 
         &lt;!-- Path to your composite repo -->
         &lt;csstudio.composite.repo>/path/to/my_comp_repo&lt;/csstudio.composite.repo>
 
-        &lt;!-- Path to your local repo -->
-        &lt;csstudio.local.repo>/path/to/my_local_repo&lt;/csstudio.local.repo>
-        
-        &lt;!-- Setting this property DISABLES
-             downloads from
-             download.controlsystemstudio.org,
-             so you use only your
-             local or composite repo
+        &lt;!-- By default, even if you use a composite repo
+             that lists local P2 sites,
+             Maven will still consult the remote CSS repos.
+             Setting this property DISABLES downloads from
+             http://download.controlsystemstudio.org,
+             so you use _only_ sites listed in your composite repo.
+             If you still want to use selected entries from
+             http://download.controlsystemstudio.org,
+             you can list them in your composite repo.
          -->
         &lt;cs-studio>dummy_value&lt;/cs-studio>
         
+        &lt;!-- Ignore artifacts in ~/.m2/repository/p2,
+             which some other "mvn install" may have placed
+             there.
+         -->
+        &lt;tycho.localArtifacts>ignore&lt;/tycho.localArtifacts>
+
         &lt;!-- Issue warnings instead of aborting on error -->
         &lt;baselineMode>warn&lt;/baselineMode>
         &lt;jgit.dirtyWorkingTree>warning&lt;/jgit.dirtyWorkingTree>
@@ -378,20 +524,21 @@ Verify by checking the output of
 # delete the Maven repository:
 rm -rf $HOME/.m2/repository
 
-# Similarly, you may want to delete
-# a previously built local repo:
-rm -rf /path/to/my_local_repo
-
-# Fetch external artifacts, wrap as Eclipse plugins
+# If you want to compile the maven-osgi-bundles
+# and listed its local repo in your composite repo,
+# do it.
+# Otherwise skip this step, and use the only repo
+# for this module.
 (cd maven-osgi-bundles; mvn clean verify)
 
-# Compile third-party code that needed slight modifications
+# Similarly, compile cs-studio-thirdparty unless
+# you prefer to use its binaries from a remote repo.
 (cd cs-studio-thirdparty; mvn clean verify)
 
-# Compile CSS 'core' code
+# If you want to compile core, ..
 (cd cs-studio/core; mvn clean verify)
 
-# Compile CSS 'applications' code
+# If you want to compile applications, ..
 (cd cs-studio/applications; mvn clean verify)
 
 # Compile desired products
@@ -405,13 +552,13 @@ rm -rf /path/to/my_local_repo
 <para>After the last step, the created products can be found in
 the following locations, depending on which products you built:
 <programlisting>org.csstudio.product/repository/target/products
-cs-studio-SNS/repository/target/products
+org.csstudio.sns/repository/target/products
 org.csstudio.nsls2.product/repository/target/products
 </programlisting>
 
 There may also be a P2 udpate repository from which the generated product
 can install optional features, for example
-<programlisting>cs-studio-SNS/repository/target/repository
+<programlisting>org.csstudio.sns/repository/target/repository
 </programlisting>
 
 </para>
@@ -423,7 +570,10 @@ can install optional features, for example
 
 <sect1 xml:id="sec_runnning_in_ide">  <title>Using the Eclipse IDE</title>
 
-<para>Fundamentally, using the Eclipse IDE for CSS development is easy:
+<para>Fundamentally, using the Eclipse Integrated Development Environment
+(IDE)<indexterm><primary>Integrated Development Environment (IDE)</primary></indexterm>
+for CSS development is easy:<indexterm><primary>Compile in Eclipse IDE</primary></indexterm>
+
 </para>
 <orderedlist>
 <listitem>Get Java and Eclipse</listitem>
