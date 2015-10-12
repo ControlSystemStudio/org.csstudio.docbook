@@ -571,6 +571,9 @@ rm -rf $HOME/.m2/repository
 # you prefer to use its binaries from a remote repo.
 (cd cs-studio-thirdparty; mvn clean verify)
 
+# Again if you prefer local mud
+(cd diirt; mvn clean verify)
+
 # If you want to compile core, ..
 (cd cs-studio/core; mvn clean verify)
 
