@@ -100,6 +100,15 @@ needed minimal additions or modifications.
 </para>
 </sect2>
 
+<sect2> <title>Diirt</title>
+<itemizedlist>
+<listitem>https://github.com/ControlSystemStudio/diirt.git</listitem>
+</itemizedlist>
+
+<para>See diirt documentation.
+</para>
+</sect2>
+
 <sect2> <title>CS-Studio</title>
 <itemizedlist>
 <listitem>https://github.com/ControlSystemStudio/cs-studio.git</listitem>
@@ -152,22 +161,25 @@ git clone $GH/maven-osgi-bundles
 # 2) Third party
 git clone $GH/cs-studio-thirdparty
 
-# 3) Bulk of CSS sources
+# 3) Diirt
+git clone $GH/diirt
+
+# 4) Bulk of CSS sources
 git clone $GH/cs-studio
 
 # Depending on your site, you would only fetch one of the following
 # examples, or use one that you created for your own purposes
 
-# 4.1) 'common' product
+# 5.1) 'common' product
 git clone $GH/org.csstudio.product
 
-# 4.2) SNS products
+# 5.2) SNS products
 git clone $GH/org.csstudio.sns
 
-# 4.3) NSLS2 product
+# 5.3) NSLS2 product
 git clone $GH/org.csstudio.nsls2.product
 
-# 4.4) Your product?
+# 5.4) Your product?
 git clone you_would_need_to_know_what_to_get
 </programlisting>
 
@@ -214,18 +226,29 @@ version number.
 </itemizedlist>
 <para>Remote repository:</para>
 <itemizedlist>
-<listitem>http://download.controlsystemstudio.org/maven-osgi-bundles/4.1</listitem>
+<listitem>http://download.controlsystemstudio.org/maven-osgi-bundles/4.2</listitem>
 </itemizedlist>
 </sect2>
 
 <sect2> <title>Third party</title>
 <para>Local repository:</para>
 <itemizedlist>
-<listitem>cs-studio-thirdparty/repository/target/repository</listitem>
+<listitem>diirt/repository/target/repository</listitem>
 </itemizedlist>
 <para>Remote repository:</para>
 <itemizedlist>
-<listitem>http://download.controlsystemstudio.org/thirdparty/4.1</listitem>
+<listitem>http://download.controlsystemstudio.org/thirdparty/4.2</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2> <title>Diirt</title>
+<para>Local repository:</para>
+<itemizedlist>
+<listitem>diirt/p2/target/repository</listitem>
+</itemizedlist>
+<para>Remote repository:</para>
+<itemizedlist>
+<listitem>http://diirt.download.controlsystemstudio.org/diirt/3.0.1</listitem>
 </itemizedlist>
 </sect2>
 
@@ -237,8 +260,8 @@ version number.
 </itemizedlist>
 <para>Remote repositories:</para>
 <itemizedlist>
-<listitem>http://download.controlsystemstudio.org/core/4.1</listitem>
-<listitem>http://download.controlsystemstudio.org/applications/4.1</listitem>
+<listitem>http://download.controlsystemstudio.org/core/4.2</listitem>
+<listitem>http://download.controlsystemstudio.org/applications/4.2</listitem>
 </itemizedlist>
 <para>The CS-Studio sources are split into core and applications,
 which each result in their own repository.
@@ -302,9 +325,10 @@ type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepos
   &lt;properties size='1'>
     &lt;property name='p2.atomic.composite.loading' value='false'/>
   &lt;/properties>
-  &lt;children size="4">
-    &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.1"/>
-    &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.1"/>
+  &lt;children size="5">
+    &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.2"/>
+    &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.2"/>
+    &lt;child location="http://diirt.download.controlsystemstudio.org/diirt/3.0.1"/>
     &lt;child location="../cs-studio/core/p2repo"/>
     &lt;child location="../cs-studio/applications/p2repo"/>
   &lt;/children>
@@ -320,9 +344,10 @@ type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepos
             version="1.0.0">
   &lt;properties size="0">
   &lt;/properties>
-  &lt;children size="4">
-    &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.1"/>
-    &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.1"/>
+  &lt;children size="5">
+    &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.2"/>
+    &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.2"/>
+    &lt;child location="http://diirt.download.controlsystemstudio.org/diirt/3.0.1"/>
     &lt;child location="../cs-studio/core/p2repo"/>
     &lt;child location="../cs-studio/applications/p2repo"/>
   &lt;/children>
@@ -330,7 +355,7 @@ type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepos
 </programlisting>
 
 <para>In this example, we depend on remote repositories for <code>maven-osgi-bundles</code>
-and <code>cs-studio-thirdparty</code>, while using locally created artifacts for the rest.
+<code>cs-studio-thirdparty</code> and <code>diirt</code>, while using locally created artifacts for the rest.
 For local child locations, entries starting in <code>file:/</code> refer to the root directory
 and need to be absolute. The child locations in the example refer to locations relative
 to the XML files.
