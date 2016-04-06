@@ -660,12 +660,19 @@ except for Mac OS X which offers it in the <code>Eclipse</code> menu.
 </listitem>
 <listitem>Locate entry <code>Java</code>, <code>Installed JREs</code>.</listitem>
 <listitem>Assert that your JDK is listed and selected, otherwise use <code>Add</code> to add it, then select it as the default.</listitem>
+<listitem>Open the preference for <code>Java</code>, <code>Compiler</code>,
+          <code>Errors/Warnings</code>.
+          Locate <code>Deprecated and restricted API</code>
+          and change the handling of <quote>Forbidden referecne (access rules)</quote>
+          from Error to a Warning, or Ignored.
+</listitem>
 </itemizedlist>
 </para>
 
-<para>The Eclipse 4.4 (Luna) IDE includes Maven support, but it will report errors on each <code>pom.xml</code>
-because it does not understand the Tycho commands which Maven self-installs on its first run.
-For the most part you can ignore these errors, or add Tycho support to the IDE:
+<para>The Eclipse IDE includes Maven support, but not Tycho.
+Since the CS-Studio sources are now based on Tycho pom.xml files,
+the IDE needs to create the original IDE files when the sources are imported.
+Add Tycho support to the IDE:
 <itemizedlist>
 <listitem>Open the <code>Preferences</code> menu item.</listitem>
 <listitem>Locate entry <code>Maven</code>, <code>Discovery</code>.</listitem>
@@ -726,55 +733,9 @@ For CSS development, you need a target platform that includes the following:
 </listitem>
 </itemizedlist>
 
-<sect2> <title>Common CS-Studio Target</title>
-<para>You are encouraged to use the target configurations included in the CSS sources.
-By using these, other developers will be able to reproduce your setup,
-help with problems, and everybody should get the same results:
-</para>
-<itemizedlist>
-<listitem>Obtain a copy of the <code>cs-studio</code> repository.</listitem>
-<listitem>In the Eclipse IDE, invoke the menu File, Import, General, Existing Projects into Workspace.</listitem>
-<listitem>For the root directory, navigate to the folder <code>cs-studio/build/target-files</code>.</listitem>
-<listitem>Once the project is imported, check the <code>*.target</code> files.</listitem>
-<listitem>Open for example the <code>target-dev</code> file, which will display it in the
-          Target Editor<indexterm><primary>Target Editor</primary></indexterm>.
-</listitem>
-<listitem>Wait until the background operation <quote>Resolving Target Definition</quote> completes.
-          When opening the target for the first time, this will take several minutes,
-          because it downloads the remote repositories.
-</listitem>
-<listitem>There can be errors because some remote repositories are not accessible.
-          In the Target Editor, you can select the locations that indicate errors
-          and use the <code>Update</code> button to re-try.
-          We have seen cases where some artifacts failed to resolve, but these
-          were not essential for building CSS and could be ignored.
-</listitem>
-<listitem>Press <code>Set as Target Platform</code>.</listitem>
-</itemizedlist>
-
-<para>Once you set a target platform, all work within the IDE uses local
-copies of the retrieved artifacts.
-</para>
-
-<para>The development target, <code>target-dev</code>, is meant for working
-on the most recent source code from the git <code>master</code> branch.
-These sources change. If you are already importing most of the CSS source code into
-your IDE, you have those updates available.
-On the other hand, if you only import a few selected source modules and depend on the target
-to provide the rest, you might want to periodically update your target
-to fetch the latest binaries.
-</para>
-
-<para>Target platform definitions for released branches are expected to be stable.
-</para>
-
-</sect2>
-</sect1>
-
 
 <sect2> <title>Local Target: Result of Maven Build</title>
-<para>While this is not the suggested setup,
-once you completed the Maven Build from the command line as described earlier in this chapter,
+<para>Once you completed the Maven Build from the command line as described earlier in this chapter,
 you can use that as your target platform.
 </para>
 
@@ -798,6 +759,8 @@ The resulting target will only contain those artifacts that were required to bui
 </para>
 
 </sect2>
+
+</sect1>
 
 
 <sect1 xml:id="sec_import_into_IDE">  <title>Import Sources Into IDE</title>
@@ -838,29 +801,7 @@ select the view drop-down menu <code>Top Level Elements</code> and pick <code>Wo
 
 <para>The IDE should now compile the imported sources.
 There should be no compilation errors.
-If there are, check that the Eclipse Maven support has not
-changed the compilation settings.
-At least with Eclipse 4.4 it tends to update the <code>.classpath</code>
-files to match IDE settings.
-In <xref linkend="fig_comp_search_prod"/>, note that the package
-<code>org.csstudio.trends.databrowser2</code>
-has a greater-than sign in front of its name.
-This indicates that the source code has changed from the original version
-obtained from Git. When comparing against the <code>HEAD Revision</code>,
-you will find a modified <code>.classpath</code> file.
-The easiest way to restore the files to their original state, reverting those
-changes applied by the IDE:
-Select the top-level directory within the working set, for example the <code>core</code> directory within the working set of the same name.
-On its context menu, invoke <code>Team</code>, <code>Reset</code>, and select the option to reset <code>Hard</code>.
-The IDE should automatically recompile, this time without errors.
 </para>
-
-<figure xml:id="fig_comp_ncomitted">  <title>Changed Files</title>
-  <mediaobject>
-    <imageobject><imagedata fileref="comp_uncomitted.png" width="50%" format="PNG"/></imageobject>
-  </mediaobject>
-</figure>
-
 
 </sect1>
 
