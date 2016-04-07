@@ -25,8 +25,12 @@ been pre-configured for users at an institute called XYZ.
 A product that includes Probe, Data Browser,
 maybe the alarm table and tree displays.
 </para>
-<para>Why is there more than one CSS product?
-Why can it be difficult to select the required Plug-ins?
+
+<para>The fastest way to create a new site-specific CSS Product is the product template available at 
+<link xlink:href="https://github.com/ControlSystemStudio/org.csstudio.template.product">https://github.com/ControlSystemStudio/org.csstudio.template.product</link>.
+Refer to its README.md for more.
+The following sections explain in more detail how such a product is structured
+and may help to understand how the template is organized.
 </para>
 
 <figure xml:id="fig_product">  <title>Composition of a Product</title>
@@ -36,6 +40,10 @@ Why can it be difficult to select the required Plug-ins?
 </figure>
 
 <sect1> <title>Site-Specific Plugin Selection and Settings</title>
+<para>Why is there more than one CSS product?
+Why can it be difficult to select the required Plug-ins?
+</para>
+
 <para>Plug-ins contain the Java code and associated content like online help
 for some CSS functionality.
 One example would be a <code>databrowser</code> Plug-in that implements
