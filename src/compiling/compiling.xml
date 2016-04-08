@@ -663,7 +663,7 @@ except for Mac OS X which offers it in the <code>Eclipse</code> menu.
 <listitem>Open the preference for <code>Java</code>, <code>Compiler</code>,
           <code>Errors/Warnings</code>.
           Locate <code>Deprecated and restricted API</code>
-          and change the handling of <quote>Forbidden referecne (access rules)</quote>
+          and change the handling of <quote>Forbidden reference (access rules)</quote>
           from Error to a Warning, or Ignored.
 </listitem>
 </itemizedlist>
