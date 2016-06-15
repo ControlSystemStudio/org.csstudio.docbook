@@ -219,6 +219,18 @@ For the source code on the git <code>master</code> branch, the URL uses the next
 version number.
 </para>
 
+<sect2> <title>Diirt</title>
+<para>Note that diirt uses a slightly different repository path and version numbering.</para>
+<para>Local repository:</para>
+<itemizedlist>
+<listitem>diirt/p2/target/repository</listitem>
+</itemizedlist>
+<para>Remote repository:</para>
+<itemizedlist>
+<listitem>http://diirt.download.controlsystemstudio.org/diirt/3.0.1</listitem>
+</itemizedlist>
+</sect2>
+
 <sect2> <title>Maven OSGi Bundles</title>
 <para>Local repository:</para>
 <itemizedlist>
@@ -233,22 +245,11 @@ version number.
 <sect2> <title>Third party</title>
 <para>Local repository:</para>
 <itemizedlist>
-<listitem>diirt/repository/target/repository</listitem>
+<listitem>cs-studio-thirdparty/repository/target/repository</listitem>
 </itemizedlist>
 <para>Remote repository:</para>
 <itemizedlist>
 <listitem>http://download.controlsystemstudio.org/thirdparty/4.2</listitem>
-</itemizedlist>
-</sect2>
-
-<sect2> <title>Diirt</title>
-<para>Local repository:</para>
-<itemizedlist>
-<listitem>diirt/p2/target/repository</listitem>
-</itemizedlist>
-<para>Remote repository:</para>
-<itemizedlist>
-<listitem>http://diirt.download.controlsystemstudio.org/diirt/3.0.1</listitem>
 </itemizedlist>
 </sect2>
 
