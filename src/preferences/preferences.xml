@@ -103,13 +103,22 @@ If you wonder about the names of preference settings supported by each plugin,
 consult the <filename>preferences.ini</filename> of the respective plugin.
 </para>
 <para>The file has to be in the plugin that defines the product.
-For example, assume you have a product X that is defined in
-<filename>org.csstudio.x.y/X.product</filename>.
+By default, it needs to be in the root directory of the product.
+For example, assume you have a product X that is defined as
+<filename>org.csstudio.x.y</filename>.
 Eclipse will look for a file
 <filename>org.csstudio.x.y/plugin_customization.ini</filename>,
 i.e. a customization file in the root directory of the plugin
 that defines the product, for settings to override values
 from individual plugins.
+</para>
+<para>Note, however, that the exact location can be adjusted
+via the <code>preferenceCustomization</code> setting
+in the product <filename>plugin.xml</filename> file.
+For example, if <code>preferenceCustomization</code>
+is set to <code>platform:/config/plugin_customization.ini</code>,
+the customization file will need to be in
+<filename>org.csstudio.x.y/configuration/plugin_customization.ini</filename>.
 </para>
 <para>In the compiled version of the product, plugins are
 usually JAR files in a <filename>plugins</filename> sub-directory
