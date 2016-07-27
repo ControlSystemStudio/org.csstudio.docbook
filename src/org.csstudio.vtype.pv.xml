@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="ch_vtype.pv">
+<title>PV Access - org.csstudio.vtype.pv<indexterm><primary>org.csstudio.vtype.pv</primary></indexterm></title>
+
+<para>This plugin provides the basic APIs for accessing live control
+system data, i.e. read process variable samples from front-end computers.
+Its emphasis is on fairly straight-forward access to individual PVs,
+using a listener for received updates.
+</para>
+
+
+<sect1> <title>Usage</title>
+<para>The <code>org.csstudio.vtype.pv</code> plugin defines
+the API for accessing PVs, an extension point to implement
+such PVs, and a <code>PVFactory</code> to access available
+implementations.
+</para>
+<para>Typical usage looks like this:</para>
+
+<programlisting>// Create PV
+PV pv = PVPool.getPV("some_pv_name");
+
+// Register listener for updates
+pv.addListener(new PVListenerAdapter()
+{
+    @Override
+    public void valueChanged(final PV pv, final VType value)
+    {
+		System.out.println(pv.getName() + " value changed to " + value);
+    }
+});
+
+// Fetch most recent value
+System.out.println(pv.read());
+
+// Write a value
+pv.write("6.28");
+
+// Stop using the PV
+PVPool.releasePV(pv);
+</programlisting>
+
+<para>The <code>VType</code>-derived data objects contain
+not only a basic value, i.e. number or string,
+but also a time stamp, status/severity information
+and in most cases meta data<indexterm><primary>Meta Data, PV</primary></indexterm>.
+The meta data provides information for display tools:
+value range, alarm limits, units, or strings that represent the states
+of enumerated PVs.
+</para>
+</sect1>
+
+
+<sect1> <title>Available Implementations</title>
+
+<para>The plugin <code>org.csstudio.vtype.pv</code> defines an interface
+for accessing live control system data.
+The archive engine for example uses that library for subscribing to value updates from PVs
+that you want to archive.
+</para>
+<para>The <code>utility.pv</code> plugin also contains implementations
+for EPICS Channel Access, EPICS pvAccess, local PVs and simulated PVs.
+</para>
+<para>To associate PVs with an implementation, a prefix is used,
+for example
+<code>sim://sine</code> for a simulated PV <quote>sine</quote> or
+<code>ca://fred</code> for a Channel Access PV <quote>fred</quote>.
+The plugin has a preference setting to specify a default
+prefix, which is usually set to the control system protocol.
+In that case, simply specifying a PV name of <code>fred</code>
+will also select <code>ca://fred</code>.
+</para>
+
+
+<sect2>  <title>EPICS Channel Access</title>
+<para>EPICS Channel Access<indexterm><primary>Channel Access, EPICS</primary></indexterm>
+is the original EPICS Version 3 protocol.
+</para>
+<para>Note that the Channel Access settings like the CA server address list
+are configured from Eclipse properties defined
+in the plugin <code>org.csstudio.platform.libs.epics</code>.
+</para>
+<para>The libs.epics settings also include the subscription mode:
+<itemizedlist>
+<listitem>VALUE - Subscribe to all value changes.
+Analog EPICS records can apply an MDEL update threshold.
+This is the default mode for CSS.
+</listitem>
+<listitem>ARCHIVE - Subscribe to archive updates.
+For analog EPICS records, this uses the dedicated ADEL update threshold.
+This should be used for the ArchiveEngine.
+</listitem>
+<listitem>ALARM - Subscribe to alarm state/severity changes.
+This should be used for the AlarmServer.
+</listitem>
+</itemizedlist>
+</para>
+<para>The EPICS implementation attempts to read the <code>DBR_CTRL_...</code>
+meta data for each PV <emphasis>once</emphasis> on connection.
+EPICS IOCs will fill the meta data based on certain record
+fields like EGU, PREC, HIHI, depending on the record type.
+</para>
+<para>The PV plugin then subscribes to the <code>DBR_TIME_...</code> type of the channel.
+This way the full meta data of the channel is known and can be returned
+with each value, while the network traffic for the subscription updates
+is reduced to the essential time, status and basic number or string.
+This procedure is quite common for EPICS client tool, but has the
+disadvantage that runtime changes to the meta data will not be noticed
+unless the client disconnects and then re-connects, since the full meta
+data is only obtained upon channel connection.
+</para>
+</sect2>
+
+<sect2>  <title>Simulated Data</title>
+<para>One purpose of simulated PVs is for testing CSS tools in the absence
+of an actual control system.
+In an operational setup, <quote>local</quote> PVs like
+<code>loc://demo</code> can be useful to communicate
+via PVs inside CSS, for example between operator interface
+panels inside one instance of CSS.
+</para>
+</sect2>
+</sect1>
+
+
+<sect1> <title>Common Issues</title>
+
+<sect2> <title>Cannot read EPICS PVs</title>
+<para>Check the EPICS CA address list. Try to access the same PV
+with the EPICS <code>caget</code> command-line tool.
+Compare the EPICS_CA_ADDR_LIST environment variable used by the
+command-line tool with the CSS preference for the address list.
+</para>
+</sect2>
+
+<sect2> <title>CA Repeater</title>
+<para>Channel Access uses a
+<filename>caRepeater</filename><indexterm><primary>caRepeater</primary></indexterm>
+to monitor beacons from CA servers.
+If you run CSS without a CA repeater, you might see error messages
+</para>
+<programlisting>failed to start executable - "caRepeater" Cannot find the file
+</programlisting>
+
+<para>This error means:
+You have not started a CA repeater on the computer where you run CSS.
+In practice, CSS will work just fine most of the time.
+In case of network errors or IOC reboots, however,
+it might not re-connect to some PVs after the network or IOC
+problem should have been resolved until you re-open the affected tools.
+</para>
+<para>In an operational control room setup, you should assert that all computers
+launch an instance of the EPICS caRepeater on bootup.
+</para>
+</sect2>
+
+</sect1>
+</chapter>

@@ -33,7 +33,7 @@ them with the <code>softIoc</code> command.
 In the absence of a real control system, a few initial steps with CSS
 will be possible by
 using simulated PVs like <code>sim://sine</code>.
-See <xref linkend="ch_utility.pv"/> for more on PVs.
+See <xref linkend="ch_vtype.pv"/> for more on PVs.
 </para>
 
 </chapter>

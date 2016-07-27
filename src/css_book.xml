@@ -158,8 +158,8 @@ so check there as well.
 <xi:include href="org.csstudio.logging.xml" />
 <xi:include href="org.csstudio.security.xml" />
 <xi:include href="org.csstudio.ui.menu/chapter.xml" />
-<xi:include href="org.csstudio.utility.pv.xml" />
 <xi:include href="org.csstudio.ui.util/chapter.xml" />
+<xi:include href="org.csstudio.vtype.pv.xml" />
 <xi:include href="org.csstudio.openfile/openfile.xml" />
 <xi:include href="org.csstudio.logbook/chapter.xml" />
 
