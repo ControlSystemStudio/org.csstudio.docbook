@@ -1107,6 +1107,21 @@ Menu <code>Preferences</code>, <code>Plug-in Development</code>, <code>Target Pl
 </para>
 </sect1>
 
+<note>
+	<para>
+		In the Mars release, delta pack zip file is no longer available on
+		the download page. The reason for removing it was that p2 can be used
+		instead, so it saves complications in the Platform build, and does not
+		take up redundant space making the same stuff available in multiple
+		ways.
+	</para>
+	<para>
+		Goto <link xlink:href="https://wiki.eclipse.org/Building#Multi-platform_build">Multi-platform build</link>
+		wiki page for more information about it and the full instructions to
+		setup multi-platform build on the new Eclipse releases.
+	</para>
+</note>
+
 
 
 <sect1>  <title>Feature Patch<indexterm><primary>Feature Patch</primary></indexterm></title>
