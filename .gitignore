@@ -6,3 +6,6 @@ fop-1.1
 
 # Output
 out
+
+nbproject/project.xml
+/nbproject/private/
