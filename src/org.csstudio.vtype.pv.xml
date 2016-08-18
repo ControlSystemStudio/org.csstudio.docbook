@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns="http://docbook.org/ns/docbook"
          xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
-         xml:id="ch_utility.pv">
-<title>PV Access - org.csstudio.utility.pv<indexterm><primary>org.csstudio.utility.pv</primary></indexterm></title>
+         xml:id="ch_vtype.pv">
+<title>PV Access - org.csstudio.vtype.pv<indexterm><primary>org.csstudio.vtype.pv</primary></indexterm></title>
 
-<para>
-<emphasis role="strong">
-This API has been deprecated, use the PVManager instead.
-</emphasis>
-</para>
-
-<para>This plugin provides one of the CSS APIs for accessing live control
+<para>This plugin provides the basic APIs for accessing live control
 system data, i.e. read process variable samples from front-end computers.
 Its emphasis is on fairly straight-forward access to individual PVs,
 using a listener for received updates.
@@ -18,7 +12,7 @@ using a listener for received updates.
 
 
 <sect1> <title>Usage</title>
-<para>The <code>org.csstudio.utility.pv</code> plugin defines
+<para>The <code>org.csstudio.vtype.pv</code> plugin defines
 the API for accessing PVs, an extension point to implement
 such PVs, and a <code>PVFactory</code> to access available
 implementations.
@@ -26,35 +20,29 @@ implementations.
 <para>Typical usage looks like this:</para>
 
 <programlisting>// Create PV
-final PV pv = PVFactory.createPV(pv_name);
+PV pv = PVPool.getPV("some_pv_name");
+
 // Register listener for updates
-pv.addListener(new PVListener()
+pv.addListener(new PVListenerAdapter()
 {
-    public void pvDisconnected(PV pv)
+    @Override
+    public void valueChanged(final PV pv, final VType value)
     {
-        System.out.println(pv.getName() + " is disconnected");
-    }
-    public void pvValueUpdate(PV pv)
-    {
-        IValue value = pv.getValue();
-        System.out.println(pv.getName() + " = " + value);
-        if (value instanceof IDoubleValue)
-        {
-            IDoubleValue dbl = (IDoubleValue) value;
-            System.out.println(dbl.getValue());
-        }
-        // ... or use ValueUtil
+		System.out.println(pv.getName() + " value changed to " + value);
     }
 });
-// Start the PV
-pv.start();
 
-...
+// Fetch most recent value
+System.out.println(pv.read());
 
-pv.stop();
+// Write a value
+pv.write("6.28");
+
+// Stop using the PV
+PVPool.releasePV(pv);
 </programlisting>
 
-<para>The <code>IValue</code>-derived data objects contain
+<para>The <code>VType</code>-derived data objects contain
 not only a basic value, i.e. number or string,
 but also a time stamp, status/severity information
 and in most cases meta data<indexterm><primary>Meta Data, PV</primary></indexterm>.
@@ -67,24 +55,19 @@ of enumerated PVs.
 
 <sect1> <title>Available Implementations</title>
 
-<para>The plugin <code>org.csstudio.utility.pv</code> defines an interface
+<para>The plugin <code>org.csstudio.vtype.pv</code> defines an interface
 for accessing live control system data.
 The archive engine for example uses that library for subscribing to value updates from PVs
 that you want to archive.
 </para>
-<para>The <code>utility.pv</code> plugin does not, however, contain any implementation.
-Instead, it defines an Eclipse Extension Point that allows other plugins
-to provide pluggable implementations.
-</para>
-<para>By including either one or all of the following plugins in a product like the archive engine,
-one can build an archive engine that supports EPICS,
-or EPICS and simulated PVs, or only simulated PVs.
+<para>The <code>utility.pv</code> plugin also contains implementations
+for EPICS Channel Access, EPICS pvAccess, local PVs and simulated PVs.
 </para>
 <para>To associate PVs with an implementation, a prefix is used,
 for example
 <code>sim://sine</code> for a simulated PV <quote>sine</quote> or
 <code>ca://fred</code> for a Channel Access PV <quote>fred</quote>.
-The utility.pv plugin has a preference setting to specify a default
+The plugin has a preference setting to specify a default
 prefix, which is usually set to the control system protocol.
 In that case, simply specifying a PV name of <code>fred</code>
 will also select <code>ca://fred</code>.
@@ -92,26 +75,12 @@ will also select <code>ca://fred</code>.
 
 
 <sect2>  <title>EPICS Channel Access</title>
-<para>The plugin
-<code>org.csstudio.utility.pv.epics</code><indexterm><primary>org.csstudio.utility.pv.epics</primary></indexterm>
-implements live data access based on
-EPICS Channel Access<indexterm><primary>Channel Access, EPICS</primary></indexterm>
-Version 3.
+<para>EPICS Channel Access<indexterm><primary>Channel Access, EPICS</primary></indexterm>
+is the original EPICS Version 3 protocol.
 </para>
 <para>Note that the Channel Access settings like the CA server address list
 are configured from Eclipse properties defined
 in the plugin <code>org.csstudio.platform.libs.epics</code>.
-</para>
-<para>One important setting is the choice of <quote>pure Java</quote>
-or the JNI implementation of JCA<indexterm><primary>JCA</primary></indexterm>.
-When selecting the former, the CAJ<indexterm><primary>CAJ</primary></indexterm>
-library will be used. CAJ is a pure Java Channel Access client implementation,
-usable on all platforms, and generally offering good performance.
-Choose JNI if you prefer to use the original Channel Access client library from EPICS base.
-The JNI client library guarantees full compatibility with existing EPICS infrastructure,
-but requires a system-specific version of the JNI binary.
-Refer to the <filename>README.txt</filename> in the libs.epics plugin for
-instructions on building this binary.
 </para>
 <para>The libs.epics settings also include the subscription mode:
 <itemizedlist>
@@ -128,7 +97,7 @@ This should be used for the AlarmServer.
 </listitem>
 </itemizedlist>
 </para>
-<para>The utility.pv plugin attempts to read the <code>DBR_CTRL_...</code>
+<para>The EPICS implementation attempts to read the <code>DBR_CTRL_...</code>
 meta data for each PV <emphasis>once</emphasis> on connection.
 EPICS IOCs will fill the meta data based on certain record
 fields like EGU, PREC, HIHI, depending on the record type.
@@ -145,22 +114,12 @@ data is only obtained upon channel connection.
 </sect2>
 
 <sect2>  <title>Simulated Data</title>
-<para>The plugin
-<code>org.csstudio.utility.pv.simu</code><indexterm><primary>org.csstudio.utility.pv.simu</primary></indexterm>
-implements simulated PVs like
-</para>
-<programlisting>sim://ramp</programlisting>
-
-<para>One purpose of simulated PVs is for testing CSS tools in the absense
+<para>One purpose of simulated PVs is for testing CSS tools in the absence
 of an actual control system.
 In an operational setup, <quote>local</quote> PVs like
 <code>loc://demo</code> can be useful to communicate
 via PVs inside CSS, for example between operator interface
 panels inside one instance of CSS.
-</para>
-<para>Refer to the online help of the plugin
-<code>org.csstudio.utility.pvmanager.ui</code>
-for the syntax of simulated PVs.
 </para>
 </sect2>
 </sect1>
@@ -169,18 +128,10 @@ for the syntax of simulated PVs.
 <sect1> <title>Common Issues</title>
 
 <sect2> <title>Cannot read EPICS PVs</title>
-<para>If you built CSS yourself from sources, assert that the EPICS plugins
-are included.
-Under <code>Help</code>, <code>About...</code>, <code>Installation Details</code>, <code>Plug-Ins</code>
-check that the plugins <code>org.csstudio.utility.pv.epics</code>
-and <code>org.csstudio.platform.libs.epics</code> are available. 
-</para>
 <para>Check the EPICS CA address list. Try to access the same PV
 with the EPICS <code>caget</code> command-line tool.
 Compare the EPICS_CA_ADDR_LIST environment variable used by the
 command-line tool with the CSS preference for the address list.
-</para>
-<para>Try both the CAJ and JNI version of CA.
 </para>
 </sect2>
 
@@ -202,31 +153,6 @@ problem should have been resolved until you re-open the affected tools.
 </para>
 <para>In an operational control room setup, you should assert that all computers
 launch an instance of the EPICS caRepeater on bootup.
-</para>
-</sect2>
-
-<sect2> <title>No Implementations in Product</title>
-<para>While the modular plug-in approach is very flexible, there can be one disadvantage:
-The archive engine code for example only depends on <code>org.csstudio.utility.pv</code>,
-the <emphasis>definition</emphasis> of the API for accessing live data.
-When bundling the archive engine code into a product, this plugin must be included.
-</para>
-<para>The <emphasis>implementing</emphasis> plugins like
-<code>org.csstudio.utility.pv.epics</code> are optional,
-allowing you to build an archive engine that does not interface to EPICS
-but another network protocol of your choice.
-If you fail to include <emphasis>any</emphasis> implementing plugins,
-the product will built without errors but later issue runtime error messages
-</para>
-<programlisting>No extensions to org.csstudio.utility.pv.pvfactory found
-</programlisting>
-
-<para>This error means:
-The <code>org.csstudio.utility.pv</code> could not locate any implementation,
-no factory classes for creating actual live data PVs.
-You need to include at least one implementing plugin like
-<code>org.csstudio.utility.pv.epics</code> or
-<code>org.csstudio.utility.pv.simu</code>.
 </para>
 </sect2>
 
