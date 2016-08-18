@@ -118,7 +118,8 @@ in the product <filename>plugin.xml</filename> file.
 For example, if <code>preferenceCustomization</code>
 is set to <code>platform:/config/plugin_customization.ini</code>,
 the customization file will need to be in
-<filename>org.csstudio.x.y/configuration/plugin_customization.ini</filename>.
+<filename>your_product/configuration/plugin_customization.ini</filename>,
+i.e. within the directory tree of the final product.
 </para>
 <para>In the compiled version of the product, plugins are
 usually JAR files in a <filename>plugins</filename> sub-directory
