@@ -75,7 +75,7 @@ The project web site is
 <link xlink:href="https://github.com/ControlSystemStudio">https://github.com/ControlSystemStudio</link>.
 </para>
 
-<para>For GIT in general, see 
+<para>For GIT in general, see
 <link xlink:href="http://git-scm.com">http://git-scm.com</link>.
 </para>
 
@@ -387,7 +387,7 @@ in a later step, so we need to set <code>p2.atomic.composite.loading</code> to <
 is a generic build tool for Java.
 It uses <code>pom.xml</code><indexterm><primary>POM Files, pom.xml</primary></indexterm> files
 to define how a piece of software needs to be compiled, and to list its dependencies.
-Eclipse plugin sources already include 
+Eclipse plugin sources already include
 <code>META-INF/MANIFEST.MF</code><indexterm><primary>Manifest files, META-INF/MANIFEST.MF</primary></indexterm>
 files for almost the same purpose.
 <code>Tycho</code><indexterm><primary>Tycho</primary></indexterm>, a support module for Maven,
@@ -513,8 +513,9 @@ based on the following example:
              http://download.controlsystemstudio.org,
              you can list them in your composite repo.
          -->
-        &lt;cs-studio>dummy_value&lt;/cs-studio>
-        
+        &lt;cs-studio>false&lt;/cs-studio>
+        &lt;eclipse>false&lt;/eclipse>
+
         &lt;!-- Ignore artifacts in ~/.m2/repository/p2,
              which some other "mvn install" may have placed
              there.
@@ -524,11 +525,11 @@ based on the following example:
         &lt;!-- Issue warnings instead of aborting on error -->
         &lt;baselineMode>warn&lt;/baselineMode>
         &lt;jgit.dirtyWorkingTree>warning&lt;/jgit.dirtyWorkingTree>
-        
+
         &lt;!-- Skip unit tests -->
         &lt;maven.test.skip>true&lt;/maven.test.skip>
         &lt;skipTests>true&lt;/skipTests>
-        
+
       &lt;/properties>
     &lt;/profile>
   &lt;/profiles>
@@ -548,7 +549,7 @@ in any of the CSS source tree locations that contain a Maven <code>pom.xml</code
 (cd maven-osgi-bundles; mvn help:active-profiles)
 
 # In the long output, locate the &lt;properties> and
-# verify they include what you entered in settings.xml 
+# verify they include what you entered in settings.xml
 (cd maven-osgi-bundles; mvn help:effective-pom)
 </programlisting>
 
@@ -567,28 +568,30 @@ rm -rf $HOME/.m2/repository
 # do it.
 # Otherwise skip this step, and use the only repo
 # for this module.
-(cd maven-osgi-bundles; mvn clean verify)
+(cd maven-osgi-bundles; mvn -B -P my-css-settings clean verify)
 
 # Similarly, compile cs-studio-thirdparty unless
 # you prefer to use its binaries from a remote repo.
-(cd cs-studio-thirdparty; mvn clean verify)
+(cd cs-studio-thirdparty; mvn -B -P my-css-settings clean verify)
 
 # Again if you prefer local mud
-(cd diirt; mvn clean verify)
+(cd diirt; mvn -B -P my-css-settings clean verify)
 
 # If you want to compile core, ..
-(cd cs-studio/core; mvn clean verify)
+(cd cs-studio/core; mvn -B -P my-css-settings clean verify)
 
 # If you want to compile applications, ..
-(cd cs-studio/applications; mvn clean verify)
+(cd cs-studio/applications; mvn -B -P my-css-settings clean verify)
 
 # Compile desired products
-(cd org.csstudio.product; mvn clean verify)
+(cd org.csstudio.product; mvn -B -P my-css-settings clean verify)
 # or:
-(cd org.csstudio.sns; mvn clean verify)
+(cd org.csstudio.sns; mvn -B -P my-css-settings clean verify)
 # or:
-(cd org.csstudio.nsls2.product; mvn clean verify)
+(cd org.csstudio.nsls2.product; mvn -B -P my-css-settings clean verify)
 </programlisting>
+
+where <code>my-css-settings</code> is the identifier of the active profile in your maven settings file.
 
 <para>After the last step, the created products can be found in
 the following locations, depending on which products you built:
@@ -606,8 +609,61 @@ can install optional features, for example
 <para>After changes to the source code, you do not need to recompile everything.
 If you change for example code under <code>cs-studio/applications/logbook</code>,
 you can build only that sub-module of applications via
-<programlisting>(cd cs-studio/applications/logbook; mvn verify)</programlisting>
+<programlisting>(cd cs-studio/applications/logbook; mvn -B -P my-css-settings verify)</programlisting>
 </para>
+
+<sect2> <title>Using Static Libraries</title>
+<para>
+  It is possible to use 2 static libraries containing all the Eclipse Mars plugins and sources,
+  and all the CS-Studio plugins to simplify and speed-up the compilation process.
+</para>
+<para>
+  To use these libraries the following procedures must be followed.
+</para>
+<procedure> <title>Preparing <emphasis>cs-studio-eclipse-4.3</emphasis> P2 Repository</title>
+<step>
+  Clone somewhere the following GitHub repository:
+  <link xlink:href="https://github.com/ControlSystemStudio/org.csstudio.p2zip.eclipse-dependencies.git">org.csstudio.p2zip.eclipse-dependencies</link>.
+</step>
+<step>
+  On a terminal window, <code>cd</code> on the cloned directory and execute
+  <programlisting>mvn -B clean install</programlisting>
+</step>
+<step>
+  Copy the <filename>target/cs-studio-eclipse-4.3-p2.zip</filename> inside the directory that will contain the static library.
+  <code>cd</code> in that directory and execute
+  <programlisting>unzip -u -q cs-studio-eclipse-4.3-p2.zip</programlisting>
+</step>
+<step>
+  Optionally remove the <filename>cs-studio-eclipse-4.3-p2.zip</filename> file.
+</step>
+</procedure>
+<procedure> <title>Preparing <emphasis>cs-studio-4.4</emphasis> P2 Repository</title>
+<step>
+  Clone somewhere the following GitHub repository:
+  <link xlink:href="https://github.com/ControlSystemStudio/org.csstudio.p2zip.git">org.csstudio.p2zip</link>.
+</step>
+<step>
+  On a terminal window, <code>cd</code> on the cloned directory and execute
+  <programlisting>mvn -B clean install</programlisting>
+</step>
+<step>
+  Copy the <filename>target/cs-studio-4.4-p2.tar.gz</filename> inside the directory that will contain the static library.
+  <code>cd</code> in that directory and execute
+  <programlisting>tar -zxvf cs-studio-4.4-p2.tar.gz</programlisting>
+</step>
+<step>
+  Optionally remove the <filename>cs-studio-4.4-p2.tar.gz</filename> file.
+</step>
+</procedure>
+<para>
+  Now put inside your composite files two additional <emphasis>child location</emphasis> lines similar to the following:
+</para>
+<programlisting>
+&lt;child location="somewhere/cs-studio-eclipse-4.3/p2repo"/&gt;
+&lt;child location="somewhere/cs-studio-4.4/p2repo"/&gt;
+</programlisting>
+</sect2>
 
 </sect1>
 
@@ -651,7 +707,7 @@ it from the IDE and install the result on the desired computers.
 </para>
 
 <para>Both the JDK and the RCP IDE need to be a specific version, ask other CSS developers
-for the currently supported versions. 
+for the currently supported versions.
 </para>
 
 <para>Start the Eclipse IDE, and assert that it uses the JDK:
@@ -721,7 +777,7 @@ For CSS development, you need a target platform that includes the following:
           because your target platform provides the Eclipse plugins required
           to compile CSS.
 </listitem>
-<listitem>External dependencies. While the Maven build fetches these based on 
+<listitem>External dependencies. While the Maven build fetches these based on
           information in the <code>pom.xml</code> files, the IDE requires them
           to be included in the target platform.
 </listitem>
@@ -731,7 +787,7 @@ For CSS development, you need a target platform that includes the following:
           Instead, you can import only the sources which you want to study or extend.
           The IDE will favor source code that you have imported over the corresponding
           binaries in the target platform, so you can continue to import more source
-          code as required. 
+          code as required.
 </listitem>
 </itemizedlist>
 
@@ -785,7 +841,7 @@ To import the desired sources into the IDE:
 <listitem>In the IDE, select the menu <code>File/Import...</code>, <code>Maven</code>, <code>Existing Maven Project</code>.</listitem>
 <listitem>As a root directory, you generally select the top-level directory as it was cloned from GIT,
           for example the <filename>org.csstudio.product</filename> directory.
-          For the <filename>cs-studio</filename> source tree, select either the 
+          For the <filename>cs-studio</filename> source tree, select either the
           <filename>cs-studio/core</filename> or
           <filename>cs-studio/applications</filename> subdirectory,
           or a specific sub module like <filename>cs-studio/applications/logbook</filename>.
@@ -858,7 +914,7 @@ Press <code>Validate Plug-Ins</code> to identify unresolved plugins, i.e. missin
 Either manually add the plugins that were reported as missing,
 or try the <code>Add Required Plug-ins</code> button to add them automatically.
 While the <code>Add Required Plug-ins</code> button is easier to use than the manual approach,
-it tends to overzealously add test fragments to the procuct which are not actually required. 
+it tends to overzealously add test fragments to the procuct which are not actually required.
 </para>
 
 <para>In the case of the command-line products like the Alarm Server it might soon exit with an error message indicating
@@ -1013,7 +1069,7 @@ That is probably not what you want, so export into a an empty directory.
 <para>You should now have a directory like <filename>/usr/fred/CSS/bin/MyCSS-4.0</filename>
  that contains a <code>css</code> executable.
 You can copy that directory to other computers and run it there.
-One method of deployment would be to offer a ZIP file of the exported product on a web page. 
+One method of deployment would be to offer a ZIP file of the exported product on a web page.
 </para>
 
 <para>If you left the option to
@@ -1043,7 +1099,7 @@ between GUI and console applications. <code>javaw -version</code> invoked in <co
 will not display any output, either.
 </para>
 
-<para>Eclipse for Windows likewise includes launchers  
+<para>Eclipse for Windows likewise includes launchers
 <filename>eclipse.exe</filename> and <filename>eclipsec.exe</filename>.
 Headless products like an <filename>ArchiveEngine</filename>, <filename>AlarmServer</filename> etc.
 should use <filename>eclipsec.exe</filename> as their launcher, but there is currently no
