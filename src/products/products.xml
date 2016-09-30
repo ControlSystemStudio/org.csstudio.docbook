@@ -587,4 +587,122 @@ how much memory you should allow.
 
 </sect1>
 
+
+<sect1> <title>Branding</title>
+
+<para>
+	In this section explanation is given on how to customize product's splash screen, desktop icons, etc.
+</para>
+
+<sect2> <title>Desktop Icons</title>
+
+<para>
+	To change the default CS-Studio desktop icon:
+</para>
+
+<itemizedlist>
+	<listitem>
+		<para>
+			Put 16&times;16, 32&times;32, 48&times;48, 64&times;64, 128&times;128,
+			and 256&times;256 <filename>.png</filename> files, <filename>.icns</filename>
+			<filename>.ico</filename>, and a 48&times;48 <filename>.xpm</filename>
+			into a root <filename>icons</filename> folder inside the product plugin.
+			Be sure to include <filename>icons</filename> into the <code>bin.includes</code>
+			section of the plugin's <filename>build.properties</filename> file.
+		</para>
+	</listitem>
+	<listitem>
+		<para>
+			Reference these files from the <emphasis>Branding</emphasis> page of the product configuration.
+			For example, the <emphasis>16x16 Image</emphasis> should be
+			<filename>/pruduct-plugin/icons/icon16.png</filename>, where <emphasis>pruduct-plugin</emphasis>
+			is the pruduct plugin's ID, and <emphasis>icon16.png</emphasis> is the filename of the
+			16&times;16 icon.
+		</para>
+	</listitem>
+	<listitem>
+		<para>
+			Copy the previous icon files into the <filename>repository/icons</filename> folder of the
+			main product project.
+		</para>
+	</listitem>
+	<listitem>
+		<para>
+			Reference these files from the <emphasis>Launching</emphasis> page of the product configuration.
+			For each <emphasis>Program Launcher</emphasis> specify the icon in a relative form, e.g.
+			<filename>/icons/icon.icns</filename> for the MacOS X icon file named <emphasis>icon.icns</emphasis>.
+		</para>
+	</listitem>
+</itemizedlist>
+
+</sect2>
+
+<sec2> <title>Splash Screen</title>
+
+<para>
+	To customize the splash screen use the <filename>org.csstudio.product/build/ImageLabeler-2.0.jar</filename> to
+	add branding information to the <filename>org.csstudio.product/plugins/org.csstudio.product/splash-template.bmp</filename>.
+</para>
+<para>
+	Here the usage of the program when run without parameters:
+</para>
+
+<programlisting>
+Usage: java -jar ImageLabeler-2.0.jar &lt;version&gt; &lt;xPosition&gt; &lt;yPosition&gt; &lt;template.bmp&gt; &lt;splash.bmp&gt;
+                                     [&lt;affiliation&gt;  &lt;xAffPosition&gt; &lt;yAffPosition&gt;
+                                     [&lt;icon&gt; &lt;xIconPosition&gt; &lt;yIconPosition&gt;]]
+Where:
+  &lt;version&gt;       is the version string,
+  &lt;xPosition&gt;     is the right X coordinate of the version string,
+  &lt;yPosition&gt;     is the baseline Y coordinate of the version string,
+  &lt;template.bmp&gt;  is the pathname of the template bitmap file,
+  &lt;splash.bmp&gt;    is the pathname of the generated (annotated) splash-screen bitmap,
+  &lt;affiliation&gt;   is an optional affiliation text,
+  &lt;xAffPosition&gt;  is the left X coordinate of the affiliation string,
+  &lt;yAffPosition&gt;  is the baseline Y coordinate of the affiliation string,
+  &lt;icon&gt;          is an optional icon,
+  &lt;xIconPosition&gt; is the left X coordinate of the icon,
+  &lt;yIconPosition&gt; is the top Y coordinate of the icon.
+</programlisting>
+
+<para>
+	For example, the splash screen image used for the community edition can be seen in <xref linkend="fig_splash_ce"/>.
+</para>
+
+<figure xml:id="fig_splash_ce">  <title>Community Edition splash screen image.</title>
+  <mediaobject>
+    <imageobject><imagedata fileref="spash-ce.png" width="100%" format="PNG"/></imageobject>
+  </mediaobject>
+</figure>
+
+<para>
+	It was created with the following command:
+</para>
+
+<programlisting>
+	cs /somewhere/org.csstudio.product
+	java -jar build/ImageLabeler-2.0.jar "1.2.3" 462 53 plugins/org.csstudio.product/splash-template.bmp plugins/org.csstudio.product/splash.bmp "Community Edition" 19 151
+</programlisting>
+
+</sec2>
+
+<sect2> <title>MacOS X Application</title>
+<para>
+	The generated MacOS X application has a <filename>Info.plist</filename> file that is not perfect. 
+	To furter customize it, bein that is not possible to provide a custom one to Eclipse, it is necessary use the 
+	<link xlink:href="https://github.com/buchen/fix-info-plist-maven-plugin">fix-info-plist-maven-plugin</link>
+	Maven plugin.
+</para>
+<para>
+	For an example on how to customize the <filename>Info.plist</filename> file see 
+	<link xlink:href="https://github.com/ControlSystemStudio/org.csstudio.ess.product/blob/master/pom.xml">org.csstudio.ess.product/pom.xml</link>
+	at lines 52-58, where the plugin is loaded, and 
+	<link xlink:href="https://github.com/ControlSystemStudio/org.csstudio.ess.product/blob/master/repository/pom.xml">org.csstudio.ess.product/repository/pom.xml</link>
+	at line 51, where the phase is defined, and at lines 58-113, where the plugin parameters are defined.
+</para>
+</sect2>
+
+</sect1>
+
+
 </chapter>
