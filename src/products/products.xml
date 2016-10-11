@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xsl:stylesheet [
+	<!ENTITY % isonum PUBLIC
+	  "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+	  "http://www.w3.org/2003/entities/iso8879/isonum.ent"
+	>
+	%isonum;
+]>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xml:id="ch_products">
@@ -637,7 +644,7 @@ how much memory you should allow.
 
 </sect2>
 
-<sec2> <title>Splash Screen</title>
+<sect2> <title>Splash Screen</title>
 
 <para>
 	To customize the splash screen use the <filename>org.csstudio.product/build/ImageLabeler-2.0.jar</filename> to
@@ -671,7 +678,7 @@ Where:
 
 <figure xml:id="fig_splash_ce">  <title>Community Edition splash screen image.</title>
   <mediaobject>
-    <imageobject><imagedata fileref="spash-ce.png" width="100%" format="PNG"/></imageobject>
+    <imageobject><imagedata fileref="spash-ce.png" width="480" format="PNG"/></imageobject>
   </mediaobject>
 </figure>
 
@@ -684,7 +691,7 @@ Where:
 	java -jar build/ImageLabeler-2.0.jar "1.2.3" 462 53 plugins/org.csstudio.product/splash-template.bmp plugins/org.csstudio.product/splash.bmp "Community Edition" 19 151
 </programlisting>
 
-</sec2>
+</sect2>
 
 <sect2> <title>MacOS X Application</title>
 <para>
