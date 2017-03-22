@@ -37,8 +37,9 @@ of the product:
 </para>
 <programlisting>
 # Selects the web links to show and define their order.
+# '|' character can be used to add separators.
 # When left blank, there won't be any web links.
-org.csstudio.ui.menu.web/weblinks=local css google
+org.csstudio.ui.menu.web/weblinks=local css | google
  
 # Define the Label and link for each web link.
 # Only those listed in ...weblinks above are actually used!
