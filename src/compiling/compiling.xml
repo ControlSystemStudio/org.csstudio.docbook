@@ -102,7 +102,7 @@ needed minimal additions or modifications.
 
 <sect2> <title>Diirt</title>
 <itemizedlist>
-<listitem>https://github.com/ControlSystemStudio/diirt.git</listitem>
+<listitem>https://github.com/diirt/diirt.git</listitem>
 </itemizedlist>
 
 <para>See diirt documentation.
@@ -227,7 +227,7 @@ version number.
 </itemizedlist>
 <para>Remote repository:</para>
 <itemizedlist>
-<listitem>http://diirt.download.controlsystemstudio.org/diirt/3.0.1</listitem>
+<listitem>http://diirt.download.controlsystemstudio.org/diirt/3.1.6</listitem>
 </itemizedlist>
 </sect2>
 
@@ -329,7 +329,7 @@ type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepos
   &lt;children size="5">
     &lt;child location="http://download.controlsystemstudio.org/maven-osgi-bundles/4.2"/>
     &lt;child location="http://download.controlsystemstudio.org/thirdparty/4.2"/>
-    &lt;child location="http://diirt.download.controlsystemstudio.org/diirt/3.0.1"/>
+    &lt;child location="http://diirt.download.controlsystemstudio.org/diirt/3.1.6"/>
     &lt;child location="../cs-studio/core/p2repo"/>
     &lt;child location="../cs-studio/applications/p2repo"/>
   &lt;/children>
