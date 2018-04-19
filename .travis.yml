@@ -13,8 +13,6 @@ sudo: false
 jdk:
   - oraclejdk8
 
-install: ant deps
-
 script:
   - ./install-docbook-xsl.sh
    # Make sure stdout is in blocking mode.
