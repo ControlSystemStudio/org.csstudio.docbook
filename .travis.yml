@@ -13,6 +13,10 @@ sudo: false
 jdk:
   - oraclejdk8
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y xsltproc
+
 script:
   - ./install-docbook-xsl.sh
    # Make sure stdout is in blocking mode.
