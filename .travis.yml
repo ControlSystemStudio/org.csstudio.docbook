@@ -18,7 +18,7 @@ script:
    # Make sure stdout is in blocking mode.
    # See https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959 for details.
   - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
-  - ant -Dfop=fop-1.1/fop -Dout="${WORKSPACE}/out"
+  - ant -Dfop=fop-1.1/fop -Dout="$TRAVIS_BUILD_DIR/out"
 
 deploy:
   - provider: script
