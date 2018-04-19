@@ -1,4 +1,4 @@
-cs-studio-docbook
+cs-studio-docbook [![Build Status](https://travis-ci.org/ControlSystemStudio/org.csstudio.docbook.svg?branch=master)](https://travis-ci.org/ControlSystemStudio/org.csstudio.docbook)
 =================
 
 Manual for building and using (much) of CS-Studio
