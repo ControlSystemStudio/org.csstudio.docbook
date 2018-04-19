@@ -19,8 +19,7 @@ script:
   - ./install-docbook-xsl.sh
    # Make sure stdout is in blocking mode.
    # See https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959 for details.
-  - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, fl
-ags&~os.O_NONBLOCK);'
+  - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
   - ant -Dfop=fop-1.1/fop -Dout="${WORKSPACE}/out"
 
 deploy:
