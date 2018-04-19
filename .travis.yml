@@ -23,7 +23,7 @@ script:
 ags&~os.O_NONBLOCK);'
  - ant -Dfop=fop-1.1/fop -Dout="${WORKSPACE}/out"
 
- deploy:
+deploy:
   provider: script
   script: rsync -aP -e ssh --delete out/ bnl-jenkins,cs-studio@web.sourceforge.net:htdocs/docbook
   on:
